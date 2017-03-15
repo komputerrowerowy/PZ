@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = abAplikacja
+title = aAplikacjaa
 
 # (str) Package name
-package.name = abProjekt
+package.name = aProjektt
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test

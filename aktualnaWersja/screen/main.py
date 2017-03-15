@@ -61,7 +61,7 @@ Context = autoclass('android.content.Context')
 activity = autoclass("org.renpy.android.PythonActivity").mActivity
 Grupy = autoclass("android.provider.ContactsContract$Groups")
 
-print "asdfg12"
+print "abba ojcze"
 
 AcceptIncomingCall2 = activity
 
@@ -122,6 +122,7 @@ class ConfirmPopup(GridLayout):
 class ShowTime(Screen):
     popup_shown = False
     flagaCall = 1
+    prev=0
 
     def build(self):
         pass
@@ -631,8 +632,10 @@ class GroupScreen(Screen):
     lonGPS = ''
     latGPS = ''
     flagaGPS = 0
-
-
+    previous_angle = 0
+    needle_angle2 = 0
+    wsp2=0
+    znacznik3=0
 
 
     # sms_recipient = "663889095"
@@ -648,6 +651,7 @@ class GroupScreen(Screen):
 
     def do_toggle(self):
         self.sensorEnabled = False
+        kat = 0
         try:
             if not self.sensorEnabled:
                 compass.enable()
@@ -700,32 +704,53 @@ class GroupScreen(Screen):
         y1 = round(self.obliczanie_y1(x, y, z), 2)
         x1 = round(self.obliczanie_x1(x, y1), 2)
         alpha = round(self.obliczanie_alpha(x1, y1), 2)
-        wsp = (alpha * 360 / 6.28 + 180) % 360
-        print wsp
-        if wsp < 60 and wsp >= 0:
-            wsp = 30
-        if wsp < 120 and wsp >= 60:
-            wsp = 90
-        if wsp < 180 and wsp >= 120:
-            wsp = 150
-        if wsp < 240 and wsp >= 180:
-            wsp = 210
-        if wsp < 300 and wsp >= 240:
-            wsp = 270
-        if wsp <= 360 and wsp >= 300:
-            wsp = 330
-        if wsp >= 360:
-            wsp = 360
-        if wsp <= 0:
-            wsp = 360
-        print wsp
-        wsp2 = int(wsp)
-        print wsp2
-        print self.ids["scatter2"]
-        scatter = self.ids["scatter2"]
-        r = Matrix().rotate(-radians(wsp2), 0, 0, 1)
+        self.wsp = (alpha * 360 / 6.28 + 180) % 360
+        print self.wsp
+        '''if self.wsp < 30 and self.wsp >= 0:
+            self.wsp = 15
+        if self.wsp < 120 and self.wsp >= 60:
+            self.wsp = 90
+        if self.wsp < 180 and self.wsp >= 120:
+            self.wsp = 150
+        if self.wsp < 240 and self.wsp >= 180:
+            self.wsp = 210
+        if self.wsp < 300 and self.wsp >= 240:
+            self.wsp = 270
+        if self.wsp <= 360 and self.wsp >= 300:
+            self.wsp = 330'''
+        print self.wsp
+        self.wsp=int(self.wsp/10)*10
+        o_ile_obrot = int(self.wsp)-ShowTime.prev
+
+        '''if (wsp2 > self.needle_angle2):
+            self.kat = wsp2 - self.needle_angle2
+
+        if (wsp2 == self.needle_angle2):
+            self.kat = wsp2 - self.needle_angle2
+
+        if (wsp2 < self.needle_angle2):
+            self.kat = self.needle_angle2 - wsp2
+
+        if self.kat > 10:
+            self.needle_angle2 = wsp2'''
+        print "wsp2 = " + str(self.wsp2)
+
+        print "o ile obrot = " + str(o_ile_obrot)
+
+        #if self.kat > 10:
+        #self.needle_angle2 = self.kat
+
+        '''print self.ids["scatter2"]'''
+        scatter=MainApp.get_running_app().root.carousel.slides[0].ids["scatter2"]
+        #scatter = self.ids["scatter2"]
+        r = Matrix().rotate(radians(o_ile_obrot), 0, 0, 1)
+        ShowTime.prev=self.wsp
+
+        print scatter
         scatter.apply_transform(r, post_multiply=True,
-                                anchor=scatter.to_local(scatter.parent.center_x, scatter.parent.center_y))
+                                    anchor=scatter.to_local(scatter.parent.center_x, scatter.parent.center_y))
+
+        # self.previous_angle = wsp2
 
     # rotacja_mapy
 
@@ -1039,7 +1064,6 @@ class CallScreen(Screen):
                 contactsGroups2[contact.display_name] = contact.number
 
 
-
 class ScreenSettings(Screen):
     def build(self):
         pass
@@ -1330,12 +1354,12 @@ class MainApp(App):
         music = MusicPlayer()
         music.getpath()
         self._anim = None
-        Clock.schedule_interval(self.update_compass, 1)
+        Clock.schedule_interval(self.update_compass, 2)
         # modyfikacja 3
         gr = GroupScreen()
         # rotacja_mapy
         gr.do_toggle()
-        Clock.schedule_interval(gr.get_readings, 1)
+        #Clock.schedule_interval(gr.get_readings, 2)
         # rotacja_mapy
         Clock.schedule_interval(show_time.check2, 1)
         try:
@@ -1404,8 +1428,8 @@ class MainApp(App):
 
             group = GroupScreen()
             # modyfikacja 4
-            #group.do_toggle()
-            #group.get_readings(1)
+            group.do_toggle()
+            group.get_readings(1)
             #group.rotate2()
 
             flaga_gps = group.returnFlag()
