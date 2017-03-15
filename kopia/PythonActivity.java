@@ -165,7 +165,7 @@ private final int CHECK_CODE = 0x1;
         if(cursor.moveToFirst()){
             return cursor.getString(0);
         }else {
-            return "unknown number";
+            return "nieznany numer";
         }
     }
 
