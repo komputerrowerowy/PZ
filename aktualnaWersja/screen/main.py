@@ -42,14 +42,15 @@ from math import sqrt
 from math import atan
 
 from plyer import compass
+
 from kivy.animation import Animation
 from kivy.graphics.transformation import Matrix
 from kivy.properties import NumericProperty
 from kivy.graphics.context_instructions import Translate, Scale
 
-#modyfikacja 1
+# modyfikacja 1
 
-#SmsManager = autoclass('android.telephony.SmsManager')
+# SmsManager = autoclass('android.telephony.SmsManager')
 
 
 
@@ -61,33 +62,36 @@ Context = autoclass('android.content.Context')
 activity = autoclass("org.renpy.android.PythonActivity").mActivity
 Grupy = autoclass("android.provider.ContactsContract$Groups")
 
-print "abba ojcze"
-
 AcceptIncomingCall2 = activity
 
 contacts = []
 contacts2 = []
+contacts3 = []
 contactsGroups = {}
 contactsGroups2 = {}
 groups = []
 sensorEnabled = False
 wsp2 = 0
-
+GrupyId = []
 '''Popup odbieranie telefonu'''
 Builder.load_string('''
 <ConfirmPopup>:
     cols:1
     Label:
         text: root.text
-    GridLayout:
-        cols: 2
-        size_hint_y: None
-        height: '44sp'
+        size_hint_y: 0.2
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: 0.8
         Button:
             text: 'Odbierz'
+            background_color: 0.1,2,0.1,1
+            size_hint_y: 0.6
             on_release: root.dispatch('on_answer','Odbierz')
         Button:
             text: 'Odrzuć'
+            background_color: 2,0,0,1
+            size_hint_y: 0.4
             on_release: root.dispatch('on_answer', 'Odrzuc')
 ''')
 
@@ -122,7 +126,7 @@ class ConfirmPopup(GridLayout):
 class ShowTime(Screen):
     popup_shown = False
     flagaCall = 1
-    prev=0
+    prev = 0
 
     def build(self):
         pass
@@ -172,40 +176,34 @@ class ShowTime(Screen):
             c.current_slide.carousel.load_slide(slides[1])
             c.current_slide.carousel.anim_move_duration = 0.5
 
-
+    def send_sms(self, sms_recipient, sms_message):
+        # sms.send(recipient=self.sms_recipient, message=self.sms_message)
+        # sms.send(self.sms_recipient, self.sms_message)
+        print "SMS"
+        sms.send(recipient=sms_recipient, message=sms_message)
 
     def callListener(self):
 
-        self.popup_shown = False
         print activity.number
-        if activity.isIncoming and self.popup_shown == False:
+        if activity.callState == 1 and self.popup_shown == False:
             self.popup_shown = True
             content = ConfirmPopup()
             content.bind(on_answer=self._on_answer)
             self.popup = Popup(title="Dzwoni: " + activity.number,
                                content=content,
-                               size_hint=(None, None),
-                               size=(480, 400),
+                               size_hint=(0.9, 0.9),
                                auto_dismiss=False)
             self.popup.open()
         else:
             self.popup_shown = False
             # time.sleep(1)
 
-    def check(self):
+    def check(self, sms_recipient, sms_message):
 
-        '''content = ConfirmPopup(text='Dzwoni ')
-        content.bind(on_answer=self._on_answer)
-        self.popup = Popup(title='Dzwoni ',
-                           content=content,
-                           size_hint=(None, None),
-                           size=(480, 400),
-                           auto_dismiss=False)
-        self.popup.open()'''
         print"nieWiem"
-        #self.send_sms()
-        self.callListener()
         # self.send_sms()
+        self.callListener()
+        self.send_sms(sms_recipient, sms_message)
         # sms2 = AndroidSms()
         # sms2.send('663889095', 'wiadomosc sms')
 
@@ -220,50 +218,69 @@ class ShowTime(Screen):
             if answer == "Odrzuc":
                 self.popup_shown = False
                 self.flagaCall = 1
-                self.popup.dismiss()
+
                 self.rejectIncomingCall()
+                self.popup.dismiss()
         self.popup.dismiss()
 
     def rejectIncomingCall(self):
 
         telephonyManager = activity.getSystemService(Context.TELEPHONY_SERVICE)
 
-        telephonyService = activity.dupa(telephonyManager)
+        telephonyService = activity.createITelephonyInstance(telephonyManager)
+
         telephonyService.endCall()
+        # self.popup.dismiss()
 
     def check2(self, fla):
         # pass
-        print "tralalalalala"
         if activity.isIncoming:
             if self.flagaCall == 1:
                 self.flagaCall = 2
-                print "wszystkie_nr_tel"
-                for contact in contacts:
-                    print contact.number
-                print "wypisz_dane"
-                #numTel = str(activity.number)
-                num = str(activity.number)
+                numTel = str(activity.number)
+                num = str(numTel)
                 num = num.replace(" ", "")
                 num = num.replace("-", "")
                 if num[0] == "+":
                     num = num[-9:]
 
                 numTel = num
-                try:
-                    nrGrupy = contactsGroups2[contactsGroups[numTel]]
-                except:
-                    nrGrupy = 99
-                    # wykona ise jesli dzwoni obcy nr
-                    self.rejectIncomingCall()  # domyślnie ustawione na odrzucenie
+
+                # for contact in contacts3:
+                #     try:
+                #         print "dane_kontaktow_test"
+                #         print "name: " + str(contact.display_name)
+                #         print "tel: " + str(contact.number)
+                #         print "grupa: " + str(contact.group_id)
+                #     except:
+                #         pass
+
+                for contact in contacts3:
+                    if str(numTel) == str(contact.number):
+                        GrupyId.append(contact.group_id)
 
                 conn = sqlite3.connect('baza.db')
                 c = conn.cursor()
 
-                c.execute("SELECT ID_GRUPY FROM Grupy WHERE REAKCJA = 'autoodebranie'")
+                c.execute("SELECT REAKCJA FROM Grupy WHERE ID_GRUPY = '999'")
                 dane = c.fetchall()
 
-                c.execute("SELECT ID_GRUPY FROM Grupy WHERE REAKCJA = 'odrzucenieSMS'")
-                dane1 = c.fetchall()
+                try:
+                    nrGrupy = contactsGroups2[contactsGroups[numTel]]
+                    print nrGrupy
+                except:
+                    nrGrupy = 999
+                    GrupyId.append(nrGrupy)
+                    print "wyjatek: ", sys.exc_info()
+                    # wykona sie jesli dzwoni obcy nr
+                    # for x in dane:
+                    #     if str(nrGrupy) == str(x[0]):
+                    #         self.callListener()
+                    #     else:
+                    #         self.rejectIncomingCall()
+
+                c.execute("SELECT ID_GRUPY FROM Grupy WHERE REAKCJA = '1'")
+                dane = c.fetchall()
 
                 conn.commit()
                 conn.close()
@@ -273,59 +290,41 @@ class ShowTime(Screen):
 
                 print "dane z bazy: "
                 print dane
+                print "==============="
+
 
                 for x in dane:
-                    if int(nrGrupy) == int(x[0]):
-                        #self.callListener()
-                        #AcceptIncomingCall2.acceptCall()
-                        print 'autoodebranie'
-                        zmienna = False
-                        print zmienna
-                        self.flagaCall = 1
-                        break
-
-                if zmienna:
-                    for x in dane1:
-                        if int(nrGrupy) == int(x[0]):
-                            # tutaj miejsce na wywolanie metody odrzucajacej polaczenie z wyslaniem powiadomienia SMS
-                            self.rejectIncomingCall()
-                            #self.send_sms()
-                            print 'odrzucenieSMS'
-                            zmienna1 = False
-                            print zmienna1
-                            self.flagaCall = 1
+                    for y in GrupyId:
+                        if str(y) == str(x[0]):
+                            self.callListener()
+                            # AcceptIncomingCall2.acceptCall()
+                            # print 'autoodebranie'
+                            zmienna = False
+                            print zmienna
+                            # self.flagaCall = 1
                             break
 
-                if bool(zmienna) == bool(zmienna1):
+                # if zmienna:
+                #     for x in dane1:
+                #         for y in GrupyId:
+                #             if int(y) == int(x[0]):
+                #                 # tutaj miejsce na wywolanie metody odrzucajacej polaczenie z wyslaniem powiadomienia SMS
+                #                 self.rejectIncomingCall()
+                #                 print 'odrzucenieSMS'
+                #                 self.send_sms(numTel, "Jadę rowerem, oddzwonię później.")
+                #                 #self.send_sms()
+                #                 zmienna1 = False
+                #                 print zmienna1
+                #                 self.flagaCall = 1
+                #                 break
+
+                # if bool(zmienna) == bool(zmienna1):
+                if bool(zmienna):
                     self.rejectIncomingCall()
                     print 'odrzucenie'
+                    # print 'odrzucenieSMS'
+                    # self.send_sms(numTel, "Jadę rowerem, oddzwonię później.")
                     self.flagaCall = 1
-
-                    # przypisywanie akci do grup
-                    # if int(nrGrupy) == 1:
-                    #     AcceptIncomingCall2.acceptCall()
-                    # elif int(nrGrupy) == 2:
-                    #     self.rejectIncomingCall()
-                    # elif int(nrGrupy) == 3:
-                    #     AcceptIncomingCall2.acceptCall()
-                    # elif int(nrGrupy) == 4:
-                    #     AcceptIncomingCall2.acceptCall()
-                    # elif int(nrGrupy) == 5:
-                    #     self.rejectIncomingCall()
-                    # elif int(nrGrupy) == 6:
-                    #     self.rejectIncomingCall()
-                    # elif int(nrGrupy) == 7:
-                    #     self.callListener()
-                    #     #self.rejectIncomingCall()
-                    #     #self.send_sms()
-                    # elif int(nrGrupy) == 99:
-                    #     self.callListener()
-                    # else:
-                    #     self.callListener()
-                    # self.callListener()
-                    # self.rejectIncomingCall()
-
-                    # Clock.schedule_interval(check2, 1)
 
 
 class ChooseFile(FloatLayout):
@@ -634,18 +633,8 @@ class GroupScreen(Screen):
     flagaGPS = 0
     previous_angle = 0
     needle_angle2 = 0
-    wsp2=0
-    znacznik3=0
-
-
-    # sms_recipient = "663889095"
-    # sms_message = 'test działania smsów'
-    #
-    # def send_sms(self, *args):
-    #     print "smsik_error"
-    #     sms.send(recipient=self.sms_recipient, message=self.sms_message)
-
-
+    wsp2 = 0
+    znacznik3 = 0
 
     # modyfikacja 2
 
@@ -655,21 +644,21 @@ class GroupScreen(Screen):
         try:
             if not self.sensorEnabled:
                 compass.enable()
-                #Clock.schedule_interval(self.get_readings, 1)
+                # Clock.schedule_interval(self.get_readings, 1)
 
                 self.sensorEnabled = True
-                #self.ids.toggle_button.text = "Stop compass"
+                # self.ids.toggle_button.text = "Stop compass"
             else:
                 compass.disable()
-                #Clock.unschedule(self.get_readings)
+                # Clock.unschedule(self.get_readings)
 
                 self.sensorEnabled = False
-                #self.ids.toggle_button.text = "Start compass"
+                # self.ids.toggle_button.text = "Start compass"
         except NotImplementedError:
             import traceback
             traceback.print_exc()
             status = "Compass is not implemented for your platform"
-            #self.ids.status.text = status
+            # self.ids.status.text = status
 
     def obliczanie_y1(self, x, y, z):
         if y == 0:
@@ -693,6 +682,7 @@ class GroupScreen(Screen):
         else:
             alpha = atan(y1 / x1) + 1.57
         return alpha
+
     # rotacja_mapy
     def get_readings(self, dt):
         print "test_rotacjajajajajajajajaja"
@@ -706,21 +696,16 @@ class GroupScreen(Screen):
         alpha = round(self.obliczanie_alpha(x1, y1), 2)
         self.wsp = (alpha * 360 / 6.28 + 180) % 360
         print self.wsp
-        '''if self.wsp < 30 and self.wsp >= 0:
-            self.wsp = 15
-        if self.wsp < 120 and self.wsp >= 60:
-            self.wsp = 90
-        if self.wsp < 180 and self.wsp >= 120:
-            self.wsp = 150
-        if self.wsp < 240 and self.wsp >= 180:
-            self.wsp = 210
-        if self.wsp < 300 and self.wsp >= 240:
-            self.wsp = 270
-        if self.wsp <= 360 and self.wsp >= 300:
-            self.wsp = 330'''
+
         print self.wsp
-        self.wsp=int(self.wsp/10)*10
-        o_ile_obrot = int(self.wsp)-ShowTime.prev
+        if self.wsp == 0:
+            pass
+        else:
+            try:
+                self.wsp = (int(self.wsp) / 10) * 10
+            except:
+                self.wsp = 0
+        o_ile_obrot = int(self.wsp) - ShowTime.prev
 
         '''if (wsp2 > self.needle_angle2):
             self.kat = wsp2 - self.needle_angle2
@@ -737,22 +722,15 @@ class GroupScreen(Screen):
 
         print "o ile obrot = " + str(o_ile_obrot)
 
-        #if self.kat > 10:
-        #self.needle_angle2 = self.kat
-
-        '''print self.ids["scatter2"]'''
-        scatter=MainApp.get_running_app().root.carousel.slides[0].ids["scatter2"]
-        #scatter = self.ids["scatter2"]
-        r = Matrix().rotate(radians(o_ile_obrot), 0, 0, 1)
-        ShowTime.prev=self.wsp
-
-        print scatter
-        scatter.apply_transform(r, post_multiply=True,
+        if int(o_ile_obrot) > 10 or int(o_ile_obrot) < -10:
+            scatter = MainApp.get_running_app().root.carousel.slides[0].ids["scatter2"]
+            # scatter = self.ids["scatter2"]
+            r = Matrix().rotate(radians(o_ile_obrot), 0, 0, 1)
+            scatter.apply_transform(r, post_multiply=True,
                                     anchor=scatter.to_local(scatter.parent.center_x, scatter.parent.center_y))
+        ShowTime.prev = self.wsp
 
-        # self.previous_angle = wsp2
-
-    # rotacja_mapy
+        # print scatter
 
     def Search(self):
         test = self.ids.SearchInput.text
@@ -777,13 +755,6 @@ class GroupScreen(Screen):
     def returnFlag(self):
         self.Search()
         return self.flagaGPS
-
-    def rotate2(self):
-        scatter = self.ids["scatter2"]
-        r = Matrix().rotate(-radians(wsp2), 0, 0, 1)
-        scatter.apply_transform(r, post_multiply=True,
-                                anchor=scatter.to_local(scatter.parent.center_x, scatter.parent.center_y))
-
 
     def rotate(self):
         scatter = self.ids["scatter2"]
@@ -996,30 +967,30 @@ class CallScreen(Screen):
             print "cosik4"
             while (phones2.moveToNext()):
                 name = pho2.getString(pho2.getColumnIndex("display_name"))
-                idGrupy = pho2.getString(pho2.getColumnIndex(Phone.NUMBER))
+                phoneNumber = pho2.getString(pho2.getColumnIndex(Phone.NUMBER))
                 contact_group_id = pho2.getString(pho2.getColumnIndex(GroupMembership.GROUP_ROW_ID))
                 contact_group_name = -1
                 for group in groups:
                     if contact_group_id == group.id:
                         contact_group_name = group.name
 
-                #dl = len(contact_group_id)
-                if contact_group_id is not None:
-                    try:
+                # dl = len(contact_group_id)
+                try:
+                    if contact_group_id is not None:
                         dl = len(contact_group_id)
+                        print "test1"
+                        print contact_group_id
                         if dl <= 1:
-
-                            current_contact = Contact(str(name), str(contact_group_id), str(contact_group_id),
+                            current_contact = Contact(str(name), str(phoneNumber), str(contact_group_id),
                                                       str(contact_group_name))
                             contacts2.append(current_contact)
 
                             if name == "Daniel":
                                 print name
-                                print idGrupy
-                                print str(contact_group_id)
+                                print phoneNumber
                                 print "przerwa2"
-                    except:
-                        pass
+                except:
+                    pass
 
             while (phones.moveToNext()):
                 name = pho.getString(pho.getColumnIndex("display_name"))
@@ -1051,7 +1022,7 @@ class CallScreen(Screen):
                 if num[0] == "+":
                     num = num[-9:]
 
-                current_contact = Contact(str(name), str(num), str(num), str(num))
+                current_contact = Contact(str(name), str(num), str(contact_group_id), str(contact_group_name))
                 contacts.append(current_contact)
 
             contacts.sort(key=lambda contact: contact.display_name)
@@ -1059,9 +1030,119 @@ class CallScreen(Screen):
 
             for contact in contacts:
                 contactsGroups[contact.number] = contact.display_name
-
             for contact in contacts2:
                 contactsGroups2[contact.display_name] = contact.number
+
+    def submit_contact3(self):
+        if platform() == 'android':
+            Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
+            ContactsContract = autoclass("android.provider.ContactsContract$Contacts")
+            GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
+
+            ContentResolver = autoclass('android.content.Context')
+
+            content_resolver = activity.getApplicationContext()
+
+            resolver = content_resolver.getContentResolver()
+
+            ApplicationContext = autoclass('android.app.Activity')
+            # app = ApplicationContext.getApplicationContext()
+            Toast = autoclass("android.widget.Toast")
+            Cursor = autoclass("android.database.Cursor")
+            Data = autoclass("android.provider.ContactsContract$Data")
+            phones = resolver.query(Phone.CONTENT_URI, None, None, None, None)
+            phones2 = resolver.query(Data.CONTENT_URI, None, None, None, None)
+            pho = phones
+            pho2 = phones2
+
+            self.read_groups()
+
+            RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
+            projection = [GroupMembership.GROUP_ROW_ID, RawContactsColumns.CONTACT_ID]
+            # projection = [GroupMembership.GROUP_ROW_ID, "contact_id"]
+            Cursor = autoclass("android.database.Cursor")
+            # c = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID+"="+groups,None, None)
+            a = 1
+            print "cosik4"
+            while (phones2.moveToNext()):
+                name = pho2.getString(pho2.getColumnIndex("display_name"))
+                phoneNumber = pho2.getString(pho2.getColumnIndex(Phone.NUMBER))
+                contact_group_id = pho2.getString(pho2.getColumnIndex(GroupMembership.GROUP_ROW_ID))
+                contact_group_name = -1
+                for group in groups:
+                    if contact_group_id == group.id:
+                        contact_group_name = group.name
+
+                # dl = len(contact_group_id)
+                try:
+                    if contact_group_id is not None:
+                        dl = len(contact_group_id)
+                        if dl <= 1:
+                            current_contact = Contact(str(name), str(contact_group_id), str(contact_group_id),
+                                                      str(contact_group_name))
+                            contacts2.append(current_contact)
+
+                            if name == "Daniel":
+                                print name
+                                print phoneNumber
+                                print "przerwa2"
+                except:
+                    pass
+
+            while (phones.moveToNext()):
+                name = pho.getString(pho.getColumnIndex("display_name"))
+                phoneNumber = pho.getString(pho.getColumnIndex(Phone.NUMBER))
+                contact_group_id = pho.getString(pho.getColumnIndex(GroupMembership.GROUP_ROW_ID))
+                contact_group_name = -1
+                for group in groups:
+                    if contact_group_id == group.id:
+                        contact_group_name = group.name
+                if name == "Test":
+                    print name
+                    print phoneNumber
+                    print "przerwa"
+
+                # if a == 3:
+                #     phoneNumber2 = contact_group_id
+                #     print "numerrrrrrrr"
+                #     print str(phoneNumber2)
+                # a = a + 1
+                # if a == 4:
+                #     a = 1
+
+                # dl = len(contact_group_id)
+                # if dl <= 1:
+
+                num = str(phoneNumber)
+                num = num.replace(" ", "")
+                num = num.replace("-", "")
+                if num[0] == "+":
+                    num = num[-9:]
+                current_contact = Contact(str(name), str(num), str(contact_group_id), str(contact_group_name))
+                contacts.append(current_contact)
+
+            contacts.sort(key=lambda contact: contact.display_name)
+            contacts2.sort(key=lambda contact: contact.display_name)
+
+            for contact in contacts:
+                contactsGroups[contact.number] = contact.display_name
+            for contact in contacts2:
+                contactsGroups2[contact.display_name] = contact.number
+                for contact2 in contacts:
+                    if (contact.display_name == contact2.display_name):
+                        current_contact = Contact(str(contact.display_name), str(contact2.number), str(contact.number),
+                                                  str(contact_group_name))
+                        contacts3.append(current_contact)
+
+                        for contact in contacts3:
+                            try:
+                                print "dane_kontaktow_test"
+                                print "name: " + str(contact.display_name)
+                                print "tel: " + str(contact.number)
+                                print "grupa: " + str(contact.group_id)
+                            except:
+                                pass
+                                # print contactsGroups2[contactsGroups["881689020"]]
 
 
 class ScreenSettings(Screen):
@@ -1217,12 +1298,9 @@ class LineMapLayer(MapLayer):
             Line(points=point_list, width=3, joint="bevel")
 
 
-class ZoneList:
-    _zoneL = []
-    Lista = []
-
-    def __init__(self):
-        super(self).__init__()
+class ZoneList():
+    ListaNazw = []
+    ListaId = []
 
     activity = autoclass("org.renpy.android.PythonActivity").mActivity
     Grupy = autoclass("android.provider.ContactsContract$Groups")
@@ -1232,25 +1310,47 @@ class ZoneList:
     grupa = resolver.query(Grupy.CONTENT_URI, None, None, None, None)
     group = grupa
 
+    ListaNazw.append("Numery spoza grup*")
+    ListaId.append('999')
+
     while (grupa.moveToNext()):
 
         g = group.getString(group.getColumnIndex("TITLE"))
-        f = group.getString(group.getColumnIndex("_id"))
-        if g not in _zoneL:
-            _zoneL.append(g)
-            Lista.append(f)
+        id = group.getString(group.getColumnIndex("_id"))
+
+        if g not in ListaNazw:
+            ListaNazw.append(g)
+            ListaId.append(id)
+
     grupa.close()
 
     conn = sqlite3.connect('baza.db')
     c = conn.cursor()
 
-    c.execute("CREATE TABLE IF NOT EXISTS Grupy (NAZWA TEXT, REAKCJA TEXT, ID_GRUPY INTEGER)")
+    c.execute("CREATE TABLE IF NOT EXISTS Grupy (ID_GRUPY INTEGER, REAKCJA INTEGER)")
     c.execute("SELECT * FROM Grupy")
-    dane = c.fetchall()
+    baza = c.fetchall()
 
-    if dane == []:
-        for x in xrange(0, len(_zoneL)):
-            c.execute("INSERT INTO Grupy VALUES (?, ?, ?)", (_zoneL[x], 'autoodebranie', Lista[x]))
+    if baza == []:
+        for x in xrange(0, len(ListaNazw)):
+            c.execute("INSERT INTO Grupy VALUES (?, ?)", (ListaId[x], 0))
+
+    else:
+        c.execute("SELECT ID_GRUPY FROM Grupy")
+        idBaza = c.fetchall()
+        c.execute("SELECT REAKCJA FROM Grupy")
+        reakcjaBaza = c.fetchall()
+        c.execute("DELETE FROM Grupy")
+
+        for x in ListaId:
+            c.execute("INSERT INTO Grupy VALUES (?, ?)", (x, 0))
+
+            if unicode(x) in unicode(idBaza):
+                for y in xrange(0, len(idBaza)):
+                    if "(" + x + ",)" == str(idBaza[y]):
+                        if str(reakcjaBaza[y]) == "(1,)":
+                            c.execute("UPDATE Grupy SET REAKCJA=? WHERE ID_GRUPY=?", (1, x))
+                            break
 
     conn.commit()
     conn.close()
@@ -1262,11 +1362,7 @@ class ZoneElements(GridLayout):
 
 class ZoneCheckBoxes(GridLayout):
     _instance_count = -1
-    _zoneNames = ZoneList._zoneL
-
-    # autood = ObjectProperty(False)
-    # odrz = StringProperty(False)
-    # odrzSMS = ObjectProperty(False)
+    _zoneNames = ZoneList.ListaNazw
 
     def __init__(self, **kwargs):
         super(ZoneCheckBoxes, self).__init__(**kwargs)
@@ -1278,44 +1374,43 @@ class ZoneCheckBoxes(GridLayout):
         c.execute("SELECT REAKCJA FROM Grupy")
         dane = c.fetchall()
 
-        if (dane[ZoneCheckBoxes._instance_count]) == (u'autoodebranie',):
-            ZoneCheckBoxes.autood = True
-            ZoneCheckBoxes.odrzSMS = False
-            ZoneCheckBoxes.odrz = False
+        if dane[ZoneCheckBoxes._instance_count] == (0,):
+            ZoneCheckBoxes.odrzuc = True
+            ZoneCheckBoxes.decyduj = False
 
-        else:
-            if dane[ZoneCheckBoxes._instance_count] == (u'odrzucenieSMS',):
-                ZoneCheckBoxes.autood = False
-                ZoneCheckBoxes.odrzSMS = True
-                ZoneCheckBoxes.odrz = False
+        elif dane[ZoneCheckBoxes._instance_count] == (1,):
+            ZoneCheckBoxes.odrzuc = False
+            ZoneCheckBoxes.decyduj = True
 
-            else:
-                ZoneCheckBoxes.autood = False
-                ZoneCheckBoxes.odrzSMS = False
-                ZoneCheckBoxes.odrz = True
-
-    def autoodebranie(self, x):
-        conn = sqlite3.connect('baza.db')
-        c = conn.cursor()
-        c.execute("UPDATE Grupy SET REAKCJA=? WHERE NAZWA=?", ('autoodebranie', x[5:len(x)]))
         conn.commit()
-
-    def odrzucenieSMS(self, x):
-        conn = sqlite3.connect('baza.db')
-        c = conn.cursor()
-        c.execute("UPDATE Grupy SET REAKCJA=? WHERE NAZWA=?", ('odrzucenieSMS', x[5:len(x)]))
-        conn.commit()
+        conn.close()
 
     def odrzucenie(self, x):
+
         conn = sqlite3.connect('baza.db')
         c = conn.cursor()
-        c.execute("UPDATE Grupy SET REAKCJA=? WHERE NAZWA=?", ('odrzucenie', x[5:len(x)]))
+        for i in range(0, len(ZoneList.ListaNazw)):
+            if ZoneList.ListaNazw[i] == x[5:len(x)]:
+                c.execute("UPDATE Grupy SET REAKCJA=? WHERE ID_GRUPY=?", (0, ZoneList.ListaId[i]))
+
         conn.commit()
+        conn.close()
+
+    def decyzja(self, x):
+
+        conn = sqlite3.connect('baza.db')
+        c = conn.cursor()
+        for i in range(0, len(ZoneList.ListaNazw)):
+            if ZoneList.ListaNazw[i] == x[5:len(x)]:
+                c.execute("UPDATE Grupy SET REAKCJA=? WHERE ID_GRUPY=?", (1, ZoneList.ListaId[i]))
+
+        conn.commit()
+        conn.close()
 
 
 class ZoneButton(Button):
     _instance_count = -1
-    _zoneNames = ZoneList._zoneL
+    _zoneNames = ZoneList.ListaNazw
 
     def __init__(self, **kwargs):
         super(ZoneButton, self).__init__(**kwargs)
@@ -1326,7 +1421,7 @@ class ZoneLayout(BoxLayout):
     def __init__(self, **kwargs):
         super(ZoneLayout, self).__init__(**kwargs)
 
-        for i in range(len(ZoneList._zoneL)):
+        for i in range(len(ZoneList.ListaNazw)):
             self.add_widget(ZoneElements())
 
 
@@ -1345,47 +1440,31 @@ class MainApp(App):
     znacznik = 0
     route_nodes = BooleanProperty(False)
     prev_time = datetime.datetime.now().time()
-    needle_angle = NumericProperty(0)
+    gr = GroupScreen()
+    try:
+        gr.do_toggle()
+    except:
+        pass
 
     def build(self):
         show_time = ShowTime()
         callS = CallScreen()
-        callS.submit_contact2()
+        # callS.submit_contact2()
+        callS.submit_contact3()
         music = MusicPlayer()
         music.getpath()
-        self._anim = None
-        Clock.schedule_interval(self.update_compass, 2)
         # modyfikacja 3
         gr = GroupScreen()
-        # rotacja_mapy
-        gr.do_toggle()
-        #Clock.schedule_interval(gr.get_readings, 2)
-        # rotacja_mapy
+        # gr.do_toggle()
+        # Clock.schedule_interval(gr.get_readings, 2)
+
         Clock.schedule_interval(show_time.check2, 1)
         try:
             gps.configure(on_location=self.on_location, on_status=self.on_status)
             self.start(1000, 0)
-            #modyfikacja rotacja
-            self._anim = None
-            #Hardware.magneticFieldSensorEnable(True)
-            # Clock.schedule_interval(self.update_compass, 1)
-            #modyfikacja rotacja
         except NotImplementedError:
             self.gps_status = 'GPS is not implemented for your platform'
         return show_time
-
-    def update_compass(self, *args):
-
-        needle_angle = wsp2
-        print "wypisz_wsp"
-        print "wsp2"
-        print wsp2
-        print "needle_angle"
-        print needle_angle
-        if self._anim:
-            self._anim.stop(self)
-        self._anim = Animation(needle_angle=needle_angle, d=.2, t='out_quad')
-        self._anim.start(self)
 
     def start(self, minTime, minDistance):
         gps.start(minTime, minDistance)
@@ -1428,9 +1507,11 @@ class MainApp(App):
 
             group = GroupScreen()
             # modyfikacja 4
-            group.do_toggle()
-            group.get_readings(1)
-            #group.rotate2()
+            # group.do_toggle()
+            try:
+                group.get_readings(1)
+            except:
+                pass
 
             flaga_gps = group.returnFlag()
             lat_2 = group.returnLat()
@@ -1438,7 +1519,7 @@ class MainApp(App):
 
             print "test_gps"
             print lat_2
-            print lon_2
+            # print lon_2fes
             print flaga_gps
 
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)

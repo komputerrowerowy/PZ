@@ -4,7 +4,7 @@
     orientation: 'vertical'
 
 	GridLayout:
-		cols: 4
+		cols: 3
         size_hint: 1, .5
         pos_hint: {'x': 0, 'y': 0}
 
@@ -18,23 +18,17 @@
 
 		Label:
 			size_hint: 0.2,0.1
-			text: 'Autoodebranie'
+			text: 'Odrzucanie'
 			text_size: self.size
 			font_size: '12sp'
 			halign: 'center'
 			valign: 'middle'
 
-		Label:
-			size_hint: 0.2,0.1
-			text: 'Odrzucenie z powiadomieniem SMS'
-			text_size: self.size
-			font_size: '12sp'
-			halign: 'center'
-			valign: 'middle'
+
 
 		Label:
 			size_hint: 0.2,0.1
-    		text: 'Odrzucenie'
+    		text: 'Decyzja w trakcie połaczenia'
 			text_size: self.size
 			font_size: '12sp'
 			halign: 'center'
@@ -50,26 +44,21 @@
 
 
 <ZoneCheckBoxes>:
-	cols:3
+	cols:2
 
     CheckBox:
 		id: autood
 		size_hint: 0.5,.01
-		active: root.autood
+		active: root.odrzuc
         group: "Zone " + root._zoneNames[root._instance_count]
-        on_active: root.autoodebranie(self.group)
-    CheckBox:
-		id: odrzSMS
-		size_hint: 0.5,.01
-		active: root.odrzSMS
-        group: "Zone " + root._zoneNames[root._instance_count]
-    	on_active: root.odrzucenieSMS(self.group)
+        on_active: root.odrzucenie(self.group)
+
 	CheckBox:
 		id: odrz
 		size_hint: 0.5,.01
-		active: root.odrz
+		active: root.decyduj
         group: "Zone " + root._zoneNames[root._instance_count]
-		on_active: root.odrzucenie(self.group)
+		on_active: root.decyzja(self.group)
 
 <ZoneElements>:
     cols: 2
