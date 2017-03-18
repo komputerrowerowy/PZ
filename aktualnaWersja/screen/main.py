@@ -698,13 +698,11 @@ class GroupScreen(Screen):
         print self.wsp
 
         print self.wsp
-        if self.wsp == 0:
+
+        try:
+            self.wsp = (int(self.wsp) / 10) * 10
+        except:
             pass
-        else:
-            try:
-                self.wsp = (int(self.wsp) / 10) * 10
-            except:
-                self.wsp = 0
         o_ile_obrot = int(self.wsp) - ShowTime.prev
 
         '''if (wsp2 > self.needle_angle2):
