@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = aAplikacjaa
+title = abAplikacja
 
 # (str) Package name
-package.name = aProjektt
+package.name = abProjekt
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test
@@ -46,10 +46,10 @@ requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlit
 #garden_requirements =
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
+presplash.filename = icon.png
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/data/icon.png
+#icon.filename = icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
@@ -72,7 +72,7 @@ orientation = portrait
 fullscreen = 1
 
 # (list) Permissions
-android.permissions = INTERNET,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,READ_CONTACTS,READ_PHONE_STATE,MODIFY_PHONE_STATE,CALL_PHONE,RECEIVE_SMS,READ_SMS,SEND_SMS
+android.permissions = INTERNET,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,READ_CONTACTS,READ_PHONE_STATE,MODIFY_PHONE_STATE,CALL_PHONE,RECEIVE_SMS,READ_SMS,SEND_SMS,BIND_NOTIFICATION_LISTENER_SERVICE
 
 # (int) Android API to use
 android.api = 23

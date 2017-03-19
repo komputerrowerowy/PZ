@@ -53,7 +53,7 @@ from kivy.graphics.context_instructions import Translate, Scale
 # SmsManager = autoclass('android.telephony.SmsManager')
 
 
-
+Hardware = autoclass('org.renpy.android.Hardware')
 
 AcceptIncomingCall = autoclass("org.test.Phone")
 
@@ -638,27 +638,27 @@ class GroupScreen(Screen):
 
     # modyfikacja 2
 
-    def do_toggle(self):
-        self.sensorEnabled = False
-        kat = 0
-        try:
-            if not self.sensorEnabled:
-                compass.enable()
-                # Clock.schedule_interval(self.get_readings, 1)
-
-                self.sensorEnabled = True
-                # self.ids.toggle_button.text = "Stop compass"
-            else:
-                compass.disable()
-                # Clock.unschedule(self.get_readings)
-
-                self.sensorEnabled = False
-                # self.ids.toggle_button.text = "Start compass"
-        except NotImplementedError:
-            import traceback
-            traceback.print_exc()
-            status = "Compass is not implemented for your platform"
-            # self.ids.status.text = status
+    # def do_toggle(self):
+    #     self.sensorEnabled = False
+    #     kat = 0
+    #     try:
+    #         if not self.sensorEnabled:
+    #             compass.enable()
+    #             # Clock.schedule_interval(self.get_readings, 1)
+    #
+    #             self.sensorEnabled = True
+    #             # self.ids.toggle_button.text = "Stop compass"
+    #         else:
+    #             compass.disable()
+    #             # Clock.unschedule(self.get_readings)
+    #
+    #             self.sensorEnabled = False
+    #             # self.ids.toggle_button.text = "Start compass"
+    #     except NotImplementedError:
+    #         import traceback
+    #         traceback.print_exc()
+    #         status = "Compass is not implemented for your platform"
+    #         # self.ids.status.text = status
 
     def obliczanie_y1(self, x, y, z):
         if y == 0:
@@ -687,9 +687,11 @@ class GroupScreen(Screen):
     def get_readings(self, dt):
         print "test_rotacjajajajajajajajaja"
         val = compass.orientation
-        x = round(int(val[0]), 2)
-        y = round(int(val[1]), 2)
-        z = round(int(val[2]), 2)
+        # x = round(int(val[0]), 2)
+        # y = round(int(val[1]), 2)
+        # z = round(int(val[2]), 2)
+
+        (x, y, z) = Hardware.magneticFieldSensorReading()
 
         y1 = round(self.obliczanie_y1(x, y, z), 2)
         x1 = round(self.obliczanie_x1(x, y1), 2)
@@ -720,7 +722,7 @@ class GroupScreen(Screen):
 
         print "o ile obrot = " + str(o_ile_obrot)
 
-        if int(o_ile_obrot) > 10 or int(o_ile_obrot) < -10:
+        if int(o_ile_obrot) > 5 or int(o_ile_obrot) < -5:
             scatter = MainApp.get_running_app().root.carousel.slides[0].ids["scatter2"]
             # scatter = self.ids["scatter2"]
             r = Matrix().rotate(radians(o_ile_obrot), 0, 0, 1)
@@ -1439,13 +1441,17 @@ class MainApp(App):
     route_nodes = BooleanProperty(False)
     prev_time = datetime.datetime.now().time()
     gr = GroupScreen()
-    try:
-        gr.do_toggle()
-    except:
-        pass
+    # try:
+    #     gr.do_toggle()
+    # except:
+    #     pass
 
     def build(self):
         show_time = ShowTime()
+        try:
+            Hardware.magneticFieldSensorEnable(True)
+        except:
+            print "nie masz kompasu"
         callS = CallScreen()
         # callS.submit_contact2()
         callS.submit_contact3()
@@ -1453,8 +1459,6 @@ class MainApp(App):
         music.getpath()
         # modyfikacja 3
         gr = GroupScreen()
-        # gr.do_toggle()
-        # Clock.schedule_interval(gr.get_readings, 2)
 
         Clock.schedule_interval(show_time.check2, 1)
         try:
@@ -1504,27 +1508,25 @@ class MainApp(App):
                 MainApp.znacznik = 1
 
             group = GroupScreen()
-            # modyfikacja 4
-            # group.do_toggle()
             try:
                 group.get_readings(1)
             except:
                 pass
 
-            flaga_gps = group.returnFlag()
-            lat_2 = group.returnLat()
-            lon_2 = group.lonGPS
+            # flaga_gps = group.returnFlag()
+            # lat_2 = group.returnLat()
+            # lon_2 = group.lonGPS
 
-            print "test_gps"
-            print lat_2
+            # print "test_gps"
+            # print lat_2
             # print lon_2fes
-            print flaga_gps
+            # print flaga_gps
 
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
-            if flaga_gps == 1:
-                MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = lat_2
-                MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = lat_2
+            # if flaga_gps == 1:
+            #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = lat_2
+            #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = lat_2
 
             if MainApp.get_running_app().root.carousel.slides[0].auto_center:
                 mapview.center_on(float(MainApp.lat), float(MainApp.lon))
