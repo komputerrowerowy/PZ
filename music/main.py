@@ -17,7 +17,7 @@ from os import listdir, path
 from kivy.clock import Clock
 import os
 
-print "aaa1bbb"
+print "aaa1bbbaaaaaaaaaaaaaaa"
 class ChooseFile(FloatLayout):
     select = ObjectProperty(None)
     cancel = ObjectProperty(None)
