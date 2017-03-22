@@ -4,7 +4,7 @@
         orientation: 'vertical'
         canvas:
             Color:
-                rgb: 1,1,1
+                rgb: 1, 1, 1
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -18,16 +18,46 @@
                 size_hint_y: None
                 row_force_default: True
                 row_default_height: root.height/10
+        Label:
+            canvas.before:
+                Color:
+                    rgb: 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: 0.02
         Button:
             size_hint_y: 0.1
-            text: "Pokaz kontakty"
-            background_color: 0.1,0.5,0.7,1
+            #text: "Pokaz kontakty"
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
             on_release: root.submit_contact()
+            Image:
+                id: sdasddasad
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y - (self.parent.height/2))
+                source: 'resources/kontakty.png'
+                height: self.parent.height
+        Label:
+            canvas.before:
+                Color:
+                    rgb: 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: 0.001
         Button:
             size_hint_y: 0.1
-            text: "Wpisz numer"
-            background_color: 0.1,0.7,0.5,1
+            #text: "Wpisz numer"
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
             on_release: root.numberSelect()
+            Image:
+                id: sdasdad
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y - (self.parent.height/2))
+                source: 'resources/numbers.png'
+                height: self.parent.height
 
 <ChooseNumber>:
     canvas.before:
@@ -42,87 +72,130 @@
         orientation: "vertical"
         Label:
             id: nrTelefonu
+            canvas.before:
+                Color:
+                    rgb: 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
             #size_hint_y: 16.5
             text: ''
+
         BoxLayout:
             #size_hint_y: .16.5
             Button:
                 id: btn1
                 text: '1'
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber1()
             Button:
                 id: btn2
                 text: '2'
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber2()
             Button:
                 id: btn3
                 text: '3'
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber3()
         BoxLayout:
             #size_hint_y: .16.5
             Button:
                 id: btn4
                 text: "4"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber4()
             Button:
                 id: btn5
                 text: "5"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber5()
             Button:
                 id: btn6
                 text: "6"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber6()
         BoxLayout:
             #size_hint_y: .16.5
             Button:
                 id: btn7
                 text: "7"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber7()
             Button:
                 id: btn8
                 text: "8"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber8()
             Button:
                 id: btn9
                 text: "9"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber9()
         BoxLayout:
             #size_hint_y: .16.5
             Button:
                 id: btn11
                 text: "*"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber11()
             Button:
                 id: btn0
                 text: "0"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber0()
             Button:
                 id: btn12
                 text: "#"
-                background_color: 0,0,0,1
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber12()
         BoxLayout:
             #size_hint_y: .16.5
             Button:
-                text: "<"
-                background_color: 0.3,0.3,2,1
+                #text: "<"
+                background_normal: ''
+                background_color: .941, .960, .960, 1
                 on_release: root.cancel()
+                Image:
+                    id: img_temp
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    source: 'resources/reply.png'
+                    height: self.parent.height
+
             Button:
-                text: "Call"
-                background_color: 0.3,2,0.3,1
+                #text: "Call"
+                background_normal: ''
+                background_color: .941, .960, .960, 1
                 on_release: root.callPhonePopup()
+                Image:
+                    id: img_temp
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    source: 'resources/ring.png'
+                    height: self.parent.height
+
             Button:
-                text: "<X="
-                background_color: 2,0.3,0.3,1
+                #text: "<X="
+                background_normal: ''
+                background_color: .941, .960, .960, 1
                 on_release: root.delNumber()
+                Image:
+                    id: asdsad
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    source: 'resources/delete.png'
+                    height: self.parent.height
+

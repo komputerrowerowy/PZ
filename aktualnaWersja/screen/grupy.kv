@@ -3,73 +3,77 @@
     name: 'zoneLayout'
     orientation: 'vertical'
 
-	GridLayout:
-		cols: 3
+    GridLayout:
+        cols: 3
         size_hint: 1, .5
         pos_hint: {'x': 0, 'y': 0}
 
         Label:
-			size_hint: 0.25,0.1
+            size_hint: 0.3,0.1
             text: 'Nazwa Grupy'
-			text_size: self.size
-			font_size: '12sp'
-			halign: 'center'
-			valign: 'middle'
+            color: (.235, .529, .572, 1)
+            text_size: self.size
+            font_size: '15sp'
+            halign: 'center'
+            valign: 'middle'
 
-		Label:
-			size_hint: 0.2,0.1
-			text: 'Odrzucanie'
-			text_size: self.size
-			font_size: '12sp'
-			halign: 'center'
-			valign: 'middle'
+        Label:
+            size_hint: 0.35,0.1
+            text: 'Odrzucenie'
+            color: (.235, .529, .572, 1)
+            text_size: self.size
+            font_size: '15sp'
+            halign: 'center'
+            valign: 'middle'
 
-
-
-		Label:
-			size_hint: 0.2,0.1
-    		text: 'Decyzja w trakcie połaczenia'
-			text_size: self.size
-			font_size: '12sp'
-			halign: 'center'
-			valign: 'middle'
-
+        Label:
+            size_hint: 0.35,0.1
+            text: 'Decyzja w trakcie połączenia'
+            color: (.235, .529, .572, 1)
+            text_size: self.size
+            font_size: '15sp'
+            halign: 'center'
+            valign: 'middle'
 
 
 <ZoneButton>:
     text: root._zoneNames[root._instance_count]
-	text_size: self.size
-	halign: 'center'
-	valign: 'middle'
+    color: (1, 1, 1, 1)
+    text_size: self.size
+    background_normal: ''
+    background_color: (.235, .529, .572, 1)
+    halign: 'center'
+    valign: 'middle'
 
 
 <ZoneCheckBoxes>:
-	cols:2
+    cols:2
 
     CheckBox:
-		id: autood
-		size_hint: 0.5,.01
-		active: root.odrzuc
+        size_hint: 0.5,.01
+        active: root.odrzuc
         group: "Zone " + root._zoneNames[root._instance_count]
         on_active: root.odrzucenie(self.group)
+        color: (.235, .529, .572, 1)
 
-	CheckBox:
-		id: odrz
-		size_hint: 0.5,.01
-		active: root.decyduj
+    CheckBox:
+        size_hint: 0.5,.01
+        active: root.decyduj
         group: "Zone " + root._zoneNames[root._instance_count]
-		on_active: root.decyzja(self.group)
+        on_active: root.decyzja(self.group)
+        color: (.235, .529, .572, 1)
+
 
 <ZoneElements>:
     cols: 2
     ZoneButton:
 
     ZoneCheckBoxes:
-	Label:
+    Label:
         size_hint: 0.5,.01
         canvas.before:
             Color:
-                rgb: .5,.5,10
+                rgba: (.941, .941, .937, 1)
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -77,7 +81,8 @@
         size_hint: 2.5,.01
         canvas.before:
             Color:
-                rgb: .5,.15,0
+                rgba: (.235, .529, .572, 1)
             Rectangle:
                 pos: self.pos
                 size: self.size
+

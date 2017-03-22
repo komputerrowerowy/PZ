@@ -39,9 +39,17 @@
                 text: ''
                 size_hint_x: 0.8
             Button:
-                text: "Szukaj"
+                #text: "Szukaj"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
                 size_hint_x: 0.2
                 on_release: root.centerTarget()
+                Image:
+                    id: sdasd
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2))
+                    source: 'resources/search.png'
+                    height: self.parent.height
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1, 0.8
@@ -49,38 +57,27 @@
             orientation: 'horizontal'
             size_hint: 1, 0.1
             valign: 'bottom'
+#            Button:
+#                size_hint_x: 0.5
+#                #opacity: 0.5
+#                background_normal: ''
+#                background_color: 0.235, 0.529, 0.572, .6
+#                halign: 'left'
+#                text: ''
+#                text_size: img_alert.size
+#                on_release: root.rotate()
+#                Image:
+#                    id: img_alert
+#                    center_x: self.parent.center_x
+#                    name: 'alert'
+#                    source: 'resources/rotation.png'
+#                    height: self.parent.height
+
             Button:
                 size_hint_x: 0.5
-                opacity: 0.5
-                halign: 'left'
-                text: ''
-                text_size: img_alert.size
-                on_release: root.rotate()
-                Image:
-                    id: img_alert
-                    center_x: self.parent.center_x
-                    name: 'alert'
-                    source: 'resources/rotation.png'
-                    height: self.parent.height
-            Button:
-                size_hint_x: 0.5
-                opacity: 0.5
-                halign: 'right'
-                text: ''
-                on_release: root.centerMy()
-                #on_release: root.parent.parent.parent.check()
-                Image:
-                    id: img_alert
-                    center_x: self.parent.center_x
-                    name: 'alert'
-                    source: 'resources/telefon.png'
-                    height: self.parent.height
-                Label:
-                    id: label1
-                    text: "0"
-            Button:
-                size_hint_x: 0.5
-                opacity: 0.5
+                #opacity: 0.5
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .6
                 halign: 'right'
                 text: ''
                 on_release: root.centerMy()
@@ -91,9 +88,14 @@
                     name: 'alert'
                     source: 'resources/center.png'
                     height: self.parent.height
+#                Label:
+#                    id: label1
+#                    text: "0"
             Button:
                 size_hint_x: 0.5
-                opacity: 0.5
+                #opacity: 0.5
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .6
                 halign: 'right'
                 text: ''
                 on_release: root.calculate_route_nodes_run()
