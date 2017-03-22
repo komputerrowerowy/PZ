@@ -5,6 +5,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.button import Button
 from kivy.properties import ObjectProperty, BooleanProperty
+from kivy.core.window import Window
 from jnius import autoclass
 import sqlite3
 import sys
@@ -78,7 +79,8 @@ class ZoneElements(GridLayout):
 class ZoneCheckBoxes(GridLayout):
     _instance_count = -1
     _zoneNames = ZoneList.ListaNazw
-
+    
+    Window.clearcolor = (1, 1, 1, 1)
     def __init__(self, **kwargs):
         super(ZoneCheckBoxes, self).__init__(**kwargs)
         ZoneCheckBoxes._instance_count += 1
