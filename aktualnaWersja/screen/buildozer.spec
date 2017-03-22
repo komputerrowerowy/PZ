@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = abAplikacja
+title = BICOM
 
 # (str) Package name
-package.name = abProjekt
+package.name = BICOMProjekt
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test
@@ -36,7 +36,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlite3
+requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlite3,pp
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

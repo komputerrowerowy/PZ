@@ -195,7 +195,9 @@ class ShowTime(Screen):
                                auto_dismiss=False)
             self.popup.open()
         else:
-            self.popup_shown = False
+            if self.popup_shown == True:
+                self.popup.close()
+                self.popup_shown = False
             # time.sleep(1)
 
     def check(self, sms_recipient, sms_message):
@@ -325,6 +327,12 @@ class ShowTime(Screen):
                     # print 'odrzucenieSMS'
                     # self.send_sms(numTel, "Jadę rowerem, oddzwonię później.")
                     self.flagaCall = 1
+
+        else:
+            if self.popup_shown == True:
+                self.popup.dismiss()
+                self.popup_shown = False
+                self.flagaCall = 1
 
 
 class ChooseFile(FloatLayout):
@@ -636,6 +644,11 @@ class GroupScreen(Screen):
     wsp2 = 0
     znacznik3 = 0
 
+    # def build(self):
+    #     liczba = (self.width * self.width + self.height * self.height)
+    #     self.edge = sqrt(liczba)
+    #     self.ids["relativeMap"].height = self.ids["relativeMap"].width = self.edge
+
     # modyfikacja 2
 
     # def do_toggle(self):
@@ -722,7 +735,7 @@ class GroupScreen(Screen):
 
         print "o ile obrot = " + str(o_ile_obrot)
 
-        if int(o_ile_obrot) > 5 or int(o_ile_obrot) < -5:
+        if int(o_ile_obrot) > 10 or int(o_ile_obrot) < -10:
             scatter = MainApp.get_running_app().root.carousel.slides[0].ids["scatter2"]
             # scatter = self.ids["scatter2"]
             r = Matrix().rotate(radians(o_ile_obrot), 0, 0, 1)

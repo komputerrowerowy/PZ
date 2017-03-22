@@ -8,13 +8,10 @@
             width: root.width
             id: scatter2
             RelativeLayout:
-#                height: 3*root.height
-#                width: 3*root.width
-#                pos: (-root.width, -root.height)
-                height: root.height + root.width
-                width: root.width + root.height
-#                pos: (-root.width, -root.height)
-                pos: (-root.height/2, -root.width/2)
+                id: relativeMap
+                height: ((root.height * root.height) + (root.width * root.width))**0.5
+                width: ((root.height * root.height) + (root.width * root.width))**0.5
+                pos: (-((((root.height * root.height) + (root.width * root.width))**0.5) - root.width))/2, (-((((root.height * root.height) + (root.width * root.width))**0.5) - root.height))/2
                 MapView:
                     height: root.height
                     width: root.width
