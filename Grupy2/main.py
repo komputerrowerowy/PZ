@@ -81,6 +81,7 @@ class ZoneCheckBoxes(GridLayout):
     _zoneNames = ZoneList.ListaNazw
     
     Window.clearcolor = (1, 1, 1, 1)
+    
     def __init__(self, **kwargs):
         super(ZoneCheckBoxes, self).__init__(**kwargs)
         ZoneCheckBoxes._instance_count += 1
