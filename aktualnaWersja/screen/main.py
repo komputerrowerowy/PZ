@@ -37,6 +37,8 @@ import geocoder
 from plyer import sms
 import sqlite3
 import sys
+import os
+from utwor import Utwor
 
 from math import sqrt
 from math import atan
@@ -79,34 +81,32 @@ GrupyId = []
 Builder.load_string('''
 <ConfirmPopup>:
     cols:1
-    Label:
-        text: root.text
-        size_hint_y: 0.2
+
     BoxLayout:
         orientation: 'vertical'
-        size_hint_y: 0.8
+        size_hint_y: 1
         Button:
-
-            background_color: 0.1,2,0.1,1
+            background_normal: ''
+            background_color: .22, .74, .13, 1
             size_hint_y: 0.6
             on_release: root.dispatch('on_answer','Odbierz')
             Image:
                 id: sdasdaa
                 center_x: (self.parent.center_x)
-                center_y: self.parent.center_y
+                center_y: (self.parent.center_y - 0)
                 source: 'resources/odbierz.png'
                 height: self.parent.height
                 #width: self.parent.width
 
         Button:
-
-            background_color: 2,0,0,1
+            background_normal: ''
+            background_color: .83, .18, .18,1
             size_hint_y: 0.4
             on_release: root.dispatch('on_answer', 'Odrzuc')
             Image:
                 id: sdasdaa
                 center_x: (self.parent.center_x)
-                center_y: self.parent.center_y
+                center_y: (self.parent.center_y - 0)
                 source: 'resources/odrzuc.png'
                 height: self.parent.height
                 #width: self.parent.width
@@ -114,15 +114,14 @@ Builder.load_string('''
 
 <StartScreen>:
     canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'resources/start.jpg'
     BoxLayout:
         orientation: 'horizontal'
         size_hint: 1.0, .3
-        pos: 0, self.height / 2
+        pos: 0, self.height * 2
         Button:
             size_hint_x: 0.2
             size_hint_y: 0.6
@@ -132,10 +131,12 @@ Builder.load_string('''
             text: "Rozpocznij"
             size_hint_x: 0.6
             size_hint_y: 0.6
+            border: 30,30,30,30
+            radius: 40
             color: 1, 1, 1, 1
 
             background_normal: ''
-            background_color: 0.235, 0.529, 0.572, 1
+            background_color: 0.45, 0.11, 0.06, 0.66
             on_release: root.parent.remove_widget(root.parent.children[0])
 
         Button:
@@ -183,6 +184,7 @@ class ShowTime(Screen):
     def __init__(self, **kwargs):
         super(ShowTime, self).__init__()
         self.add_widget(StartScreen())
+        #MainApp.get_running_app().root.carousel.slides[0].hide_search_bar()
 
     def build(self):
         pass
@@ -243,17 +245,19 @@ class ShowTime(Screen):
         print activity.number
         if activity.callState == 1 and self.popup_shown == False:
             self.popup_shown = True
+            contact = activity.getContactName(activity.number)
+            # activity.speaker.speak("Dzwoni: : " + contact + "!")
+            if contact == "Nieznany numer":
+                contact = activity.number
+
             content = ConfirmPopup()
             content.bind(on_answer=self._on_answer)
-            self.popup = Popup(title="Dzwoni: " + activity.number,
+            self.popup = Popup(title="Dzwoni: " + contact,
                                content=content,
-                               size_hint=(0.9, 0.9),
+                               size_hint=(0.9, 0.75),
                                auto_dismiss=False)
             self.popup.open()
-        else:
-            if self.popup_shown == True:
-                self.popup.close()
-                self.popup_shown = False
+
             # time.sleep(1)
 
     def check(self, sms_recipient, sms_message):
@@ -268,18 +272,19 @@ class ShowTime(Screen):
     def _on_answer(self, instance, answer):
         print "USER ANSWER: ", repr(answer)
         if answer == "Odbierz":
-            self.popup_shown = False
+
             self.flagaCall = 1
             self.popup.dismiss()
             AcceptIncomingCall2.acceptCall()
         else:
             if answer == "Odrzuc":
-                self.popup_shown = False
+
                 self.flagaCall = 1
 
                 self.rejectIncomingCall()
                 self.popup.dismiss()
         self.popup.dismiss()
+        self.popup_shown = False
 
     def rejectIncomingCall(self):
 
@@ -459,15 +464,17 @@ class MusicPlayer(Screen):
     directory = ''  # lokacja folderu z piosenkami
     nowPlaying = ''  # Aktualnie wybrana piosenka
     songs = []  # Lista utworów
+    songs2 = []  # Lista utworów
     flaga = 1
+    indeks = 0
 
-    # funkcja wywoływana na przycisku stop/play
+    #funkcja wywoływana na przycisku stop/play
     def stopSong(self):
         self.flaga = 88
         if self.nowPlaying == '':
-            title = self.songs[0]
-            self.nowPlaying = SoundLoader.load(self.directory + str(title))
-            self.ids.nowplay.text = self.songs[0]
+            #title = self.songs[0]
+            self.nowPlaying = SoundLoader.load(self.songs[0].pelna_sciezka)
+            self.ids.nowplay.text = self.songs[0].nazwa
         if self.nowPlaying.state == 'stop':
             self.flaga = 5
             self.nowPlaying.play()
@@ -483,10 +490,7 @@ class MusicPlayer(Screen):
     def nextSong(self):
         self.flaga = 1
         if self.nowPlaying == '':
-            title = self.songs[0]
-            self.nowPlaying = SoundLoader.load(self.directory + str(title))
-            self.ids.nowplay.text = self.songs[0]
-            self.nowPlaying.play()
+            pass
         else:
             self.nowPlaying.stop()
         print("nextkSong")
@@ -498,17 +502,14 @@ class MusicPlayer(Screen):
         self.flaga = 0
         dl = len(self.songs) - 1
         if self.nowPlaying == '':
-            title = self.songs[dl]
-            self.nowPlaying = SoundLoader.load(self.directory + str(title))
-            self.ids.nowplay.text = self.songs[dl]
-            self.nowPlaying.play()
+            pass
         else:
             self.nowPlaying.stop()
         print("backSong")
         if self.flaga == 0:
             self.nowPlaying.bind(on_stop=self.stop_event_flaga)
 
-    # odczytanie ścieżki folderu z pliku
+    #odczytanie ścieżki folderu z pliku
     def getpath(self):
         try:
             f = open("sav.dat", "r")
@@ -518,8 +519,10 @@ class MusicPlayer(Screen):
             self.getSongs()
         except:
             self.ids.direct.text = ''
+            #jak odkomentuje wyswieli wszystkie utwory
+            self.getSongs()
 
-    # zapisanie ścieżki folderu do pliku
+    #zapisanie ścieżki folderu do pliku
     def savepath(self, path):
         f = open("sav.dat", "w")
         f.write(path)
@@ -538,7 +541,7 @@ class MusicPlayer(Screen):
 
     def select(self, path):
         self.directory = path
-        self.ids.direct.text = self.directory
+        #self.ids.direct.text = self.directory
         #self.ids.searchBtn.text = "Wybierz folder"
         self.savepath(self.directory)
         self.songs = []
@@ -548,68 +551,68 @@ class MusicPlayer(Screen):
     # proba wyczyszczenia listy utworow po dodaniu nowego folderu
     def onPressSongs(self):
         self.fileSelect()
-        # music = MusicPlayer()
-        # music.getpath()
-        # return music
-        # self.getSongs()
 
-    # główna funkcja służąca do otwarzania muzyki i tworzenia listy utworów
+    #główna funkcja służąca do otwarzania muzyki i tworzenia listy utworów
     def getSongs(self):
 
         self.directory = self.ids.direct.text  # przypisanie katalogu z etykiety
 
-        # Przeniesione do onPressSongs()
-        # if self.directory == '':
-        # self.fileSelect()
 
         # sprawdza czy ścieżka katalogu kończy się znakiem '/'
         if not self.directory.endswith('/'):
             self.directory += '/'
 
-            # Sprawdza czy folder istnieje
-            # if not path.exists(self.directory):
-            # self.ids.status.text = 'Folder nie istnieje'
-            # self.ids.status.color = (1, 0, 0, 1)
 
-            # else:
 
             self.ids.status.text = ''
 
             self.ids.scroll.bind(minimum_height=self.ids.scroll.setter('height'))
 
             # get mp3 files from directory
-            for fil in listdir(self.directory):
-                if fil.endswith('.mp3'):
-                    self.songs.append(fil)
+            print "utwory"
+            for root, dirs, files in os.walk('/storage'):
+                for f in files:
+                    filename = os.path.join(root, f)
+                    if filename.endswith('.mp3'):
+                        self.songs.append(Utwor(f, filename))
 
             # Jeśli nie znaleziono plików mp3 w wybranym katalogu
-            if self.songs == [] and self.directory != '':
+            if self.songs == []:
                 self.ids.status.text = 'Nie znaleziono muzyki!'
                 self.ids.status.color = (1, 0, 0, 1)
 
-            self.songs.sort()
 
-        # funkcja uruchamiana w momencie kliknięcia utworu na liście
+            self.songs.sort(key=lambda song: song.nazwa)
+
+
+        #funkcja uruchamiana w momencie kliknięcia utworu na liście
         def playSong(bt):
             self.flaga = 3
+            licznikk = 0
             try:
                 self.nowPlaying.stop()
             except:
                 pass
             finally:
-                self.nowPlaying = SoundLoader.load(self.directory + bt.text + '.mp3')
+                nazwautworu = bt.text + '.mp3'
+
+                for song in self.songs:
+                    if song.nazwa == nazwautworu:
+                        pathSong = str(song.pelna_sciezka)
+
+                self.nowPlaying = SoundLoader.load(pathSong)
                 self.nowPlaying.play()
-                self.ids.nowplay.text = bt.text + '.mp3'
+                self.ids.nowplay.text = nazwautworu
                 if self.flaga == 3:
                     self.flaga = 4
                     if self.flaga == 4:
                         self.nowPlaying.bind(on_stop=self.stop_event_flaga)
 
-        # tworzenie listy utworów
+        #tworzenie listy utworów
         for song in self.songs:
 
-            btn = Button(text=song[:-4], on_press=playSong)
-            icon = Button(size_hint_x=None, size_hint_y=None, background_down="ico.png", background_normal="ico.png")
+            btn = Button(text=song.nazwa[:-4], on_press=playSong)
+            #icon = Button(size_hint_x=None, size_hint_y=None, background_down="ico.png", background_normal="ico.png")
 
             # kolorowanie elementów listy
             if self.songs.index(song) % 2 == 0:
@@ -621,11 +624,11 @@ class MusicPlayer(Screen):
                 btn.background_normal = ''
                 btn.background_color = (.941, .960, .960, 1)
 
-            # dodanie elementów etykiet utworów
+            #dodanie elementów etykiet utworów
             #self.ids.scroll.add_widget(icon)
             self.ids.scroll.add_widget(btn)
 
-    # funkcja wywoływana w momencie gdy obecnie odtwarzany utwór się skończy
+    #funkcja wywoływana w momencie gdy obecnie odtwarzany utwór się skończy
     def stop_event_flaga(self, song):
         if self.flaga == 1:
             Clock.schedule_once(partial(self.nextSong2, self.nowPlaying))
@@ -636,7 +639,7 @@ class MusicPlayer(Screen):
         if self.flaga == 6:
             Clock.schedule_once(partial(self.nextSong2, self.nowPlaying))
 
-    # funkcja która odtwarza kolejny utwór z listy
+    #funkcja która odtwarza kolejny utwór z listy
     def nextSong2(self, songfile, dt):
         self.flaga = 1
         dl = len(self.songs)
@@ -645,7 +648,7 @@ class MusicPlayer(Screen):
         next2 = 0
         for song in self.songs:
 
-            if self.songs[b] == self.ids.nowplay.text:
+            if self.songs[b].nazwa == self.ids.nowplay.text:
                 next1 = b + 1
                 next2 = int(next1)
                 if next2 >= dl:
@@ -658,10 +661,10 @@ class MusicPlayer(Screen):
             pass
         else:
             self.nowPlaying.stop()
-        title = self.songs[next2]
-        self.nowPlaying = SoundLoader.load(self.directory + str(title))
+        #title = self.songs[next2]
+        self.nowPlaying = SoundLoader.load(self.songs[next2].pelna_sciezka)
         self.nowPlaying.play()
-        self.ids.nowplay.text = self.songs[next2]
+        self.ids.nowplay.text = self.songs[next2].nazwa
         print("nextSong2")
         if self.flaga == 1:
             self.nowPlaying.bind(on_stop=self.stop_event_flaga)
@@ -674,7 +677,7 @@ class MusicPlayer(Screen):
         next2 = 0
         for song in self.songs:
 
-            if self.songs[b] == self.ids.nowplay.text:
+            if self.songs[b].nazwa == self.ids.nowplay.text:
                 next1 = b - 1
                 next2 = int(next1)
                 b = 0
@@ -685,10 +688,10 @@ class MusicPlayer(Screen):
             pass
         else:
             self.nowPlaying.stop()
-        title = self.songs[next2]
-        self.nowPlaying = SoundLoader.load(self.directory + str(title))
+        #title = self.songs[next2]
+        self.nowPlaying = SoundLoader.load(self.songs[next2].pelna_sciezka)
         self.nowPlaying.play()
-        self.ids.nowplay.text = self.songs[next2]
+        self.ids.nowplay.text = self.songs[next2].nazwa
         print("backSong2")
         if self.flaga == 1:
             self.nowPlaying.bind(on_stop=self.stop_event_flaga)
@@ -703,35 +706,25 @@ class GroupScreen(Screen):
     needle_angle2 = 0
     wsp2 = 0
     znacznik3 = 0
+    search_location_position_temp = -1
+    search_input_position_temp = -1
+    search_bar_shown = True
+    czy_wyznacozno_trase = False
 
-    # def build(self):
-    #     liczba = (self.width * self.width + self.height * self.height)
-    #     self.edge = sqrt(liczba)
-    #     self.ids["relativeMap"].height = self.ids["relativeMap"].width = self.edge
 
-    # modyfikacja 2
+    def show_search_bar(self):
+        if self.search_bar_shown == False:
+            self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] + self.height
+            self.ids.SearchInput.pos[0] = self.ids.SearchInput.pos[0] + self.height
+            self.search_bar_shown = True
 
-    # def do_toggle(self):
-    #     self.sensorEnabled = False
-    #     kat = 0
-    #     try:
-    #         if not self.sensorEnabled:
-    #             compass.enable()
-    #             # Clock.schedule_interval(self.get_readings, 1)
-    #
-    #             self.sensorEnabled = True
-    #             # self.ids.toggle_button.text = "Stop compass"
-    #         else:
-    #             compass.disable()
-    #             # Clock.unschedule(self.get_readings)
-    #
-    #             self.sensorEnabled = False
-    #             # self.ids.toggle_button.text = "Start compass"
-    #     except NotImplementedError:
-    #         import traceback
-    #         traceback.print_exc()
-    #         status = "Compass is not implemented for your platform"
-    #         # self.ids.status.text = status
+    def hide_search_bar(self):
+        print "test1"
+        #self.ids.SearchLocation.pos = self.search_location_position_temp
+        #self.ids.SearchInput.pos = self.search_search_input_position_temp
+        self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] - self.height
+        self.ids.SearchInput.pos[0] = self.ids.SearchInput.pos[0] - self.height
+        self.search_bar_shown = False
 
     def obliczanie_y1(self, x, y, z):
         if y == 0:
@@ -836,32 +829,49 @@ class GroupScreen(Screen):
                                 anchor=scatter.to_local(scatter.parent.center_x, scatter.parent.center_y))
 
     def center(self):
-        MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(float(MainApp.lat), (MainApp.lon))
+        MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(float(MainApp.lat), float(MainApp.lon))
         self.auto_center = True
         self.redraw_route()
 
     def centerTarget(self):
         try:
+            print self.returnLon()
             lon = float(self.returnLon())
             lat = float(self.returnLat())
             MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
             # self.auto_center = True
-            self.redraw_route()
+            #self.redraw_route()
+            self.hide_search_bar()
+            MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = float(self.latGPS)
+            MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = float(self.lonGPS)
         except:
             pass
 
     def centerMy(self):
-        lon = float(MainApp.lon)
-        lat = float(MainApp.lat)
-        MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
-        # self.auto_center = True
-        self.redraw_route()
+        if self.auto_center == False:
+            if self.czy_wyznacozno_trase == True:
+                self.auto_center = True
+            lon = float(MainApp.lon)
+            lat = float(MainApp.lat)
+            MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
+            # self.auto_center = True
+            self.redraw_route()
+        else:
+
+            self.auto_center = False
+            lon = float(MainApp.lon)
+            lat = float(MainApp.lat)
+            MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
+            # self.auto_center = True
+            self.redraw_route()
+
 
     def calculate_route_nodes_run(self):
         self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
 
     def calculate_route_nodes(self, lat1, lon1, lat2, lon2):
         MainApp.cos = -1
+        self.czy_wyznacozno_trase = True
         self.center()
 
         '''potrzebne do testowania na komputerze'''
@@ -1561,6 +1571,7 @@ class MainApp(App):
             self.start(1000, 0)
         except NotImplementedError:
             self.gps_status = 'GPS is not implemented for your platform'
+
         return show_time
 
     def start(self, minTime, minDistance):

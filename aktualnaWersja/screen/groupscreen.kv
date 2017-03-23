@@ -36,13 +36,18 @@
             valign: 'top'
             TextInput:
                 id: SearchInput
+                background_color: 1,1,1,1
                 text: ''
                 size_hint_x: 0.8
+
+#                pos: (self.pos[0] + self.width, self.pos[1] + self.height)
             Button:
                 #text: "Szukaj"
+                id: SearchLocation
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 size_hint_x: 0.2
+#                pos: (self.x + self.width, self.y + self.height)
                 on_release: root.centerTarget()
                 Image:
                     id: sdasd
@@ -105,6 +110,22 @@
                     id: img_temp
                     center_x: self.parent.center_x
                     source: 'resources/route.png'
+                    height: self.parent.height
+
+            Button:
+                size_hint_x: 0.5
+                #opacity: 0.5
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .7
+                halign: 'right'
+                text: ''
+                on_release: root.show_search_bar()
+                #on_release: root.calculate_route_nodes(53.0102, 18.5946, 52.9828, 18.5729)
+                text_size: img_temp.size
+                Image:
+                    id: img_temp
+                    center_x: self.parent.center_x
+                    source: 'resources/search.png'
                     height: self.parent.height
 
 
