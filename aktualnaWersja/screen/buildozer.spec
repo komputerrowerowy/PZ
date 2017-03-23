@@ -49,7 +49,7 @@ requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlit
 presplash.filename = icon.png
 
 # (str) Icon of the application
-#icon.filename = icon.png
+icon.filename = icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
@@ -133,7 +133,7 @@ android.add_src = org,com
 #android.ouya.category = GAME
 
 # (str) Filename of OUYA Console icon. It must be a 732x412 png image.
-#android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
+android.ouya.icon.filename = icon.png
 
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =

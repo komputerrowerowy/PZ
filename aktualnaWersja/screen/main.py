@@ -106,6 +106,7 @@ Builder.load_string('''
                 source: 'resources/odrzuc.png'
                 height: self.parent.height
                 width: self.parent.width
+<<<<<<< HEAD
                 
 <StartScreen>:
     canvas.before:
@@ -122,6 +123,8 @@ Builder.load_string('''
             background_normal: ''
             background_color: 1, 1, 1, 1
             on_release: root.parent.remove_widget(root.parent.children[0])
+=======
+>>>>>>> master
 ''')
 
 
