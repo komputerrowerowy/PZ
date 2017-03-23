@@ -108,7 +108,7 @@ public class PythonActivity extends Activity implements Runnable {
     public int callState = -1;
 
 
-    
+
 
 
     /*@TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -137,7 +137,7 @@ private final int CHECK_CODE = 0x1;
     private final int LONG_DURATION = 5000;
     private final int SHORT_DURATION = 1200;
 
-    private Speaker speaker;
+    public Speaker speaker;
 
     //private ToggleButton toggle;
     //private OnCheckedChangeListener toggleListener;
@@ -186,14 +186,14 @@ private final int CHECK_CODE = 0x1;
     }
 
 
-    private String getContactName(String phone){
+    public String getContactName(String phone){
         Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phone));
         String projection[] = new String[]{ContactsContract.Data.DISPLAY_NAME};
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
         if(cursor.moveToFirst()){
             return cursor.getString(0);
         }else {
-            return "nieznany numer";
+            return "Nieznany numer";
         }
     }
 
@@ -227,8 +227,8 @@ private final int CHECK_CODE = 0x1;
                number = incomingNumber;
                isIncoming = true;
                callState = state;
-               String sender = getContactName(number);
-               speaker.speak("Dzwoni: : " + sender + "!");
+               //String sender = getContactName(number);
+               //speaker.speak("Dzwoni: : " + sender + "!");
            }
            else{
                number = "";
