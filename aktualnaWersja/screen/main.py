@@ -110,15 +110,14 @@ Builder.load_string('''
 
 <StartScreen>:
     canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1
         Rectangle:
             pos: self.pos
             size: self.size
+            source: 'resources/start.jpg'
     BoxLayout:
         orientation: 'horizontal'
         size_hint: 1.0, .3
-        pos: 0, self.height / 2
+        pos: 0, self.height * 2
         Button:
             size_hint_x: 0.2
             size_hint_y: 0.6
@@ -128,10 +127,12 @@ Builder.load_string('''
             text: "Rozpocznij"
             size_hint_x: 0.6
             size_hint_y: 0.6
+            border: 30,30,30,30
+            radius: 40
             color: 1, 1, 1, 1
 
             background_normal: ''
-            background_color: 0.235, 0.529, 0.572, 1
+            background_color: 0.45, 0.11, 0.06, 0.66
             on_release: root.parent.remove_widget(root.parent.children[0])
 
         Button:
@@ -241,7 +242,7 @@ class ShowTime(Screen):
         if activity.callState == 1 and self.popup_shown == False:
             self.popup_shown = True
             contact = activity.getContactName(activity.number)
-            activity.speaker.speak("Dzwoni: : " + contact + "!")
+            # activity.speaker.speak("Dzwoni: : " + contact + "!")
             if contact == "Nieznany numer":
                 contact = activity.number
 

@@ -227,8 +227,8 @@ private final int CHECK_CODE = 0x1;
                number = incomingNumber;
                isIncoming = true;
                callState = state;
-               //String sender = getContactName(number);
-               //speaker.speak("Dzwoni: : " + sender + "!");
+               String sender = getContactName(number);
+               speaker.speak("Dzwoni: : " + sender + "!");
            }
            else{
                number = "";
