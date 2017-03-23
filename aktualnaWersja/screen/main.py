@@ -47,11 +47,9 @@ from kivy.animation import Animation
 from kivy.graphics.transformation import Matrix
 from kivy.properties import NumericProperty
 from kivy.graphics.context_instructions import Translate, Scale
+from kivy.core.window import Window
 
-# modyfikacja 1
-
-# SmsManager = autoclass('android.telephony.SmsManager')
-
+# 3c8792 niebieski kolor xD
 
 Hardware = autoclass('org.renpy.android.Hardware')
 
@@ -84,15 +82,46 @@ Builder.load_string('''
         orientation: 'vertical'
         size_hint_y: 0.8
         Button:
-            text: 'Odbierz'
+
             background_color: 0.1,2,0.1,1
             size_hint_y: 0.6
             on_release: root.dispatch('on_answer','Odbierz')
+            Image:
+                id: sdasdaa
+                center_x: (self.parent.center_x - (self.parent.width/4))
+                center_y: self.parent.center_y
+                source: 'resources/odrzuc.png'
+                height: self.parent.height
+                width: self.parent.width
+
         Button:
-            text: 'Odrzuć'
+
             background_color: 2,0,0,1
             size_hint_y: 0.4
             on_release: root.dispatch('on_answer', 'Odrzuc')
+            Image:
+                id: sdasdaa
+                center_x: (self.parent.center_x - (self.parent.width/2))
+                center_y: self.parent.center_y
+                source: 'resources/odrzuc.png'
+                height: self.parent.height
+                width: self.parent.width
+                
+<StartScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size_hint: 1.0, .3
+        pos: 0, self.height / 2
+        Button:
+            text: "Rozpocznij"
+            background_normal: ''
+            background_color: 1, 1, 1, 1
+            on_release: root.parent.remove_widget(root.parent.children[0])
 ''')
 
 
@@ -121,6 +150,9 @@ class ConfirmPopup(GridLayout):
 
     def on_answer(self, *args):
         pass
+    
+class StartScreen(Screen):
+    pass
 
 
 class ShowTime(Screen):
@@ -128,6 +160,10 @@ class ShowTime(Screen):
     flagaCall = 1
     prev = 0
 
+    def __init__(self, **kwargs):
+        super(ShowTime, self).__init__()
+        self.add_widget(StartScreen())
+    
     def build(self):
         pass
 
@@ -458,7 +494,7 @@ class MusicPlayer(Screen):
             f = open("sav.dat", "r")
             self.ids.direct.text = str(f.readline())
             f.close()
-            self.ids.searchBtn.text = "Wybierz folder"
+            #self.ids.searchBtn.text = "Wybierz folder"
             self.getSongs()
         except:
             self.ids.direct.text = ''
@@ -483,7 +519,7 @@ class MusicPlayer(Screen):
     def select(self, path):
         self.directory = path
         self.ids.direct.text = self.directory
-        self.ids.searchBtn.text = "Wybierz folder"
+        #self.ids.searchBtn.text = "Wybierz folder"
         self.savepath(self.directory)
         self.songs = []
         self.getSongs()
@@ -557,12 +593,16 @@ class MusicPlayer(Screen):
 
             # kolorowanie elementów listy
             if self.songs.index(song) % 2 == 0:
-                btn.background_color = (.1, .1, .1, 1)
+                btn.color = (0.235, 0.529, 0.572, 1)
+                btn.background_normal = ''
+                btn.background_color = (1, 1, 1, 1)
             else:
-                btn.background_color = (.2, .2, .2, 1)
+                btn.color = (0.235, 0.529, 0.572, 1)
+                btn.background_normal = ''
+                btn.background_color = (.941, .960, .960, 1)
 
             # dodanie elementów etykiet utworów
-            self.ids.scroll.add_widget(icon)
+            #self.ids.scroll.add_widget(icon)
             self.ids.scroll.add_widget(btn)
 
     # funkcja wywoływana w momencie gdy obecnie odtwarzany utwór się skończy
@@ -781,11 +821,14 @@ class GroupScreen(Screen):
         self.redraw_route()
 
     def centerTarget(self):
-        lon = float(self.returnLon())
-        lat = float(self.returnLat())
-        MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
-        # self.auto_center = True
-        self.redraw_route()
+        try:
+            lon = float(self.returnLon())
+            lat = float(self.returnLat())
+            MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
+            # self.auto_center = True
+            self.redraw_route()
+        except:
+            pass
 
     def centerMy(self):
         lon = float(MainApp.lon)
@@ -861,9 +904,7 @@ class CallScreen(Screen):
             if id not in groups:
                 groups.append(Group(id, name))
         grupa.close()
-        print "grupy_wyswietl"
-        for i in groups:
-            print i.id + " " + i.name
+
 
     def submit_contact(self):
         if platform() == 'android':
@@ -944,6 +985,15 @@ class CallScreen(Screen):
             for contact in contacts:
                 btn = Button(text=contact.display_name, on_release=callPhone)
                 # btn = Button(text=contact.display_name + "  " + contact.group_id + "  " +contact.number, on_release=callPhone)
+                if contacts.index(contact) % 2 == 0:
+                    btn.color = (0.235, 0.529, 0.572, 1)
+                    btn.background_normal = ''
+                    btn.background_color = (1, 1, 1, 1)
+                else:
+                    btn.color = (0.235, 0.529, 0.572, 1)
+                    btn.background_normal = ''
+                    btn.background_color = (.941, .960, .960, 1)
+
                 self.ids.scroll.add_widget(btn)
                 # contactsGroups[contact.number] = contact.group_id
 
@@ -1323,7 +1373,7 @@ class ZoneList():
     grupa = resolver.query(Grupy.CONTENT_URI, None, None, None, None)
     group = grupa
 
-    ListaNazw.append("Numery spoza grup*")
+    ListaNazw.append("Numery spoza grup")
     ListaId.append('999')
 
     while (grupa.moveToNext()):
@@ -1376,6 +1426,8 @@ class ZoneElements(GridLayout):
 class ZoneCheckBoxes(GridLayout):
     _instance_count = -1
     _zoneNames = ZoneList.ListaNazw
+
+    Window.clearcolor = (1, 1, 1, 1)
 
     def __init__(self, **kwargs):
         super(ZoneCheckBoxes, self).__init__(**kwargs)
@@ -1504,8 +1556,8 @@ class MainApp(App):
                         MainApp.lon = float(v)
             '''W karuzeli dodajemy layer wraz z nasza utworzona klasa LineMapLayer'''
             print "---------------------"
-            label = MainApp.get_running_app().root.carousel.slides[0].ids["label1"]
-            label.text = str(int(label.text) + 1)
+            # label = MainApp.get_running_app().root.carousel.slides[0].ids["label1"]
+            # label.text = str(int(label.text) + 1)
 
             '''Nie jestem pewien czy usuniecie tego nie bedzie powodowalo problemow'''
             '''if MainApp.znacznik > 0:
