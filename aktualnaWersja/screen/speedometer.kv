@@ -1,0 +1,30 @@
+#:kivy 1.8.0
+
+<Speedometer>:
+    BoxLayout:
+        orientation: 'vertical'
+        canvas:
+            Color:
+                rgb: 0, 0, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Label:
+            size_hint_y: 10
+            text: "Speed:"
+        Label:
+            id:label_speed
+            size_hint_y: 40
+            font_size: self.height / 3
+            color: 1,1,1,1
+
+        Label:
+            size_hint_y: 10
+            text: "Highest speed:"
+
+        Label:
+            id:label_max_speed
+            size_hint_y: 40
+            font_size: self.height / 3
+            color: 1,1,1,1
+

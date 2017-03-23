@@ -49,6 +49,10 @@ from kivy.properties import NumericProperty
 from kivy.graphics.context_instructions import Translate, Scale
 from kivy.core.window import Window
 
+from speed import Speed
+from settingsjson import settings_json
+import ctypes
+
 # 3c8792 niebieski kolor xD
 
 Hardware = autoclass('org.renpy.android.Hardware')
@@ -1224,6 +1228,13 @@ class CallScreen(Screen):
                                 # print contactsGroups2[contactsGroups["881689020"]]
 
 
+class Speedometer(Screen):
+    gps_speed=1
+    def build(self):
+
+
+        pass
+
 class ScreenSettings(Screen):
     def build(self):
         pass
@@ -1507,7 +1518,9 @@ class ZoneLayout(BoxLayout):
 
 
 class MainApp(App):
-    gps_location = StringProperty()
+    gps_speed = 0.00
+    highest_speed = 0.00
+    highest_speed_float = 0.00
     gps_status = StringProperty('Click Start to get GPS location updates')
     lat = 53.0102
     lon = 18.5946
@@ -1518,6 +1531,7 @@ class MainApp(App):
     Builder.load_file("callscreen.kv")
     Builder.load_file("musicplayer.kv")
     Builder.load_file("grupy.kv")
+    Builder.load_file("speedometer.kv")
     znacznik = 0
     route_nodes = BooleanProperty(False)
     prev_time = datetime.datetime.now().time()
@@ -1582,6 +1596,20 @@ class MainApp(App):
                         MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]._layers.remove(layer)
                         break
             #MainApp.znacznik = 1'''
+
+            speed = Speed(float(kwargs['speed']))
+            if speed > self.highest_speed_float:
+                self.highest_speed_float = speed
+            self.gps_speed = speed
+            self.highest_speed = self.highest_speed_float
+            print "blblbl"
+            print self.gps_speed
+            self.gps_speed=self.gps_speed*18/5
+            self.gps_speed=round(self.gps_speed,2)
+            self.highest_speed = self.highest_speed * 18 / 5
+            self.highest_speed = round(self.highest_speed, 2)
+            MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
+            MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
 
             mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
             if MainApp.znacznik == 0:
