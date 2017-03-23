@@ -88,11 +88,11 @@ Builder.load_string('''
             on_release: root.dispatch('on_answer','Odbierz')
             Image:
                 id: sdasdaa
-                center_x: (self.parent.center_x - (self.parent.width/4))
+                center_x: (self.parent.center_x)
                 center_y: self.parent.center_y
-                source: 'resources/odrzuc.png'
+                source: 'resources/odbierz.png'
                 height: self.parent.height
-                width: self.parent.width
+                #width: self.parent.width
 
         Button:
 
@@ -101,30 +101,43 @@ Builder.load_string('''
             on_release: root.dispatch('on_answer', 'Odrzuc')
             Image:
                 id: sdasdaa
-                center_x: (self.parent.center_x - (self.parent.width/2))
+                center_x: (self.parent.center_x)
                 center_y: self.parent.center_y
                 source: 'resources/odrzuc.png'
                 height: self.parent.height
-                width: self.parent.width
-<<<<<<< HEAD
-                
+                #width: self.parent.width
+
+
 <StartScreen>:
     canvas.before:
         Color:
-            rgba: 0.235, 0.529, 0.572, 1
+            rgba: 1, 1, 1, 1
         Rectangle:
             pos: self.pos
             size: self.size
     BoxLayout:
+        orientation: 'horizontal'
         size_hint: 1.0, .3
         pos: 0, self.height / 2
         Button:
+            size_hint_x: 0.2
+            size_hint_y: 0.6
+            background_color: 0.235, 0.529, 0.572, 0
+
+        Button:
             text: "Rozpocznij"
+            size_hint_x: 0.6
+            size_hint_y: 0.6
+            color: 1, 1, 1, 1
+
             background_normal: ''
-            background_color: 1, 1, 1, 1
+            background_color: 0.235, 0.529, 0.572, 1
             on_release: root.parent.remove_widget(root.parent.children[0])
-=======
->>>>>>> master
+
+        Button:
+            size_hint_x: 0.2
+            size_hint_y: 0.6
+            background_color: 0.235, 0.529, 0.572, 0
 ''')
 
 
@@ -153,7 +166,7 @@ class ConfirmPopup(GridLayout):
 
     def on_answer(self, *args):
         pass
-    
+
 class StartScreen(Screen):
     pass
 
@@ -166,7 +179,7 @@ class ShowTime(Screen):
     def __init__(self, **kwargs):
         super(ShowTime, self).__init__()
         self.add_widget(StartScreen())
-    
+
     def build(self):
         pass
 
