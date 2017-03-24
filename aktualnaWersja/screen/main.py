@@ -121,27 +121,32 @@ Builder.load_string('''
     BoxLayout:
         orientation: 'horizontal'
         size_hint: 1.0, .3
-        pos: 0, self.height * 2
+        pos: 0, self.height * 1.7
         Button:
-            size_hint_x: 0.2
-            size_hint_y: 0.6
+            size_hint_x: 0.1
+            size_hint_y: 0.5
             background_color: 0.235, 0.529, 0.572, 0
 
         Button:
             text: "Rozpocznij"
-            size_hint_x: 0.6
-            size_hint_y: 0.6
-            border: 30,30,30,30
-            radius: 40
+            size_hint_x: 0.8
+            size_hint_y: 0.3
             color: 1, 1, 1, 1
-
             background_normal: ''
-            background_color: 0.45, 0.11, 0.06, 0.66
+            background_color: 0.45, 0.11, 0.06, .6
             on_release: root.parent.remove_widget(root.parent.children[0])
+            #Image:
+                #id: sdasdaaqq
+                #opacity: 0.8
+                #center_x: (self.parent.center_x / 3.7)
+                #center_y: (self.parent.center_y * 0.87)
+                #source: 'resources/btn.png'
+                #height: self.parent.height
+                #width: self.parent.width
 
         Button:
-            size_hint_x: 0.2
-            size_hint_y: 0.6
+            size_hint_x: 0.1
+            size_hint_y: 0.5
             background_color: 0.235, 0.529, 0.572, 0
 ''')
 
