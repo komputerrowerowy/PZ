@@ -36,6 +36,7 @@
             valign: 'top'
             TextInput:
                 id: SearchInput
+                font_size: self.height / 3.5
                 background_color: 1,1,1,1
                 text: ''
                 size_hint_x: 0.8
@@ -88,10 +89,10 @@
                 on_release: root.centerMy()
                 #on_release: root.parent.parent.parent.check("881689020", "Testowy SMS")
                 Image:
-                    id: img_alert
+                    id: img_center
                     center_x: self.parent.center_x
                     name: 'alert'
-                    source: 'resources/center.png'
+                    source: 'resources/center_white.png'
                     height: self.parent.height
 #                Label:
 #                    id: label1

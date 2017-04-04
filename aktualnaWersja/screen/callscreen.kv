@@ -69,6 +69,7 @@
     BoxLayout:
         size: root.size
         pos: root.pos
+        spacing: 3
         orientation: "vertical"
         Label:
             id: nrTelefonu
@@ -79,85 +80,102 @@
                     pos: self.pos
                     size: self.size
             #size_hint_y: 16.5
+            font_size: self.height / 3
             text: ''
             color: 0.235, 0.529, 0.572, 1
 
         BoxLayout:
             #size_hint_y: .16.5
+            spacing: 3
             Button:
                 id: btn1
+                font_size: self.height / 2
                 text: '1'
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber1()
             Button:
                 id: btn2
+                font_size: self.height / 2
                 text: '2'
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber2()
             Button:
                 id: btn3
+                font_size: self.height / 2
                 text: '3'
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber3()
         BoxLayout:
             #size_hint_y: .16.5
+            spacing: 3
             Button:
                 id: btn4
+                font_size: self.height / 2
                 text: "4"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber4()
             Button:
                 id: btn5
+                font_size: self.height / 2
                 text: "5"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber5()
             Button:
                 id: btn6
+                font_size: self.height / 2
                 text: "6"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber6()
         BoxLayout:
             #size_hint_y: .16.5
+            spacing: 3
             Button:
                 id: btn7
+                font_size: self.height / 2
                 text: "7"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber7()
             Button:
                 id: btn8
+                font_size: self.height / 2
                 text: "8"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber8()
             Button:
                 id: btn9
+                font_size: self.height / 2
                 text: "9"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber9()
         BoxLayout:
             #size_hint_y: .16.5
+            spacing: 3
             Button:
                 id: btn11
+                font_size: self.height / 2
                 text: "*"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber11()
             Button:
                 id: btn0
+                font_size: self.height / 2
                 text: "0"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1
                 on_release: root.addNumber0()
             Button:
                 id: btn12
+                font_size: self.height / 2
                 text: "#"
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, 1

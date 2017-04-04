@@ -115,7 +115,7 @@ public class AcceptCallActivity extends Activity {
         
         //Nie jestem pewien czy ma byc zakomentowane czy nie
         
-        //finish();
+        finish();
 
     }
 

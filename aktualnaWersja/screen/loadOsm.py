@@ -26,7 +26,7 @@ import os
 import re
 import sys
 import osmapi
-import xml.etree.ElementTree as etree
+import xml.etree.cElementTree as etree
 from datetime import datetime
 
 # from pyroutelib2 import (tiledata, tilenames, weights)

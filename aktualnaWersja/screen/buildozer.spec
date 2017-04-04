@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = BICOM
+title = BICOM12345
 
 # (str) Package name
-package.name = BICOMProjekt
+package.name = BICOMProjekt12
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test
@@ -49,7 +49,7 @@ requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlit
 presplash.filename = icon.png
 
 # (str) Icon of the application
-icon.filename = icon.png
+icon.filename = resources/ikona.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
@@ -119,6 +119,7 @@ android.sdk = 23
 #android.add_jars = foo.jar,bar.jar,path/to/more/*.jar
 #android.add_jars = libs/support-v4-19.1.0.jar
 #android.add_jars = libs/support-v4-24.1.1.aar
+#android.add_jars = libs/graphhopper-tools-0.9-SNAPSHOT-jar-with-dependencies.jar
 
 # (list) List of Java files to add to the android project (can be java or a
 # directory containing the files)
@@ -133,7 +134,7 @@ android.add_src = org,com
 #android.ouya.category = GAME
 
 # (str) Filename of OUYA Console icon. It must be a 732x412 png image.
-android.ouya.icon.filename = icon.png
+android.ouya.icon.filename = resources/ikona.png
 
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =

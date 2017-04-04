@@ -54,12 +54,16 @@ from kivy.core.window import Window
 from speed import Speed
 from settingsjson import settings_json
 import ctypes
+from route import Router
+from loadOsm import LoadOsm
 
 # 3c8792 niebieski kolor xD
+print "wersja_aaa"
 
 Hardware = autoclass('org.renpy.android.Hardware')
 
 AcceptIncomingCall = autoclass("org.test.Phone")
+# Graphhopper = autoclass("com.graphhopper.android.MainActivity")
 
 TelephonyManager = autoclass('android.telephony.TelephonyManager')
 Context = autoclass('android.content.Context')
@@ -476,20 +480,26 @@ class MusicPlayer(Screen):
     #funkcja wywoływana na przycisku stop/play
     def stopSong(self):
         self.flaga = 88
+        self.ids.playSongg.source = "resources/play.png"
         if self.nowPlaying == '':
             #title = self.songs[0]
             self.nowPlaying = SoundLoader.load(self.songs[0].pelna_sciezka)
             self.ids.nowplay.text = self.songs[0].nazwa
+            self.ids.playSongg.source = "resources/stop_music.png"
         if self.nowPlaying.state == 'stop':
             self.flaga = 5
+
             self.nowPlaying.play()
             if self.flaga == 5:
                 self.flaga = 6
                 if self.flaga == 6:
                     self.nowPlaying.bind(on_stop=self.stop_event_flaga)
+                    self.ids.playSongg.source = "resources/stop_music.png"
+
         else:
             self.flaga = 99
             self.nowPlaying.stop()
+            self.ids.playSongg.source = "resources/play.png"
 
     # funkcja wywoływana na przycisku Następny utwór
     def nextSong(self):
@@ -525,7 +535,7 @@ class MusicPlayer(Screen):
         except:
             self.ids.direct.text = ''
             #jak odkomentuje wyswieli wszystkie utwory
-            self.getSongs()
+            #self.getSongs()
 
     #zapisanie ścieżki folderu do pliku
     def savepath(self, path):
@@ -612,6 +622,7 @@ class MusicPlayer(Screen):
                     self.flaga = 4
                     if self.flaga == 4:
                         self.nowPlaying.bind(on_stop=self.stop_event_flaga)
+                        self.ids.playSongg.source = "resources/stop_music.png"
 
         #tworzenie listy utworów
         for song in self.songs:
@@ -647,6 +658,7 @@ class MusicPlayer(Screen):
     #funkcja która odtwarza kolejny utwór z listy
     def nextSong2(self, songfile, dt):
         self.flaga = 1
+        self.ids.playSongg.source = "resources/stop_music.png"
         dl = len(self.songs)
         a = 0
         b = int(a)
@@ -677,6 +689,7 @@ class MusicPlayer(Screen):
     # funkcja która odtwarza poprzedni utwór z listy
     def backSong2(self, songfile, dt):
         self.flaga = 1
+        self.ids.playSongg.source = "resources/stop_music.png"
         a = 0
         b = int(a)
         next2 = 0
@@ -856,6 +869,7 @@ class GroupScreen(Screen):
         if self.auto_center == False:
             if self.czy_wyznacozno_trase == True:
                 self.auto_center = True
+                self.ids.img_center.source = "resources/center_red.png"
             lon = float(MainApp.lon)
             lat = float(MainApp.lat)
             MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
@@ -864,6 +878,7 @@ class GroupScreen(Screen):
         else:
 
             self.auto_center = False
+            self.ids.img_center.source = "resources/center_white.png"
             lon = float(MainApp.lon)
             lat = float(MainApp.lat)
             MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
@@ -878,13 +893,14 @@ class GroupScreen(Screen):
         MainApp.cos = -1
         self.czy_wyznacozno_trase = True
         self.center()
+        self.ids.img_center.source = "resources/center_red.png"
 
         '''potrzebne do testowania na komputerze'''
         MainApp.on_location(MainApp.get_running_app())
 
         for layer in MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]._layers:
             if layer.id == 'line_map_layer':
-                layer.routeToGpx(lat1, lon1, lat2, lon2)
+                layer.routeToGpx(lat1, lon1, lat2, lon2, "cycle", "Route", "track")
                 break
 
     def redraw_route(self):
@@ -1346,25 +1362,37 @@ class LineMapLayer(MapLayer):
         response = requests.get(my_url)
         return response
 
-    def routeToGpx(self, lat1, lon1, lat2, lon2):
+    def routeToGpx(self, lat1, lon1, lat2, lon2, transport, description="", style="track"):
         points = str(MainApp.lon) + ',' + str(MainApp.lat) + ';' + str(lon2) + ',' + str(lat2)
         self.parseJSON(points)
 
-        '''Wersja offline'''
-
-        '''data = LoadOsm('cycle')
-        data = LoadOsm('car')
-        node1 = data.findNode(lat1, lon1)
-        node2 = data.findNode(lat2, lon2)
-
-        router = Router(data)
-        result, route = router.doRoute(node1, node2)
-        self.count = 0
-        self.parent.node = []
-
-        for i in route:
-            self.parent.node.append(data.rnodes[i])
-            self.count = self.count + 1'''
+        # '''Wersja offline'''
+        #
+        # data = LoadOsm(transport)
+        #
+        # # data = LoadOsm('cycle')
+        # #data = LoadOsm('car')
+        # node1 = data.findNode(float(MainApp.lat), float(MainApp.lon))
+        # node2 = data.findNode(float(lat2), float(lon2))
+        #
+        # router = Router(data)
+        # result, route = router.doRoute(node1, node2)
+        # if result != 'success':
+        #     return
+        # # self.count = 0
+        # self.parent.node = []
+        # if (style == 'track'):
+        #     self.count = 0
+        #     for i in route:
+        #         self.parent.node.append(data.rnodes[i])
+        #         self.count = self.count + 1
+        #
+        #
+        # elif (style == 'route'):
+        #     self.count = 0
+        #     for i in route:
+        #         self.parent.node.append(data.rnodes[i])
+        #         self.count = self.count + 1
         MainApp.route_nodes = True
 
     '''W momencie przemieszczenia mapy przerysowujemy linie'''
@@ -1388,9 +1416,17 @@ class LineMapLayer(MapLayer):
         '''Wywolujemy funkcje ktora zwraca nam wspolrzedne trasy o danych wspolzednych poczatkowych i koncowych (Gdzie to przeniesc???)'''
         # self.routeToGpx(float(geo_dom[0]), float(geo_dom[1]), float(geo_wydzial[0]), float(geo_wydzial[1]))
 
+        print "lista punktow"
         for j in xrange(len(self.parent.node) - 1):
             point_list.extend(
+                # wersja online:
                 mapview.get_window_xy_from(float(self.parent.node[j][1]), float(self.parent.node[j][0]), mapview.zoom))
+                # wersja offline:
+                # mapview.get_window_xy_from(float(self.parent.node[j][0]), float(self.parent.node[j][1]), mapview.zoom))
+            print str(self.parent.node[j][1])
+            print str(self.parent.node[j][0])
+
+
 
         scatter = mapview._scatter
         x, y, s = scatter.x, scatter.y, scatter.scale

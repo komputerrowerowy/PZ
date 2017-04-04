@@ -47,6 +47,7 @@ class Router(object):
   
   def doRoute(self,start,end):
     """Do the routing"""
+    print "zaczynam doRoute"
     self.searchEnd = end
     closed = [start]
     self.queue = []
@@ -55,15 +56,19 @@ class Router(object):
     blankQueueItem = {'end':-1,'distance':0,'nodes':str(start)}
 
     try:
+      print "Pierwszy for"
       for i, weight in self.data.routing[start].items():
+        print "Pierwszy for licznik"
         self.addToQueue(start,i, blankQueueItem, weight)
     except KeyError:
       return('no_such_node',[])
 
     # Limit for how long it will search
     count = 0
+    print "Pierwszy while"
     while count < 10000:
       count = count + 1
+      print "Pierwszy while " + str(count)
       try:
         nextItem = self.queue.pop(0)
       except IndexError:
@@ -77,9 +82,14 @@ class Router(object):
         # Found the end node - success
         routeNodes = [int(i) for i in nextItem['nodes'].split(",")]
         return('success', routeNodes)
+      print "dodaje do kolejki"
       closed.append(x)
+      print "dodalem do kolejki"
       try:
+        print "kolejny for1"
+        print count
         for i, weight in self.data.routing[x].items():
+          print "kolejny for1 licznik"
           if not i in closed:
             self.addToQueue(x,i,nextItem, weight)
       except KeyError:
