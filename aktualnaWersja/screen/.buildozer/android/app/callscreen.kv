@@ -1,0 +1,220 @@
+#: import Platform kivy.utils.platform
+<CallScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        canvas:
+            Color:
+                rgb: 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        ScrollView:
+            size_hint: 1, 0.8
+            size_x: root.width
+            GridLayout:
+                id: scroll
+                cols: 1
+                spacing: 10
+                size_hint_y: None
+                row_force_default: True
+                row_default_height: root.height/10
+        Label:
+            canvas.before:
+                Color:
+                    rgb: 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: 0.02
+        Button:
+            size_hint_y: 0.1
+            #text: "Pokaz kontakty"
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            on_release: root.submit_contact()
+            Image:
+                id: sdasddasad
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y - (self.parent.height/2))
+                source: 'resources/kontakty.png'
+                height: self.parent.height
+        Label:
+            canvas.before:
+                Color:
+                    rgb: 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: 0.001
+        Button:
+            size_hint_y: 0.1
+            #text: "Wpisz numer"
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            on_release: root.numberSelect()
+            Image:
+                id: sdasdad
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y - (self.parent.height/2))
+                source: 'resources/numbers.png'
+                height: self.parent.height
+
+<ChooseNumber>:
+    canvas.before:
+        Color:
+            rgba: .4, .4, .4, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        spacing: 3
+        orientation: "vertical"
+        Label:
+            id: nrTelefonu
+            canvas.before:
+                Color:
+                    rgb: 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            #size_hint_y: 16.5
+            font_size: self.height / 3
+            text: ''
+            color: 0.235, 0.529, 0.572, 1
+
+        BoxLayout:
+            #size_hint_y: .16.5
+            spacing: 3
+            Button:
+                id: btn1
+                font_size: self.height / 2
+                text: '1'
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber1()
+            Button:
+                id: btn2
+                font_size: self.height / 2
+                text: '2'
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber2()
+            Button:
+                id: btn3
+                font_size: self.height / 2
+                text: '3'
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber3()
+        BoxLayout:
+            #size_hint_y: .16.5
+            spacing: 3
+            Button:
+                id: btn4
+                font_size: self.height / 2
+                text: "4"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber4()
+            Button:
+                id: btn5
+                font_size: self.height / 2
+                text: "5"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber5()
+            Button:
+                id: btn6
+                font_size: self.height / 2
+                text: "6"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber6()
+        BoxLayout:
+            #size_hint_y: .16.5
+            spacing: 3
+            Button:
+                id: btn7
+                font_size: self.height / 2
+                text: "7"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber7()
+            Button:
+                id: btn8
+                font_size: self.height / 2
+                text: "8"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber8()
+            Button:
+                id: btn9
+                font_size: self.height / 2
+                text: "9"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber9()
+        BoxLayout:
+            #size_hint_y: .16.5
+            spacing: 3
+            Button:
+                id: btn11
+                font_size: self.height / 2
+                text: "*"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber11()
+            Button:
+                id: btn0
+                font_size: self.height / 2
+                text: "0"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber0()
+            Button:
+                id: btn12
+                font_size: self.height / 2
+                text: "#"
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.addNumber12()
+        BoxLayout:
+            #size_hint_y: .16.5
+            Button:
+                #text: "<"
+                background_normal: ''
+                background_color: .941, .960, .960, 1
+                on_release: root.cancel()
+                Image:
+                    id: img_temp
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    source: 'resources/reply.png'
+                    height: self.parent.height
+
+            Button:
+                #text: "Call"
+                background_normal: ''
+                background_color: .941, .960, .960, 1
+                on_release: root.callPhonePopup()
+                Image:
+                    id: img_temp
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    source: 'resources/ring.png'
+                    height: self.parent.height
+
+            Button:
+                #text: "<X="
+                background_normal: ''
+                background_color: .941, .960, .960, 1
+                on_release: root.delNumber()
+                Image:
+                    id: asdsad
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    source: 'resources/delete.png'
+                    height: self.parent.height
+

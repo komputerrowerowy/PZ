@@ -1,0 +1,177 @@
+#:import hex kivy.utils.get_color_from_hex
+
+<MusicPlayer>:
+    BoxLayout:
+        orientation: 'vertical'
+        canvas.before:
+            Color:
+                rgb: 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        BoxLayout:
+            size_hint: 1.0,.09
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            pos: 0,root.top-35
+
+            Label:
+                id: direct
+                size_hint_x: .7
+                canvas.before:
+                    Color:
+                        rgb: 0.235, 0.529, 0.572
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                color: 1, 1, 1, 1
+                font_size: self.height / 2
+                text: 'Twoja muzyka'
+
+            Button:
+                id: searchBtn
+                #text: "szukaj"
+                size_hint_x: .3
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.getSongs()
+                Image:
+                    id: sdasdas
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2))
+                    source: 'resources/search.png'
+                    height: self.parent.height
+        Label:
+            size_hint: 1, 0.01
+            canvas.before:
+                Color:
+                    rgb: .941, .960, .960
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: 1.0,.1
+            Button:
+                id: nowplay
+                text: ''
+                size_hint: 1, 0.98
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572,1
+            Label:
+                size_hint: 1, 0.01
+                id: status
+                text: ''
+                center: root.center
+            Label:
+                size_hint: 1, 0.01
+                id: status
+                text: ''
+                center: root.center
+        Label:
+            size_hint: 1, 0.01
+        BoxLayout:
+            size_hint: 1.0,.89
+            canvas:
+                Color:
+                    rgb: .941, .960, .960
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            ScrollView:
+                size_hint: 1, 1
+                size_x: root.width
+                GridLayout:
+                    id: scroll
+                    cols: 1
+                    size_hint_y: None
+                    row_force_default: True
+                    row_default_height: root.height/10
+        Label:
+            size_hint: 1, 0.01
+        GridLayout:
+            rows: 1
+            size_hint_x: 1
+            size_hint_y: .1
+            Button:
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_press: root.backSong()
+                Image:
+                    id: backSongg
+                    center_x: self.parent.center_x
+                    source: 'resources/back.png'
+                    height: self.parent.height
+            Button:
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_press: root.stopSong()
+                Image:
+                    id: playSongg
+                    center_x: self.parent.center_x
+                    source: 'resources/play.png'
+                    height: self.parent.height
+            Button:
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, 1
+                on_press: root.nextSong()
+                Image:
+                    id: nextSongg
+                    center_x: self.parent.center_x
+                    source: 'resources/next.png'
+                    height: self.parent.height
+
+<ChooseFile>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            size_hint_y: .85
+            id: filechooser
+        #color: 0.521, 0.521, 0.513, 1
+
+        BoxLayout:
+            size_hint_y: .15
+            canvas.before:
+                Color:
+                    rgb: 0.235, 0.529, 0.572
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Zamknij"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.cancel()
+                Image:
+                    id: anulujbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/anuluj.png'
+                    height: self.parent.height
+
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Wybierz folder"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.select(filechooser.path)
+                Image:
+                    id: okbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/ok.png'
+                    height: self.parent.height

@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = BICOM12345
+title = BICOM
 
 # (str) Package name
-package.name = BICOMProjekt12
+package.name = BICOMProject
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test
@@ -13,10 +13,11 @@ package.domain = org.test
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas
+source.include_exts = py,png,jpg,kv,atlas,dic,params,gram
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
+source.include_patterns = sphinx/*.dic, sphinx/en-us-adapt/*, sphinx/en-us-adapt/*.params,sphinx/*.gram
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -49,7 +50,7 @@ requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlit
 presplash.filename = icon.png
 
 # (str) Icon of the application
-icon.filename = resources/ikona.png
+icon.filename = icon.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
@@ -72,7 +73,7 @@ orientation = portrait
 fullscreen = 1
 
 # (list) Permissions
-android.permissions = INTERNET,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,READ_CONTACTS,READ_PHONE_STATE,MODIFY_PHONE_STATE,CALL_PHONE,RECEIVE_SMS,READ_SMS,SEND_SMS,BIND_NOTIFICATION_LISTENER_SERVICE
+android.permissions = INTERNET,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,READ_CONTACTS,READ_PHONE_STATE,MODIFY_PHONE_STATE,CALL_PHONE,RECEIVE_SMS,READ_SMS,SEND_SMS,BIND_NOTIFICATION_LISTENER_SERVICE,RECORD_AUDIO
 
 # (int) Android API to use
 android.api = 23
@@ -119,7 +120,7 @@ android.sdk = 23
 #android.add_jars = foo.jar,bar.jar,path/to/more/*.jar
 #android.add_jars = libs/support-v4-19.1.0.jar
 #android.add_jars = libs/support-v4-24.1.1.aar
-#android.add_jars = libs/graphhopper-tools-0.9-SNAPSHOT-jar-with-dependencies.jar
+android.add_jars = libs/cmu.jar
 
 # (list) List of Java files to add to the android project (can be java or a
 # directory containing the files)
@@ -134,7 +135,7 @@ android.add_src = org,com
 #android.ouya.category = GAME
 
 # (str) Filename of OUYA Console icon. It must be a 732x412 png image.
-android.ouya.icon.filename = resources/ikona.png
+android.ouya.icon.filename = icon.png
 
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =
@@ -144,6 +145,7 @@ android.ouya.icon.filename = resources/ikona.png
 #android.add_libs_armeabi_v7a = libs/android-v7/*.so
 #android.add_libs_x86 = libs/android-x86/*.so
 #android.add_libs_mips = libs/android-mips/*.so
+android.add_libs_armeabi = libs/libpocketsphinx_jni.so
 
 # (bool) Indicate whether the screen should stay on
 # Don't forget to add the WAKE_LOCK permission if you set this to True

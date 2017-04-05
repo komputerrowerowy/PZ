@@ -1,0 +1,8 @@
+#JSGF V1.0;
+
+grammar incomingcall;
+
+<incomingcal> = ODRZUC    |
+				 ODBIERZ   |
+				 ROZLACZ   ;
+public <incomingcall> = <incomingcal>+;

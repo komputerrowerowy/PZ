@@ -1,0 +1,45 @@
+Language model created by QuickLM on Mon Mar 13 06:55:23 EDT 2017
+Copyright (c) 1996-2010 Carnegie Mellon University and Alexander I. Rudnicky
+
+The model is in standard ARPA format, designed by Doug Paul while he was at MITRE.
+
+The code that was used to produce this language model is available in Open Source.
+Please visit http://www.speech.cs.cmu.edu/tools/ for more information
+
+The (fixed) discount mass is 0.5. The backoffs are computed using the ratio method.
+This model based on a corpus of 5 sentences and 7 words
+
+\data\
+ngram 1=7
+ngram 2=10
+ngram 3=5
+
+\1-grams:
+-0.7782 </s> -0.3010
+-0.7782 <s> -0.2218
+-1.4771 DWA -0.2218
+-1.4771 DZWOñ -0.2218
+-1.4771 JEDEN -0.2218
+-1.4771 ODBIERZ -0.2218
+-1.4771 ODRZUæ -0.2218
+
+\2-grams:
+-1.0000 <s> DWA 0.0000
+-1.0000 <s> DZWOñ 0.0000
+-1.0000 <s> JEDEN 0.0000
+-1.0000 <s> ODBIERZ 0.0000
+-1.0000 <s> ODRZUæ 0.0000
+-0.3010 DWA </s> -0.3010
+-0.3010 DZWOñ </s> -0.3010
+-0.3010 JEDEN </s> -0.3010
+-0.3010 ODBIERZ </s> -0.3010
+-0.3010 ODRZUæ </s> -0.3010
+
+\3-grams:
+-0.3010 <s> DWA </s>
+-0.3010 <s> DZWOñ </s>
+-0.3010 <s> JEDEN </s>
+-0.3010 <s> ODBIERZ </s>
+-0.3010 <s> ODRZUæ </s>
+
+\end\

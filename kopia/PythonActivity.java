@@ -75,7 +75,45 @@ import android.content.ContentResolver;
 import java.util.HashMap;
 
 
-public class PythonActivity extends Activity implements Runnable {
+
+
+
+
+
+
+
+
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
+import edu.cmu.pocketsphinx.Assets;
+import edu.cmu.pocketsphinx.Hypothesis;
+import edu.cmu.pocketsphinx.RecognitionListener;
+import edu.cmu.pocketsphinx.SpeechRecognizer;
+import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
+
+import static android.widget.Toast.makeText;
+
+
+
+
+
+
+
+
+
+
+public class PythonActivity extends Activity implements Runnable, RecognitionListener {
     private static String TAG = "Python";
 
     // The audio thread for streaming audio...
@@ -108,6 +146,32 @@ public class PythonActivity extends Activity implements Runnable {
     public int callState = -1;
 
 
+            
+            
+            
+    //Sphinx
+            
+    private static final String KWS_SEARCH = "JEDEN";
+    private static final String FORECAST_SEARCH = "DWA";
+    private static final String DIGITS_SEARCH = "ODBIERZ";
+    private static final String PHONE_SEARCH = "DWA";
+    private static final String MENU_SEARCH = "DWA";
+	public static final String INCOMING_CALL_SEARCH = "ODBIERZ";
+
+    /* Keyword we are looking for to activate menu */
+    public static final String KEYPHRASE = "BIKOM";
+
+    /* Used to handle permission request */
+    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+
+    private SpeechRecognizer recognizer;
+    private HashMap<String, Integer> captions;
+	public String lastWord = "";
+	public String lastState = "";
+            
+            
+            
+            
 
 
 
@@ -353,6 +417,190 @@ private final int CHECK_CODE = 0x1;
 }
 
 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+    public void runRecognizerSetup() {
+        // Recognizer initialization is a time-consuming and it involves IO,
+        // so we execute it in async task
+        new AsyncTask<Void, Void, Exception>() {
+            @Override
+            protected Exception doInBackground(Void... params) {
+                try {
+                    System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbb");
+                    //Assets assets = new Assets(PythonActivity.this);
+                    //File assetDir = assets.syncAssets();
+                    setupRecognizer();
+					System.out.println("test6");
+                } catch (IOException e) {
+                    System.out.println("dupa" + e);
+                    return e;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Exception result) {
+                if (result != null) {
+                    //((TextView) findViewById(R.id.caption_text))
+                            //.setText("Failed to init recognizer " + result);
+                    System.out.println("Failed to init recognizer" + result);
+                } else {
+                    switchSearch(KWS_SEARCH);
+
+                }
+            }
+        }.execute();
+            
+    }
+            
+    @Override
+    public void onPartialResult(Hypothesis hypothesis) {
+        if (hypothesis == null)
+            return;
+
+        String text = hypothesis.getHypstr();
+        /*if (text.equals(KEYPHRASE)){
+			lastState = KEYPHRASE;
+            switchSearch(DIGITS_SEARCH);
+		}*/
+        /*if (text.equals(INCOMING_CALL_SEARCH)){
+			lastState = text;
+            switchSearch(INCOMING_CALL_SEARCH);
+		}*/
+        //else if (text.equals(PHONE_SEARCH))
+        //    switchSearch(PHONE_SEARCH);
+       // else if (text.equals(FORECAST_SEARCH))
+        //    switchSearch(FORECAST_SEARCH);
+        //else
+        //    ;
+		System.out.println("test partial = " + text);
+            //((TextView) findViewById(R.id.result_text)).setText(text);
+        //makeText(getApplicationContext(), "partial = " + text, Toast.LENGTH_SHORT).show();
+    }
+            
+    @Override
+    public void onResult(Hypothesis hypothesis) {
+        //((TextView) findViewById(R.id.result_text)).setText("");
+        if (hypothesis != null) {
+            String text = hypothesis.getHypstr();
+            //makeText(getApplicationContext(), "result = " + text, Toast.LENGTH_SHORT).show();
+            //makeText(getApplicationContext(), "partial = " + text, Toast.LENGTH_SHORT).show();
+            //((TextView) findViewById(R.id.result_text)).setText(text);
+			lastWord = text;
+            System.out.println("test result = " + text);
+        }
+    }
+            
+    @Override
+    public void onBeginningOfSpeech() {
+    }
+
+    /**
+     * We stop recognizer here to get a final result
+     */
+    @Override
+    public void onEndOfSpeech() {
+        //if (!recognizer.getSearchName().equals(KWS_SEARCH))
+        System.out.println("nojuzniewiem");    
+		//switchSearch(KWS_SEARCH);
+		switchSearch(INCOMING_CALL_SEARCH);
+        //makeText(getApplicationContext(), "endSpeach", Toast.LENGTH_SHORT).show();
+		//recognizer.stop();
+        ;
+    }
+
+    public void switchSearch(String searchName) {
+        System.out.println("test6");
+		recognizer.stop();
+		System.out.println(searchName);
+		System.out.println("test7");
+
+        // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
+        if (searchName.equals(KWS_SEARCH)){
+			System.out.println("test8");
+            recognizer.startListening(searchName);
+			System.out.println("test9");
+		}
+        else{
+			System.out.println("test10");
+            recognizer.startListening(searchName, 10000);
+			System.out.println("test11");
+		}
+
+        //String caption = getResources().getString(captions.get(searchName));
+        //((TextView) findViewById(R.id.caption_text)).setText(caption);
+        //makeText(getApplicationContext(), "switch search = " + searchName, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupRecognizer() throws IOException {
+        // The recognizer can be configured to perform multiple searches
+        // of different kind and switch between them
+		System.out.println("test1");
+		///storage/sdcard0/Android/data/edu.cmu.sphinx.pocketsphinx/files/sync
+        recognizer = SpeechRecognizerSetup.defaultSetup()
+                .setAcousticModel(new File(mPath, "sphinx/en-us-adapt"))
+                .setDictionary(new File(mPath, "sphinx/7823.dic"))
+				.setKeywordThreshold(1e-20f)
+
+                //.setRawLogDir(assetsDir) // To disable logging of raw audio comment out this call (takes a lot of space on the device)
+
+                .getRecognizer();
+        recognizer.addListener(this);
+		System.out.println("test2");
+
+        /** In your application you might not need to add all those searches.
+         * They are added here for demonstration. You can leave just one.
+         */
+
+        // Create keyword-activation search.
+        recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
+		System.out.println("test3");
+
+        // Create grammar-based search for selection between demos
+        //File menuGrammar = new File(assetsDir, "menu.gram");
+        //recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
+
+        // Create grammar-based search for digit recognition
+        //File digitsGrammar = new File(mPath, "digits.gram");
+        System.out.println("test4");
+		//recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
+		System.out.println("test5");
+		
+		File incomingCallGrammar = new File(mPath, "sphinx/incomingcall.gram");
+		recognizer.addGrammarSearch(INCOMING_CALL_SEARCH, incomingCallGrammar);
+        
+        /*// Create language model search
+        File languageModel = new File(assetsDir, "weather.dmp");
+        recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
+
+        // Phonetic search
+        File phoneticModel = new File(assetsDir, "en-phone.dmp");
+        recognizer.addAllphoneSearch(PHONE_SEARCH, phoneticModel);*/
+    }
+
+    @Override
+    public void onError(Exception error) {
+        //((TextView) findViewById(R.id.caption_text)).setText(error.getMessage());
+        ;
+    }
+
+    @Override
+    public void onTimeout() {
+        ;
+    }
+            
+            
+            
+            
 
 
     @Override
@@ -360,7 +608,7 @@ private final int CHECK_CODE = 0x1;
         super.onCreate(savedInstanceState);
 
 
-
+        System.out.println("ccccccccccccccccc");
 
 
 
@@ -389,7 +637,6 @@ private final int CHECK_CODE = 0x1;
         checkTTS();
         initializeSMSReceiver();
         registerSMSReceiver();
-
 
 
 
@@ -676,6 +923,11 @@ private final int CHECK_CODE = 0x1;
         unregisterReceiver(smsReceiver);
         speaker.destroy();
 
+        if (recognizer != null) {
+            recognizer.cancel();
+            recognizer.shutdown();
+        }
+        
 
         if (mPurchaseDatabase != null) {
             mPurchaseDatabase.close();
