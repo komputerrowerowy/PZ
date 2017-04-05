@@ -1,0 +1,106 @@
+ZoneLayout:
+
+
+<ZoneLayout>:
+    id: zoneLayout
+    name: 'zoneLayout'
+    orientation: 'vertical'
+
+    GridLayout:
+        cols: 3
+        size_hint: 1, .8   
+        pos_hint: {'top_x': 0, 'center_y': 0}
+
+        Label:
+            size_hint: 0.3,0.3
+            text: 'Nazwa Grupy'
+            color: (.235, .529, .572, 1)
+            text_size: self.size
+            font_size: '14sp'
+            halign: 'center'
+            valign: 'middle'
+	
+        Label:
+            size_hint: 0.2,0.3
+            text: 'Odrzucenie'
+            color: (.235, .529, .572, 1)
+            text_size: self.size
+            font_size: '14sp'
+            halign: 'center'
+            valign: 'middle'
+
+        Label:
+            size_hint: 0.5,0.3
+            text: 'Decyzja w chwili połączenia'
+            color: (.235, .529, .572, 1)
+            text_size: self.size
+            font_size: '14sp'
+            halign: 'center'
+            valign: 'middle'
+
+  
+<ZoneButton>:
+    text: root._zoneNames[root._instance_count]
+    color: (1, 1, 1, 1)
+    text_size: self.size
+    font_size: '14sp'
+    background_normal: ''
+    background_color: (.235, .529, .572, 1)
+    halign: 'center'
+    valign: 'middle'	
+
+    
+<ZoneCheckBoxes>:
+    cols:5
+
+    Label:
+        size_hint: 0.1,.01
+
+    CheckBox:
+        size_hint: 0.1,.01
+        group: "Zone " + root._zoneNames[root._instance_count]
+        active: root.odrzuc
+        on_active: root.odrzucenie(self.group)
+        color: root.kolor
+
+    Label:
+        size_hint: 0.35,.01
+
+    CheckBox:
+        size_hint: 0.1,.01
+        group: "Zone " + root._zoneNames[root._instance_count]
+        active: root.decyduj
+        on_active: root.decyzja(self.group)
+        color: root.kolor
+
+    Label:
+        size_hint: 0.35,.01
+
+
+<ZoneElements>:
+    cols: 2
+
+    Label:
+        size_hint: 0.5,.03
+        canvas.before: 
+            Color: 
+                rgba: (.941, .941, .937, 1)
+            Rectangle: 
+                pos: self.pos
+                size: self.size
+
+    Label:
+        size_hint: 2.5,.03
+        canvas.before: 
+            Color: 
+                rgba: (.235, .529, .572, 1)
+            Rectangle: 
+                pos: self.pos
+                size: self.size
+
+    ZoneButton:
+
+    ZoneCheckBoxes:
+
+
+
