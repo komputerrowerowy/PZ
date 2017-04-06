@@ -1515,6 +1515,7 @@ class LineMapLayer(MapLayer):
 
 
 class ZoneList():
+
     ListaNazw = []
     ListaId = []
 
@@ -1563,23 +1564,26 @@ class ZoneList():
 
             if unicode(x) in unicode(idBaza):
                 for y in xrange(0, len(idBaza)):
-                    if "(" + x + ",)" == str(idBaza[y]):
+                    if "("+x+",)" == str(idBaza[y]):
                         if str(reakcjaBaza[y]) == "(1,)":
                             c.execute("UPDATE Grupy SET REAKCJA=? WHERE ID_GRUPY=?", (1, x))
                             break
+
 
     conn.commit()
     conn.close()
 
 
 class ZoneElements(GridLayout):
-    pass
+    if len(ZoneList.ListaNazw) < 5:
+        linia = .01
+    else:
+        linia = .03
 
 
-class ZoneCheckBoxes(GridLayout):
+class ZoneCheckBoxes(ToggleButtonBehavior, GridLayout):
     _instance_count = -1
     _zoneNames = ZoneList.ListaNazw
-
     Window.clearcolor = (1, 1, 1, 1)
 
     def __init__(self, **kwargs):
@@ -1591,6 +1595,8 @@ class ZoneCheckBoxes(GridLayout):
 
         c.execute("SELECT REAKCJA FROM Grupy")
         dane = c.fetchall()
+
+        ZoneCheckBoxes.kolor = (.235, .529, .572, 1)
 
         if dane[ZoneCheckBoxes._instance_count] == (0,):
             ZoneCheckBoxes.odrzuc = True
@@ -1629,13 +1635,22 @@ class ZoneCheckBoxes(GridLayout):
 class ZoneButton(Button):
     _instance_count = -1
     _zoneNames = ZoneList.ListaNazw
-
+    
     def __init__(self, **kwargs):
         super(ZoneButton, self).__init__(**kwargs)
         ZoneButton._instance_count += 1
 
 
 class ZoneLayout(BoxLayout):
+    if len(ZoneList.ListaNazw) < 5:
+        rozmiar = .3
+    elif 5 >= len(ZoneList.ListaNazw) < 10:
+        rozmiar = .5
+    elif 10 >= len(ZoneList.ListaNazw) < 15:
+        rozmiar = 1
+    else:
+        rozmiar = 1.5
+
     def __init__(self, **kwargs):
         super(ZoneLayout, self).__init__(**kwargs)
 
