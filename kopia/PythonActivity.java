@@ -134,7 +134,7 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
     private File externalStorage;
 
     // The path to the directory containing the game.
-    private File mPath = null;
+    public File mPath = null;
 
     boolean _isPaused = false;
 

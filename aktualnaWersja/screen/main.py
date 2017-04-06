@@ -63,12 +63,18 @@ print "wersja_aaa"
 Hardware = autoclass('org.renpy.android.Hardware')
 
 AcceptIncomingCall = autoclass("org.test.Phone")
-# Graphhopper = autoclass("com.graphhopper.android.MainActivity")
 
 TelephonyManager = autoclass('android.telephony.TelephonyManager')
 Context = autoclass('android.content.Context')
 activity = autoclass("org.renpy.android.PythonActivity").mActivity
 Grupy = autoclass("android.provider.ContactsContract$Groups")
+
+print "test1"
+print "ugabuga"
+GraphHopperAndroid = autoclass("com.graphhopper.android.GraphHopperAndroid")(activity.mPath)
+GraphHopperAndroid.loadGraphStorage()
+print "test2"
+print GraphHopperAndroid
 
 AcceptIncomingCall2 = activity
 
@@ -753,7 +759,22 @@ class GroupScreen(Screen):
     search_input_position_temp = -1
     search_bar_shown = True
     czy_wyznacozno_trase = False
+    route_calculated = False
+    licznikTemp = False
+    punkty = []
+    
+    '''def __init__(self, **kwargs):
+        super(GroupScreen, self).__init__()
+        self.licznikTemp = False'''
 
+    def test111(self):
+        print "test69"
+
+        
+        
+        
+    def test2(self):
+        GraphHopperAndroid.loadGraphStorage()
 
     def show_search_bar(self):
         if self.search_bar_shown == False:
@@ -912,7 +933,22 @@ class GroupScreen(Screen):
 
 
     def calculate_route_nodes_run(self):
-        self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
+        #self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
+        try:
+            GraphHopperAndroid.calcPath(float(MainApp.lat), float(MainApp.lon), float(self.latGPS), float(self.lonGPS))
+            self.licznikTemp = True
+
+            self.punkty = GraphHopperAndroid.resp.getPoints()
+            self.route_calculated = True
+            print self.punkty.toString()
+            self.czy_wyznacozno_trase = True
+            self.center()
+            self.ids.img_center.source = "resources/center_red.png"
+                #self.redraw_route()
+            print "respInMain"
+            MainApp.route_nodes = True
+        except:
+            pass
 
     def calculate_route_nodes(self, lat1, lon1, lat2, lon2):
         MainApp.cos = -1
@@ -1430,38 +1466,52 @@ class LineMapLayer(MapLayer):
     '''Funkcja rysowania linii'''
 
     def draw_line(self):
-        mapview = self.parent
-        self.zoom = mapview.zoom
+        if MainApp.get_running_app().root.carousel.slides[0].route_calculated == True:
+            mapview = self.parent
+            print "testparent"
+            group_screen = self.parent.parent.parent.parent.parent
+            self.zoom = mapview.zoom
 
-        '''Na ten moment ustawiamy stale wspolrzedne'''
-        geo_dom = [52.9828, 18.5729]
-        geo_wydzial = [53.0102, 18.5946]
+            '''Na ten moment ustawiamy stale wspolrzedne'''
+            geo_dom = [52.9828, 18.5729]
+            geo_wydzial = [53.0102, 18.5946]
 
-        point_list = []
-        '''Wywolujemy funkcje ktora zwraca nam wspolrzedne trasy o danych wspolzednych poczatkowych i koncowych (Gdzie to przeniesc???)'''
-        # self.routeToGpx(float(geo_dom[0]), float(geo_dom[1]), float(geo_wydzial[0]), float(geo_wydzial[1]))
+            point_list = []
+            '''Wywolujemy funkcje ktora zwraca nam wspolrzedne trasy o danych wspolzednych poczatkowych i koncowych (Gdzie to przeniesc???)'''
+            # self.routeToGpx(float(geo_dom[0]), float(geo_dom[1]), float(geo_wydzial[0]), float(geo_wydzial[1]))
 
-        print "lista punktow"
-        for j in xrange(len(self.parent.node) - 1):
-            point_list.extend(
-                # wersja online:
-                mapview.get_window_xy_from(float(self.parent.node[j][1]), float(self.parent.node[j][0]), mapview.zoom))
-                # wersja offline:
-                # mapview.get_window_xy_from(float(self.parent.node[j][0]), float(self.parent.node[j][1]), mapview.zoom))
-            print str(self.parent.node[j][1])
-            print str(self.parent.node[j][0])
+            print "lista punktow"
+            '''for j in xrange(len(self.parent.node) - 1):
+                point_list.extend(
+                    # wersja online:
+                    mapview.get_window_xy_from(float(self.parent.node[j][1]), float(self.parent.node[j][0]), mapview.zoom))
+                    # wersja offline:
+                    # mapview.get_window_xy_from(float(self.parent.node[j][0]), float(self.parent.node[j][1]), mapview.zoom))
+                print str(self.parent.node[j][1])
+                print str(self.parent.node[j][0])'''
+            print float(group_screen.punkty.getLat(10))
+            punkty_size = group_screen.punkty.getSize()
+            print punkty_size
+            for j in xrange(punkty_size - 1):
+                lat = float(group_screen.punkty.getLat(j))
+                lon = float(group_screen.punkty.getLon(j))
+                print lat
+                lat1 = round(group_screen.punkty.getLat(j), 4)
+                print lat1
+                point_list.extend(mapview.get_window_xy_from(lat, lon, mapview.zoom))
 
+            print "dupa1"
+            print point_list
+            
+            scatter = mapview._scatter
+            x, y, s = scatter.x, scatter.y, scatter.scale
 
-
-        scatter = mapview._scatter
-        x, y, s = scatter.x, scatter.y, scatter.scale
-
-        with self.canvas:
-            self.canvas.clear()
-            Scale(1 / s, 1 / s, 1)
-            Translate(-x, -y)
-            Color(0, 0, 255, .6)
-            Line(points=point_list, width=3, joint="bevel")
+            with self.canvas:
+                self.canvas.clear()
+                Scale(1 / s, 1 / s, 1)
+                Translate(-x, -y)
+                Color(0, 0, 255, .6)
+                Line(points=point_list, width=3, joint="bevel")
 
 
 class ZoneList():

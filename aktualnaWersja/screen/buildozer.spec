@@ -17,7 +17,7 @@ source.include_exts = py,png,jpg,kv,atlas,dic,params,gram
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
-source.include_patterns = sphinx/*.dic, sphinx/en-us-adapt/*, sphinx/en-us-adapt/*.params,sphinx/*.gram
+source.include_patterns = sphinx/*.dic, sphinx/en-us-adapt/*, sphinx/en-us-adapt/*.params,sphinx/*.gram,graphhopper/maps/kujawsko-pomorskie-latest-gh/*
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -50,7 +50,7 @@ requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlit
 presplash.filename = icon.png
 
 # (str) Icon of the application
-icon.filename = icon.png
+icon.filename = resources/ikona.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
@@ -120,7 +120,7 @@ android.sdk = 23
 #android.add_jars = foo.jar,bar.jar,path/to/more/*.jar
 #android.add_jars = libs/support-v4-19.1.0.jar
 #android.add_jars = libs/support-v4-24.1.1.aar
-android.add_jars = libs/cmu.jar
+android.add_jars = libs/cmu.jar,libs/graphhopper-tools-0.9-SNAPSHOT-jar-with-dependencies.jar
 
 # (list) List of Java files to add to the android project (can be java or a
 # directory containing the files)
@@ -135,7 +135,7 @@ android.add_src = org,com
 #android.ouya.category = GAME
 
 # (str) Filename of OUYA Console icon. It must be a 732x412 png image.
-android.ouya.icon.filename = icon.png
+android.ouya.icon.filename = resources/ikona.png
 
 # (str) XML file to include as an intent filters in <activity> tag
 #android.manifest.intent_filters =

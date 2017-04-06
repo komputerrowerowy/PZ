@@ -42,9 +42,78 @@ import android.content.SharedPreferences;
 import android.content.Context;
 import android.os.Build;
 import org.test.AcceptCallActivity;
+import android.Manifest;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import java.lang.Class;
+import java.lang.reflect.Method;
+import com.android.internal.telephony.ITelephony;
+import android.Manifest;
+//import android.support.v4.app.ActivityCompat;
+//import android.support.v4.content.ContextCompat;
+import android.content.pm.PackageManager;
+import android.os.Looper;
+import android.os.Process;
+import org.test.Speaker;
+import android.widget.TextView;
+import android.content.BroadcastReceiver;
+import android.speech.tts.TextToSpeech;
+import android.telephony.SmsMessage;
+import android.net.Uri;
+import android.provider.ContactsContract.PhoneLookup;
+import android.provider.ContactsContract;
+import android.content.IntentFilter;
+import android.R;
+import android.annotation.TargetApi;
+import android.widget.MediaController;
+//import org.test.NotificationReceiverService;
+import android.media.session.MediaSessionManager;
+import android.content.ComponentName;
+import android.provider.ContactsContract.*;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.content.ContentResolver;
+import java.util.HashMap;
 
 
-public class PythonActivity extends Activity implements Runnable {
+
+
+
+
+
+
+
+
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
+import edu.cmu.pocketsphinx.Assets;
+import edu.cmu.pocketsphinx.Hypothesis;
+import edu.cmu.pocketsphinx.RecognitionListener;
+import edu.cmu.pocketsphinx.SpeechRecognizer;
+import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
+
+import static android.widget.Toast.makeText;
+
+
+
+
+
+
+
+
+
+
+public class PythonActivity extends Activity implements Runnable, RecognitionListener {
     private static String TAG = "Python";
 
     // The audio thread for streaming audio...
@@ -55,6 +124,7 @@ public class PythonActivity extends Activity implements Runnable {
     public static PythonActivity mActivity = null;
     public static ApplicationInfo mInfo = null;
 
+
     // Did we launch our thread?
     private boolean mLaunchedThread = false;
 
@@ -64,11 +134,193 @@ public class PythonActivity extends Activity implements Runnable {
     private File externalStorage;
 
     // The path to the directory containing the game.
-    private File mPath = null;
+    public File mPath = null;
 
     boolean _isPaused = false;
 
     private static final String DB_INITIALIZED = "db_initialized";
+
+    public String number = "";
+
+    public boolean isIncoming = false;
+    public int callState = -1;
+
+
+            
+            
+            
+    //Sphinx
+            
+    private static final String KWS_SEARCH = "JEDEN";
+    private static final String FORECAST_SEARCH = "DWA";
+    private static final String DIGITS_SEARCH = "ODBIERZ";
+    private static final String PHONE_SEARCH = "DWA";
+    private static final String MENU_SEARCH = "DWA";
+	public static final String INCOMING_CALL_SEARCH = "ODBIERZ";
+
+    /* Keyword we are looking for to activate menu */
+    public static final String KEYPHRASE = "BIKOM";
+
+    /* Used to handle permission request */
+    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+
+    private SpeechRecognizer recognizer;
+    private HashMap<String, Integer> captions;
+	public String lastWord = "";
+	public String lastState = "";
+            
+            
+            
+            
+
+
+
+    /*@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void sendHeadsetHookLollipop() {
+        MediaSessionManager mediaSessionManager =  (MediaSessionManager) getApplicationContext().getSystemService(Context.MEDIA_SESSION_SERVICE);
+        try {
+            System.out.println("przerwa");
+            List<android.media.session.MediaController> mediaControllerList = (List<android.media.session.MediaController>)(mediaSessionManager.getActiveSessions
+                         (new ComponentName(this.getApplicationContext(), NotificationReceiverService.class)));
+            for (android.media.session.MediaController m : mediaControllerList) {
+                 if ("com.android.server.telecom".equals(m.getPackageName())) {
+                     m.dispatchMediaButtonEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_HEADSETHOOK));
+                     System.out.println("HEADSETHOOK sent to telecom server");
+                     break;
+                 }
+            }
+        } catch (SecurityException e) {
+            System.out.println("Permission error. Access to notification not granted to the app.");
+        }
+    }*/
+
+
+
+
+private final int CHECK_CODE = 0x1;
+    private final int LONG_DURATION = 5000;
+    private final int SHORT_DURATION = 1200;
+
+    public Speaker speaker;
+
+    //private ToggleButton toggle;
+    //private OnCheckedChangeListener toggleListener;
+
+    //private TextView smsText;
+    //private TextView smsSender;
+
+    private BroadcastReceiver smsReceiver;
+
+
+    private void checkTTS(){
+        Intent check = new Intent();
+        check.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(check, CHECK_CODE);
+    }
+
+
+
+    private void initializeSMSReceiver(){
+        smsReceiver = new BroadcastReceiver(){
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Bundle bundle = intent.getExtras();
+                if(bundle!=null){
+                    Object[] pdus = (Object[])bundle.get("pdus");
+                    for(int i=0;i<pdus.length;i++){
+                        byte[] pdu = (byte[])pdus[i];
+                        SmsMessage message = SmsMessage.createFromPdu(pdu);
+                        String text = message.getDisplayMessageBody();
+                        String sender = getContactName(message.getOriginatingAddress());
+                        speaker.pause(LONG_DURATION);
+                        speaker.speak("Masz nową wiadomość od: " + sender + "!");
+                        speaker.pause(SHORT_DURATION);
+                        speaker.speak(text);
+                        System.out.println("NARESZCIEDZIALA");
+                        System.out.println(text);
+                        //speaker.speak(text);
+                        //smsSender.setText("Message from " + sender);
+                        //smsText.setText(text);
+                    }
+                }
+
+            }
+        };
+    }
+
+
+    public String getContactName(String phone){
+        Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phone));
+        String projection[] = new String[]{ContactsContract.Data.DISPLAY_NAME};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if(cursor.moveToFirst()){
+            return cursor.getString(0);
+        }else {
+            return "Nieznany numer";
+        }
+    }
+
+    private void registerSMSReceiver() {
+        IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+        registerReceiver(smsReceiver, intentFilter);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public class MyPhoneStateListener extends PhoneStateListener {
+       @Override
+       public void onCallStateChanged(int state, String incomingNumber) {
+           super.onCallStateChanged(state, incomingNumber);
+           if (state == TelephonyManager.CALL_STATE_RINGING) {
+               String phoneNumber =   incomingNumber;
+               number = incomingNumber;
+               isIncoming = true;
+               callState = state;
+               String sender = getContactName(number);
+               speaker.speak("Dzwoni: : " + sender + "!");
+           }
+           else{
+               number = "";
+               isIncoming = false;
+               callState = state;
+           }
+       }
+    }
+
+
+
+    private MyPhoneStateListener phoneStateListener = null;
+
+
+    public ITelephony createITelephonyInstance(TelephonyManager tm){
+        Method metoda = null;
+        ITelephony ts = null;
+        try{
+            metoda = tm.getClass().getDeclaredMethod("getITelephony");
+            metoda.setAccessible(true);
+            ts = (ITelephony) metoda.invoke(tm);
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+        return ts;
+    }
+
 
     public void acceptCall() {
         Context context = this;
@@ -85,13 +337,324 @@ public class PythonActivity extends Activity implements Runnable {
         }
     }
 
+
+    static void checkForValidRequestCode(int requestCode) {
+        if ((requestCode & 0xffff0000) != 0) {
+            throw new IllegalArgumentException("Can only use lower 16 bits for requestCode");
+        }
+    }
+
+    public final void validateRequestPermissionsRequestCode(int requestCode) {
+        if (requestCode != -1) {
+            checkForValidRequestCode(requestCode);
+        }
+    }
+
+    public interface RequestPermissionsRequestCodeValidator {
+        public void validateRequestPermissionsRequestCode(int requestCode);
+    }
+
+    public static void requestPermissions2(Activity activity, String[] permissions,
+            int requestCode) {
+        if (activity instanceof RequestPermissionsRequestCodeValidator) {
+            ((RequestPermissionsRequestCodeValidator) activity)
+                    .validateRequestPermissionsRequestCode(requestCode);
+        }
+        activity.requestPermissions(permissions, requestCode);
+    }
+
+
+    public interface OnRequestPermissionsResultCallback {
+        public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                int[] grantResults);
+    }
+
+    public static void requestPermissions(final Activity activity,
+            final String[] permissions, final int requestCode) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            requestPermissions2(activity, permissions, requestCode);
+        } else if (activity instanceof OnRequestPermissionsResultCallback) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    final int[] grantResults = new int[permissions.length];
+
+                    PackageManager packageManager = activity.getPackageManager();
+                    String packageName = activity.getPackageName();
+
+                    final int permissionCount = permissions.length;
+                    for (int i = 0; i < permissionCount; i++) {
+                        grantResults[i] = packageManager.checkPermission(
+                                permissions[i], packageName);
+                    }
+
+                    ((OnRequestPermissionsResultCallback) activity).onRequestPermissionsResult(
+                            requestCode, permissions, grantResults);
+                }
+            });
+        }
+    }
+
+
+    public static int checkSelfPermission(Context context, String permission) {
+        if (permission == null) {
+            throw new IllegalArgumentException("permission is null");
+        }
+
+        return context.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
+    }
+
+
+    private void requestSmsPermission() {
+    String permission = Manifest.permission.SEND_SMS;
+    int grant = checkSelfPermission((Context)this, permission);
+    if ( grant != PackageManager.PERMISSION_GRANTED) {
+        String[] permission_list = new String[1];
+        permission_list[0] = permission;
+        requestPermissions((Activity)this, permission_list, 1);
+    }
+}
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+    public void runRecognizerSetup() {
+        // Recognizer initialization is a time-consuming and it involves IO,
+        // so we execute it in async task
+        new AsyncTask<Void, Void, Exception>() {
+            @Override
+            protected Exception doInBackground(Void... params) {
+                try {
+                    System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbb");
+                    //Assets assets = new Assets(PythonActivity.this);
+                    //File assetDir = assets.syncAssets();
+                    setupRecognizer();
+					System.out.println("test6");
+                } catch (IOException e) {
+                    System.out.println("dupa" + e);
+                    return e;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Exception result) {
+                if (result != null) {
+                    //((TextView) findViewById(R.id.caption_text))
+                            //.setText("Failed to init recognizer " + result);
+                    System.out.println("Failed to init recognizer" + result);
+                } else {
+                    switchSearch(KWS_SEARCH);
+
+                }
+            }
+        }.execute();
+            
+    }
+            
+    @Override
+    public void onPartialResult(Hypothesis hypothesis) {
+        if (hypothesis == null)
+            return;
+
+        String text = hypothesis.getHypstr();
+        /*if (text.equals(KEYPHRASE)){
+			lastState = KEYPHRASE;
+            switchSearch(DIGITS_SEARCH);
+		}*/
+        /*if (text.equals(INCOMING_CALL_SEARCH)){
+			lastState = text;
+            switchSearch(INCOMING_CALL_SEARCH);
+		}*/
+        //else if (text.equals(PHONE_SEARCH))
+        //    switchSearch(PHONE_SEARCH);
+       // else if (text.equals(FORECAST_SEARCH))
+        //    switchSearch(FORECAST_SEARCH);
+        //else
+        //    ;
+		System.out.println("test partial = " + text);
+            //((TextView) findViewById(R.id.result_text)).setText(text);
+        //makeText(getApplicationContext(), "partial = " + text, Toast.LENGTH_SHORT).show();
+    }
+            
+    @Override
+    public void onResult(Hypothesis hypothesis) {
+        //((TextView) findViewById(R.id.result_text)).setText("");
+        if (hypothesis != null) {
+            String text = hypothesis.getHypstr();
+            //makeText(getApplicationContext(), "result = " + text, Toast.LENGTH_SHORT).show();
+            //makeText(getApplicationContext(), "partial = " + text, Toast.LENGTH_SHORT).show();
+            //((TextView) findViewById(R.id.result_text)).setText(text);
+			lastWord = text;
+            System.out.println("test result = " + text);
+        }
+    }
+            
+    @Override
+    public void onBeginningOfSpeech() {
+    }
+
+    /**
+     * We stop recognizer here to get a final result
+     */
+    @Override
+    public void onEndOfSpeech() {
+        //if (!recognizer.getSearchName().equals(KWS_SEARCH))
+        System.out.println("nojuzniewiem");    
+		//switchSearch(KWS_SEARCH);
+		switchSearch(INCOMING_CALL_SEARCH);
+        //makeText(getApplicationContext(), "endSpeach", Toast.LENGTH_SHORT).show();
+		//recognizer.stop();
+        ;
+    }
+
+    public void switchSearch(String searchName) {
+        System.out.println("test6");
+		recognizer.stop();
+		System.out.println(searchName);
+		System.out.println("test7");
+
+        // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
+        if (searchName.equals(KWS_SEARCH)){
+			System.out.println("test8");
+            recognizer.startListening(searchName);
+			System.out.println("test9");
+		}
+        else{
+			System.out.println("test10");
+            recognizer.startListening(searchName, 10000);
+			System.out.println("test11");
+		}
+
+        //String caption = getResources().getString(captions.get(searchName));
+        //((TextView) findViewById(R.id.caption_text)).setText(caption);
+        //makeText(getApplicationContext(), "switch search = " + searchName, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupRecognizer() throws IOException {
+        // The recognizer can be configured to perform multiple searches
+        // of different kind and switch between them
+		System.out.println("test1");
+		///storage/sdcard0/Android/data/edu.cmu.sphinx.pocketsphinx/files/sync
+        recognizer = SpeechRecognizerSetup.defaultSetup()
+                .setAcousticModel(new File(mPath, "sphinx/en-us-adapt"))
+                .setDictionary(new File(mPath, "sphinx/7823.dic"))
+				.setKeywordThreshold(1e-20f)
+
+                //.setRawLogDir(assetsDir) // To disable logging of raw audio comment out this call (takes a lot of space on the device)
+
+                .getRecognizer();
+        recognizer.addListener(this);
+		System.out.println("test2");
+
+        /** In your application you might not need to add all those searches.
+         * They are added here for demonstration. You can leave just one.
+         */
+
+        // Create keyword-activation search.
+        recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
+		System.out.println("test3");
+
+        // Create grammar-based search for selection between demos
+        //File menuGrammar = new File(assetsDir, "menu.gram");
+        //recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
+
+        // Create grammar-based search for digit recognition
+        //File digitsGrammar = new File(mPath, "digits.gram");
+        System.out.println("test4");
+		//recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
+		System.out.println("test5");
+		
+		File incomingCallGrammar = new File(mPath, "sphinx/incomingcall.gram");
+		recognizer.addGrammarSearch(INCOMING_CALL_SEARCH, incomingCallGrammar);
+        
+        /*// Create language model search
+        File languageModel = new File(assetsDir, "weather.dmp");
+        recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
+
+        // Phonetic search
+        File phoneticModel = new File(assetsDir, "en-phone.dmp");
+        recognizer.addAllphoneSearch(PHONE_SEARCH, phoneticModel);*/
+    }
+
+    @Override
+    public void onError(Exception error) {
+        //((TextView) findViewById(R.id.caption_text)).setText(error.getMessage());
+        ;
+    }
+
+    @Override
+    public void onTimeout() {
+        ;
+    }
+            
+            
+            
+            
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        System.out.println("ccccccccccccccccc");
+
+
+
+
+
+        //setContentView(R.layout.main);
+
+        //toggle = (ToggleButton)findViewById(R.id.speechToggle);
+        //smsText = (TextView)findViewById(R.id.sms_text);
+        //smsSender = (TextView)findViewById(R.id.sms_sender);
+
+        /*toggleListener = new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton view, boolean isChecked) {
+                if(isChecked){
+                    speaker.allow(true);
+                    speaker.speak(getString(R.string.start_speaking));
+                }else{
+                    speaker.speak(getString(R.string.stop_speaking));
+                    speaker.allow(false);
+                }
+            }
+        };*/
+        //toggle.setOnCheckedChangeListener(toggleListener);
+
+        checkTTS();
+        initializeSMSReceiver();
+        registerSMSReceiver();
+
+
+
+
+
+
+
+
+
+
+
         Hardware.context = this;
         Action.context = this;
         this.mActivity = this;
+        phoneStateListener = new MyPhoneStateListener();
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        requestSmsPermission();
 
         getWindowManager().getDefaultDisplay().getMetrics(Hardware.metrics);
 
@@ -332,6 +895,12 @@ public class PythonActivity extends Activity implements Runnable {
     @Override
     public boolean onKeyDown(int keyCode, final KeyEvent event) {
         //Log.i("python", "key2 " + mView + " " + mView.mStarted);
+
+        //Wylaczenie obslugi przycisku ze sluchawek, np. pause/play muzyki
+        if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK)
+            {
+                return true;
+            }
         if (mView != null && mView.mStarted && SDLSurfaceView.nativeKey(keyCode, 1, event.getUnicodeChar())) {
             return true;
         } else {
@@ -350,6 +919,16 @@ public class PythonActivity extends Activity implements Runnable {
     }
 
     protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(smsReceiver);
+        speaker.destroy();
+
+        if (recognizer != null) {
+            recognizer.cancel();
+            recognizer.shutdown();
+        }
+        
+
         if (mPurchaseDatabase != null) {
             mPurchaseDatabase.close();
         }
@@ -444,8 +1023,23 @@ public class PythonActivity extends Activity implements Runnable {
         this.activityResultListeners.remove(listener);
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if(requestCode == CHECK_CODE){
+            if(resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS){
+                speaker = new Speaker(this);
+            }else {
+                Intent install = new Intent();
+                install.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(install);
+            }
+        }
+
+
+
+
+
         if ( this.activityResultListeners == null )
             return;
         if ( this.mView != null )
@@ -646,4 +1240,3 @@ public class PythonActivity extends Activity implements Runnable {
     }
 
 }
-
