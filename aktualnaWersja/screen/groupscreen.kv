@@ -19,7 +19,7 @@
                     id: mapView
                     lat: 45
                     lon: 11
-                    zoom: 18
+                    zoom: 16
                     node: []
                     MapMarker:
                         id: marker
@@ -58,6 +58,17 @@
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1, 0.8
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: 1, 0.95
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, 0.05
+                Label:
+                    color: 1,1,1,.7
+                    text: '© OpenStreetMap and contributors'
+                Label:
+
         BoxLayout:
             orientation: 'horizontal'
             size_hint: 1, 0.1

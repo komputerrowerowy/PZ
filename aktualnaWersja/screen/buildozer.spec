@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = BICOM
+title = BICOMww
 
 # (str) Package name
-package.name = BICOMProject
+package.name = BICOMProjectww
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test

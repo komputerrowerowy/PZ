@@ -659,22 +659,42 @@ class MusicPlayer(Screen):
         #tworzenie listy utworów
         for song in self.songs:
 
-            btn = Button(text=song.nazwa[:-4], on_press=playSong)
+            btn1 = Button(text=song.nazwa[:-4])
+            btn = Button(text=song.nazwa[:-4], on_release=playSong)
             #icon = Button(size_hint_x=None, size_hint_y=None, background_down="ico.png", background_normal="ico.png")
 
             # kolorowanie elementów listy
             if self.songs.index(song) % 2 == 0:
-                btn.color = (0.235, 0.529, 0.572, 1)
-                btn.background_normal = ''
+                btn.color = (0.235, 0.529, 0.572, 0)
+                #btn.background_normal = ''
+                btn.background_down = "resources/playy.png"
+                btn.background_normal = "resources/playy.png"
                 btn.background_color = (1, 1, 1, 1)
+                btn.size_hint_x = 0.18
+
+                btn1.color = (0.235, 0.529, 0.572, 1)
+                btn1.background_normal = ''
+                btn1.background_down =''
+                btn1.background_color = (1, 1, 1, 1)
+                btn1.size_hint_x = 0.82
             else:
-                btn.color = (0.235, 0.529, 0.572, 1)
-                btn.background_normal = ''
+                btn.color = (0.235, 0.529, 0.572, 0)
+                #btn.background_normal = ''
+                btn.background_down = "resources/play_music.png"
+                btn.background_normal = "resources/play_music.png"
                 btn.background_color = (.941, .960, .960, 1)
+                btn.size_hint_x = 0.18
+
+                btn1.color = (0.235, 0.529, 0.572, 1)
+                btn1.background_normal = ''
+                btn1.background_down = ''
+                btn1.background_color = (.941, .960, .960, 1)
+                btn1.size_hint_x = 0.82
 
             #dodanie elementów etykiet utworów
             #self.ids.scroll.add_widget(icon)
             self.ids.scroll.add_widget(btn)
+            self.ids.scroll.add_widget(btn1)
 
     #funkcja wywoływana w momencie gdy obecnie odtwarzany utwór się skończy
     def stop_event_flaga(self, song):
@@ -782,6 +802,10 @@ class GroupScreen(Screen):
             self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] + self.height
             self.ids.SearchInput.pos[0] = self.ids.SearchInput.pos[0] + self.height
             self.search_bar_shown = True
+        else:
+            self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] - self.height
+            self.ids.SearchInput.pos[0] = self.ids.SearchInput.pos[0] - self.height
+            self.search_bar_shown = False
 
     def hide_search_bar(self):
         print "test1"
@@ -1096,17 +1120,37 @@ class CallScreen(Screen):
 
             contacts.sort(key=lambda contact: contact.display_name)
             for contact in contacts:
-                btn = Button(text=contact.display_name, on_release=callPhone)
+                btn1 = Button(text=contact.display_name, on_release=callPhone)
+                btn = Button(text=contact.display_name)
                 # btn = Button(text=contact.display_name + "  " + contact.group_id + "  " +contact.number, on_release=callPhone)
                 if contacts.index(contact) % 2 == 0:
-                    btn.color = (0.235, 0.529, 0.572, 1)
-                    btn.background_normal = ''
-                    btn.background_color = (1, 1, 1, 1)
-                else:
-                    btn.color = (0.235, 0.529, 0.572, 1)
-                    btn.background_normal = ''
-                    btn.background_color = (.941, .960, .960, 1)
+                    btn1.color = (0.235, 0.529, 0.572, 0)
+                    #btn1.background_normal = ''
+                    btn1.background_down = "resources/ringg.png"
+                    btn1.background_normal = "resources/ringg.png"
+                    btn1.background_color = (1, 1, 1, 1)
+                    btn1.size_hint_x=0.18
 
+                    btn.color = (0.235, 0.529, 0.572, 1)
+                    btn.background_normal = ''
+                    btn1.background_down = ''
+                    btn.background_color = (1, 1, 1, 1)
+                    btn.size_hint_x = 0.82
+                else:
+                    btn1.color = (0.235, 0.529, 0.572, 0)
+                    #btn1.background_normal = ''
+                    btn1.background_down = "resources/icon_ring.png"
+                    btn1.background_normal = "resources/icon_ring.png"
+                    btn1.background_color = (.941, .960, .960, 1)
+                    btn1.size_hint_x = 0.18
+
+                    btn.color = (0.235, 0.529, 0.572, 1)
+                    btn.background_normal = ''
+                    btn1.background_down = ''
+                    btn.background_color = (.941, .960, .960, 1)
+                    btn.size_hint_x = 0.82
+
+                self.ids.scroll.add_widget(btn1)
                 self.ids.scroll.add_widget(btn)
                 # contactsGroups[contact.number] = contact.group_id
 
@@ -1696,6 +1740,7 @@ class MainApp(App):
         music.getpath()
         # modyfikacja 3
         gr = GroupScreen()
+
 
         Clock.schedule_interval(show_time.check2, 1)
         try:
