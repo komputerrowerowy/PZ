@@ -1133,7 +1133,7 @@ class CallScreen(Screen):
 
                     btn.color = (0.235, 0.529, 0.572, 1)
                     btn.background_normal = ''
-                    btn1.background_down = ''
+                    btn.background_down = ''
                     btn.background_color = (1, 1, 1, 1)
                     btn.size_hint_x = 0.82
                 else:
@@ -1146,7 +1146,7 @@ class CallScreen(Screen):
 
                     btn.color = (0.235, 0.529, 0.572, 1)
                     btn.background_normal = ''
-                    btn1.background_down = ''
+                    btn.background_down = ''
                     btn.background_color = (.941, .960, .960, 1)
                     btn.size_hint_x = 0.82
 
