@@ -57,6 +57,11 @@ from settingsjson import settings_json
 import ctypes
 from route import Router
 from loadOsm import LoadOsm
+import json
+
+#import pyowm
+
+#owm = pyowm.OWM('b26433c9a2c69c16c1d138cc5710fd57', language='pl')  #moj kod!!!
 
 # 3c8792 niebieski kolor xD
 print "wersja_aaa"
@@ -187,6 +192,8 @@ class ConfirmPopup(GridLayout):
 
     def on_answer(self, *args):
         pass
+
+
 
 class StartScreen(Screen):
     pass
@@ -791,6 +798,8 @@ class GroupScreen(Screen):
     def test111(self):
         print "test69"
 
+
+
         
         
         
@@ -1002,6 +1011,21 @@ class CallScreen(Screen):
     kontakty2 = []
     telefony2 = []
     lista = {}
+
+    #def weather(self):
+        #print 'makarena'
+        #obs = owm.weather_at_coords(52, 18)
+        #print obs.get_reception_time(timeformat='iso')
+        #w = obs.get_weather()
+        #print w
+        #print w.get_clouds()
+        #print w.get_rain()
+        #print w.get_wind()
+        #print w.get_humidity()
+        #print w.get_pressure()
+        #print w.get_temperature(unit='celsius')
+        #MainApp.get_running_app().root.carousel.slides[5].ids["temperature_now"].text = str(5)
+
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -1372,6 +1396,107 @@ class Speedometer(Screen):
 
         pass
 
+class Weather(Screen):
+    def ustal_pogode(self):
+        print 'makarena'
+        #obs = owm.weather_at_coords(52, 18)
+        #print obs.get_reception_time(timeformat='iso')
+        #w = obs.get_weather()
+        #print w
+        #print w.get_clouds()
+        #print w.get_rain()
+        #print w.get_wind()
+        #print w.get_humidity()
+        #print w.get_pressure()
+        #print w.get_temperature(unit='celsius')
+        search_template="http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&appid=b26433c9a2c69c16c1d138cc5710fd57"
+        search_url=search_template.format(53.01,18.53)
+        data=requests.get(search_url).json()
+
+        print "pobieranie prognozy"
+        search_template_forecast="http://api.openweathermap.org/data/2.5/forecast?lat={}&lon={}&appid=b26433c9a2c69c16c1d138cc5710fd57"
+        search_url_forecast=search_template_forecast.format(53.01,18.53)
+        data_forecast=requests.get(search_url_forecast).json()
+        print "koniec pobierania prognozy"
+
+        #{u'clouds': {u'all': 20}, u'name': u'Wielka Nieszawka', u'visibility': 10000,
+        #u'sys': {u'country': u'PL', u'sunset': 1492191908, u'message': 0.0067000000000000002, u'type': 1, u'id': 5345,
+        #         u'sunrise': 1492141678},
+        #u'weather': [{u'main': u'Clouds', u'id': 801, u'icon': u'02d', u'description': u'few clouds'}],
+        #u'coord': {u'lat': 53.009999999999998, u'lon': 18.530000000000001}, u'base': u'stations', u'dt': 1492178400,
+        #u'main': {u'pressure': 1010, u'temp_min': 283.14999999999998, u'temp_max': 283.14999999999998,
+        #         u'temp': 283.14999999999998, u'humidity': 66}, u'id': 3082287,
+        #u'wind': {u'speed': 6.2000000000000002, u'deg': 300}, u'cod': 200}
+
+
+        #{u'city': {u'country': u'PL', u'population': 1000, u'id': 3082287,
+        #           u'coord': {u'lat': 52.996200000000002, u'lon': 18.509699999999999}, u'name': u'Wielka Nieszawka'},
+        # u'message': 0.0020999999999999999, u'list': [
+        #    {u'clouds': {u'all': 80}, u'rain': {u'3h': 0.035000000000000003}, u'sys': {u'pod': u'n'},
+        #     u'dt_txt': u'2017-04-14 18:00:00',
+        #     u'weather': [{u'main': u'Rain', u'id': 500, u'icon': u'10n', u'description': u'light rain'}],
+        #     u'dt': 1492192800,
+        #     u'main': {u'temp_kf': 2.5499999999999998, u'temp': 282.38999999999999, u'grnd_level': 1014.83,
+        #               u'temp_max': 282.38999999999999, u'sea_level': 1025.3599999999999, u'humidity': 87,
+        #               u'pressure': 1014.83, u'temp_min': 279.84500000000003},
+        #     u'wind': {u'speed': 4.5599999999999996, u'deg': 278.00099999999998}},
+        #    {u'clouds': {u'all': 88}, u'rain': {u'3h': 0.30499999999999999}, u'sys': {u'pod': u'n'},
+        #     u'dt_txt': u'2017-04-14 21:00:00',
+        #     u'weather': [{u'main': u'Rain', u'id': 500, u'icon': u'10n', u'description': u'light rain'}],
+        #     u'dt': 1492203600, u'main': {u'temp_kf': 1.7, u'temp': 280.38, u'grnd_level': 1014.71, u'temp_max': 280.38,
+        #                                  u'sea_level': 1025.23, u'humidity': 91, u'pressure': 1014.71,
+        #                                  u'temp_min': 278.685},
+        #     u'wind': {u'speed': 3.9700000000000002, u'deg': 244.506}},
+        #    {u'clouds': {u'all': 88}, u'rain': {u'3h': 0.98999999999999999}, u'sys': {u'pod': u'n'},
+        #     u'dt_txt': u'2017-04-15 00:00:00',
+        #     u'weather': [{u'main': u'Rain', u'id': 500, u'icon': u'10n', u'description': u'light rain'}],
+        #     u'dt': 1492214400,
+        #     u'main': {u'temp_kf': 0.84999999999999998, u'temp': 279.75999999999999, u'grnd_level': 1013.62,
+        #               u'temp_max': 279.75999999999999, u'sea_level': 1024.1300000000001, u'humidity': 95,
+        #               u'pressure': 1013.62, u'temp_min': 278.90899999999999},
+        #     u'wind': {u'speed': 4.4900000000000002, u'deg': 250.50299999999999}},
+        #    {u'clouds': {u'all': 92}, u'rain': {u'3h': 0.82499999999999996}, u'sys': {u'pod': u'n'},
+        #     u'dt_txt': u'2017-04-15 03:00:00',
+        #     u'weather': [{u'main': u'Rain', u'id': 500, u'icon': u'10n', u'description': u'light rain'}],
+        #     u'dt': 1492225200, u'main': {u'temp_kf': 0, u'temp': 279.18700000000001, u'grnd_level': 1012.55,
+        #                                  u'temp_max': 279.18700000000001, u'sea_level': 1023.12, u'humidity': 96,
+        #                                  u'pressure': 1012.55, u'temp_min': 279.18700000000001},
+        #     u'wind': {u'speed': 3.5899999999999999, u'deg': 245.00200000000001}},
+        #    {u'clouds': {u'all': 92}, u'rain': {u'3h': 0.95499999999999996}, u'sys': {u'pod': u'd'},
+        #     u'dt_txt': u'2017-04-15 06:00:00',
+        #     u'weather': [{u'main': u'Rain', u'id': 500, u'icon': u'10d', u'description': u'light rain'}],
+        #     u'dt': 1492236000, u'main': {u'temp_kf': 0, u'temp': 279.71100000000001, u'grnd_level': 1011.98,
+        #                                  u'temp_max': 279.71100000000001, u'sea_level': 1022.5599999999999,
+        #                                  u'humidity': 99, u'pressure': 1011.98, u'temp_min': 279.71100000000001},
+        #     u'wind': {u'speed': 4.21, u'deg': 256.00299999999999}},
+        #    {u'clouds': {u'all': 92}, u'rain': {u'3h': 0.35999999999999999}, u'sys': {u'pod': u'd'},
+        #     u'dt_txt': u'2017-04-15 09:00:00',
+        #     u'weather': [{u'main': u'Rain', u'id': 500, u'icon': u'10d', u'description': u'light rain'}],
+        #     u'dt': 1492246800, u'main': {u'temp_kf': 0, u'temp': 280.48399999999998, u'grnd_level': 1011.03,
+        #                                  u'temp_max': 280.48399999999998, u'sea_level': 1021.46, u'humidity': 100,
+        #                                  u'pressure': 1011.03, u'temp_min': 280.48399999999998},
+        #     u'wind': {u'speed': 4.0599999999999996, u'deg': 244.00299999999999}},
+        #    {u'clouds': {u'all': 92}, u'rain': {u'3h': 0.40999999999999998}, u'sys': {u'pod': u'd'},
+        #     u'dt_txt': u'2017-04-15 12:00:00',
+        #     u'weather': [{u'main': u'Rain', u'id': 500, u'icon': u'10d', u'description': u'light rain'}],
+        #     u'dt': 1492257600,
+        #     u'main': {u'temp_kf': 0, u'temp': 281.892, u'grnd_level': 1008.6799999999999, u'temp_max': 281.892,
+        #               u'sea_level': 1019.15, u'humidity': 100, u'pressure': 1008.6799999999999, u'temp_min': 281.892},
+        #     u'wind': {u'speed': 5.0700000000000003, u'deg': 222.50200000000001}},
+        #    {u'clouds': {u'all': 92}, u'rain': {u'3h': 1.5700000000000001}, u'sys': {u'pod': u'd'},
+        #     u'dt_txt': u'2017-04-15 15:00:00',
+        #     u'weather': [{u'main': u'Rain', u'id': 500, u'icon': u'10d', u'description': u'light rain'}],
+        #     u'dt': 1492268400, u'main': {u'
+
+        print 'zxzxzx'
+        print data_forecast['list'][1]
+        temp=data['main']['temp']-273.15
+        temp_forecast=data_forecast['list'][1]['main']['temp']-273.15
+        print 'koniec zxzxzx'
+        #location=(data['sys']['country'],data['name'])
+        MainApp.get_running_app().root.carousel.slides[5].ids["temperature_now"].text = str(temp)+str('°C')
+        MainApp.get_running_app().root.carousel.slides[5].ids["temperature_forecast"].text = str(temp_forecast) + str('°C')
+
 class ScreenSettings(Screen):
     def build(self):
         pass
@@ -1718,6 +1843,7 @@ class MainApp(App):
     Builder.load_file("musicplayer.kv")
     Builder.load_file("grupy.kv")
     Builder.load_file("speedometer.kv")
+    Builder.load_file("weather.kv")
     znacznik = 0
     route_nodes = BooleanProperty(False)
     prev_time = datetime.datetime.now().time()
