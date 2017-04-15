@@ -2,79 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="00913aa2-7bdd-4ff5-8e46-049e0ad2dca4" name="Default" comment="Dodanie rotacji mapy, skrócenie czasu w route.py">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17382_20979.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17382_20980.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17382_20981.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17382_20982.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17383_20979.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17383_20980.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17383_20981.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17383_20982.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17384_20979.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17384_20980.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17384_20981.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17384_20982.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17385_20979.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17385_20980.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17385_20981.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17385_20982.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17386_20979.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17386_20980.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17386_20981.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17386_20982.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17387_20979.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17387_20980.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17387_20981.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_17387_20982.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18074_22094.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18074_22095.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18074_22096.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18074_22097.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18075_22094.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18075_22095.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18075_22096.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18075_22097.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18076_22094.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18076_22095.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18076_22096.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18076_22097.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18077_22094.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18077_22095.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18077_22096.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18077_22097.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18078_22094.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18078_22095.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18078_22096.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.buildozer/android/app/cache/26a7511794_15_18078_22097.png" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/android/platform/python-for-android" afterPath="$PROJECT_DIR$/.buildozer/android/platform/python-for-android" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/local/bin" afterPath="$PROJECT_DIR$/.buildozer/venv/local/bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/local/include" afterPath="$PROJECT_DIR$/.buildozer/venv/local/include" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/local/lib" afterPath="$PROJECT_DIR$/.buildozer/venv/local/lib" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/android/app/_applibs/futures-3.0.5.dist-info/RECORD" afterPath="$PROJECT_DIR$/.buildozer/android/app/_applibs/futures-3.0.5.dist-info/RECORD" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/android/app/_applibs/requests-2.13.0.dist-info/RECORD" afterPath="$PROJECT_DIR$/.buildozer/android/app/_applibs/requests-2.13.0.dist-info/RECORD" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/android/app/main.py" afterPath="$PROJECT_DIR$/.buildozer/android/app/main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/android/app/screensettings.kv" afterPath="$PROJECT_DIR$/.buildozer/android/app/screensettings.kv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/applibs/futures-3.0.5.dist-info/RECORD" afterPath="$PROJECT_DIR$/.buildozer/applibs/futures-3.0.5.dist-info/RECORD" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/applibs/requests-2.13.0.dist-info/RECORD" afterPath="$PROJECT_DIR$/.buildozer/applibs/requests-2.13.0.dist-info/RECORD" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/state.db" afterPath="$PROJECT_DIR$/.buildozer/state.db" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/activate" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/activate" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/activate.csh" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/activate.csh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/activate.fish" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/activate.fish" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/easy_install" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/easy_install" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/easy_install-2.7" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/easy_install-2.7" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/pip" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/pip" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/pip2" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/pip2" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/pip2.7" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/pip2.7" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/python-config" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/python-config" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/bin/wheel" afterPath="$PROJECT_DIR$/.buildozer/venv/bin/wheel" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/lib/python2.7/site-packages/pip-9.0.1.dist-info/RECORD" afterPath="$PROJECT_DIR$/.buildozer/venv/lib/python2.7/site-packages/pip-9.0.1.dist-info/RECORD" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/lib/python2.7/site-packages/wheel-0.29.0.dist-info/RECORD" afterPath="$PROJECT_DIR$/.buildozer/venv/lib/python2.7/site-packages/wheel-0.29.0.dist-info/RECORD" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.buildozer/venv/pip-selfcheck.json" afterPath="$PROJECT_DIR$/.buildozer/venv/pip-selfcheck.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../aktualnaWersja/screen/bin/BICOM-0.1-debug.apk" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.kv" afterPath="$PROJECT_DIR$/main.kv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/screensettings.kv" afterPath="$PROJECT_DIR$/screensettings.kv" />
     </list>
     <ignored path="$PROJECT_DIR$/.buildozer/" />
     <ignored path="$PROJECT_DIR$/cache/" />
@@ -98,60 +28,8 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="25" column="21" lean-forward="true" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="groupscreen.kv" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/groupscreen.kv">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1062">
-              <caret line="59" column="27" lean-forward="true" selection-start-line="59" selection-start-column="27" selection-end-line="59" selection-end-column="27" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="screensettings.kv" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/screensettings.kv">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
-              <caret line="33" column="31" lean-forward="true" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.kv" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.kv">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="24" column="20" lean-forward="true" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../plyer-master/examples/call/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="50" column="35" lean-forward="true" selection-start-line="50" selection-start-column="35" selection-end-line="50" selection-end-column="35" />
-              <folding>
-                <element signature="e#0#24#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="callscreen.kv" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/callscreen.kv">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="15" column="29" lean-forward="true" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+            <state relative-caret-position="1470">
+              <caret line="87" column="43" selection-start-line="87" selection-start-column="41" selection-end-line="87" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -214,10 +92,20 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="267" />
-    <option name="y" value="64" />
+    <option name="x" value="472" />
+    <option name="y" value="357" />
     <option name="width" value="1038" />
     <option name="height" value="704" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -241,6 +129,12 @@
               <option name="myItemId" value="screen" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="screen" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="screen" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -248,12 +142,12 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../plyer-master/examples/call/main.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../aktualnaWersja/screen" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
   </component>
   <component name="RunManager" selected="Python.main">
@@ -318,6 +212,19 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="screen" />
+      <method />
+    </configuration>
+    <configuration default="true" type="ccruntests" factoryName="Run Study Tests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="screen" />
+      <option name="studyTest" value="" />
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Attests">
@@ -459,26 +366,26 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="267" y="64" width="1038" height="704" extended-state="0" />
-    <editor active="false" />
+    <frame x="472" y="357" width="1038" height="704" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12235068" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12216749" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296355" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32985657" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -503,10 +410,34 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/screensettings.kv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="693">
+          <caret line="33" column="31" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.kv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="24" column="20" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/callscreen.kv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1080">
-          <caret line="88" column="8" lean-forward="false" selection-start-line="88" selection-start-column="8" selection-end-line="88" selection-end-column="8" />
+          <caret line="88" column="8" selection-start-line="88" selection-start-column="8" selection-end-line="88" selection-end-column="8" />
           <folding />
         </state>
       </provider>
@@ -514,15 +445,14 @@
     <entry file="file://$PROJECT_DIR$/buildozer.spec">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/groupscreen.kv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="720">
-          <caret line="40" column="7" lean-forward="false" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
+          <caret line="40" column="7" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
           <folding />
         </state>
       </provider>
@@ -530,15 +460,14 @@
     <entry file="file://$PROJECT_DIR$/route.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="918">
-          <caret line="53" column="23" lean-forward="false" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
-          <folding />
+          <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -546,7 +475,7 @@
     <entry file="file://$PROJECT_DIR$/groupscreen.kv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="840">
-          <caret line="40" column="7" lean-forward="false" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
+          <caret line="40" column="7" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
           <folding />
         </state>
       </provider>
@@ -554,15 +483,14 @@
     <entry file="file://$PROJECT_DIR$/route.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1071">
-          <caret line="53" column="23" lean-forward="false" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
-          <folding />
+          <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="147">
-          <caret line="7" column="15" lean-forward="false" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
+          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
           <folding />
         </state>
       </provider>
@@ -570,7 +498,7 @@
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -578,7 +506,7 @@
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -586,7 +514,7 @@
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -594,28 +522,28 @@
     <entry file="file://$PROJECT_DIR$/testy.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="42">
-          <caret line="2" column="7" lean-forward="false" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+          <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
-          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/pyroutelib2/routeAsGpx.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1386">
-          <caret line="67" column="16" lean-forward="false" selection-start-line="67" selection-start-column="16" selection-end-line="67" selection-end-column="16" />
+          <caret line="67" column="16" selection-start-line="67" selection-start-column="16" selection-end-line="67" selection-end-column="16" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1908">
-          <caret line="123" column="24" lean-forward="false" selection-start-line="123" selection-start-column="24" selection-end-line="123" selection-end-column="24" />
+          <caret line="123" column="24" selection-start-line="123" selection-start-column="24" selection-end-line="123" selection-end-column="24" />
           <folding />
         </state>
       </provider>
@@ -623,21 +551,21 @@
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
-          <caret line="14" column="29" lean-forward="false" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
+          <caret line="14" column="29" selection-start-line="14" selection-start-column="29" selection-end-line="14" selection-end-column="29" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/pyroutelib2/routeAsGpx.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1368">
-          <caret line="77" column="14" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="87" selection-end-column="76" />
+          <caret line="77" column="14" selection-start-line="24" selection-start-column="0" selection-end-line="87" selection-end-column="76" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1908">
-          <caret line="106" column="0" lean-forward="false" selection-start-line="106" selection-start-column="0" selection-end-line="119" selection-end-column="40" />
+          <caret line="106" column="0" selection-start-line="106" selection-start-column="0" selection-end-line="119" selection-end-column="40" />
           <folding />
         </state>
       </provider>
@@ -645,21 +573,21 @@
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
-          <caret line="17" column="29" lean-forward="false" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
+          <caret line="17" column="29" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/pyroutelib2/routeAsGpx.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1368">
-          <caret line="77" column="14" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="87" selection-end-column="76" />
+          <caret line="77" column="14" selection-start-line="24" selection-start-column="0" selection-end-line="87" selection-end-column="76" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -667,14 +595,14 @@
     <entry file="file://$PROJECT_DIR$/groupscreen.kv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
-          <caret line="17" column="24" lean-forward="false" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
+          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -682,14 +610,14 @@
     <entry file="file://$PROJECT_DIR$/groupscreen.kv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
-          <caret line="17" column="24" lean-forward="false" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
+          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -697,14 +625,14 @@
     <entry file="file://$PROJECT_DIR$/groupscreen.kv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
-          <caret line="17" column="24" lean-forward="false" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
+          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
-          <caret line="7" column="42" lean-forward="false" selection-start-line="7" selection-start-column="42" selection-end-line="7" selection-end-column="42" />
+          <caret line="7" column="42" selection-start-line="7" selection-start-column="42" selection-end-line="7" selection-end-column="42" />
           <folding />
         </state>
       </provider>
@@ -712,7 +640,7 @@
     <entry file="file://$PROJECT_DIR$/groupscreen.kv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -722,84 +650,87 @@
     <entry file="file://$PROJECT_DIR$/testy.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="42">
-          <caret line="2" column="7" lean-forward="false" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+          <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
-          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/pyroutelib2/routeAsGpx.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3">
-          <caret line="48" column="14" lean-forward="false" selection-start-line="48" selection-start-column="14" selection-end-line="48" selection-end-column="14" />
+          <caret line="48" column="14" selection-start-line="48" selection-start-column="14" selection-end-line="48" selection-end-column="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routeAsCSV.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-565">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routeAsGpx.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-486">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/map">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1192970">
-          <caret line="37" column="9" lean-forward="true" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
-          <folding />
+          <caret line="37" column="9" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/buildozer.spec">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tiledata.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="602">
-          <caret line="57" column="28" lean-forward="true" selection-start-line="57" selection-start-column="28" selection-end-line="57" selection-end-column="28" />
-          <folding />
+          <caret line="57" column="28" selection-start-line="57" selection-start-column="28" selection-end-line="57" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/loadOsm.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="179">
-          <caret line="60" column="45" lean-forward="true" selection-start-line="60" selection-start-column="45" selection-end-line="60" selection-end-column="45" />
-          <folding />
+          <caret line="60" column="45" selection-start-line="60" selection-start-column="45" selection-end-line="60" selection-end-column="45" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/route.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="563">
-          <caret line="53" column="23" lean-forward="false" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
+          <caret line="53" column="23" selection-start-line="53" selection-start-column="23" selection-end-line="53" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../plyer-master/examples/call/callinterface" />
+    <entry file="file://$PROJECT_DIR$/../../../plyer-master/examples/call/main.py" />
+    <entry file="file://$PROJECT_DIR$/groupscreen.kv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="59" column="27" selection-start-line="59" selection-start-column="27" selection-end-line="59" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../plyer-master/examples/call/callinterface">
+    <entry file="file://$PROJECT_DIR$/screensettings.kv">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="560">
+          <caret line="33" column="31" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
           <folding />
         </state>
       </provider>
@@ -807,23 +738,7 @@
     <entry file="file://$PROJECT_DIR$/main.kv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="432">
-          <caret line="24" column="20" lean-forward="true" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/screensettings.kv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="33" column="31" lean-forward="true" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groupscreen.kv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1062">
-          <caret line="59" column="27" lean-forward="true" selection-start-line="59" selection-start-column="27" selection-end-line="59" selection-end-column="27" />
+          <caret line="24" column="20" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
           <folding />
         </state>
       </provider>
@@ -831,25 +746,15 @@
     <entry file="file://$PROJECT_DIR$/callscreen.kv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
-          <caret line="15" column="29" lean-forward="true" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+          <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../plyer-master/examples/call/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="50" column="35" lean-forward="true" selection-start-line="50" selection-start-column="35" selection-end-line="50" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="25" column="21" lean-forward="true" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+        <state relative-caret-position="1470">
+          <caret line="87" column="43" selection-start-line="87" selection-start-column="41" selection-end-line="87" selection-end-column="43" />
           <folding />
         </state>
       </provider>

@@ -9,7 +9,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
-from math import radians
+from math import radians, sin, cos, acos, degrees, pi
 
 import requests
 from kivy.garden.mapview import MapLayer
@@ -790,6 +790,8 @@ class GroupScreen(Screen):
     route_calculated = False
     licznikTemp = False
     punkty = []
+    actual_point = 0
+    actual_instruction = 0
     
     '''def __init__(self, **kwargs):
         super(GroupScreen, self).__init__()
@@ -998,6 +1000,94 @@ class GroupScreen(Screen):
                 layer.routeToGpx(lat1, lon1, lat2, lon2, "cycle", "Route", "track")
                 break
 
+    def calculate_route_nodes_run(self):
+        #self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
+        try:
+            GraphHopperAndroid.calcPath(float(MainApp.lat), float(MainApp.lon), float(self.latGPS), float(self.lonGPS))
+            self.licznikTemp = True
+
+            self.punkty = GraphHopperAndroid.resp.getPoints()
+            self.instructions = GraphHopperAndroid.resp.getInstructions()
+            self.route_calculated = True
+            print self.punkty.toString()
+            self.czy_wyznacozno_trase = True
+            self.center()
+            self.ids.img_center.source = "resources/center_red.png"
+                #self.redraw_route()
+            print "respInMain"
+            MainApp.route_nodes = True
+            self.actual_point = 0
+            self.actual_instruction = 0
+            self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
+        except:
+            pass
+
+    def calculate_route_nodes(self, lat1, lon1, lat2, lon2):
+        MainApp.cos = -1
+        self.czy_wyznacozno_trase = True
+        self.center()
+        self.ids.img_center.source = "resources/center_red.png"
+
+        '''potrzebne do testowania na komputerze'''
+        MainApp.on_location(MainApp.get_running_app())
+
+        for layer in MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]._layers:
+            if layer.id == 'line_map_layer':
+                layer.routeToGpx(lat1, lon1, lat2, lon2, "cycle", "Route", "track")
+                break
+
+    def calculate_distance(self, lat1, lat2, lon1, lon2):
+        ap = 90.0 - lat1
+        bp = 90.0 - lat2
+        '''cosap = cos(ap * pi / 180)
+        cosbp = cos(bp * pi / 180)
+        sinap = sin(ap * pi / 180)
+        sinbp = sin(bp * pi / 180)
+
+        print lat1
+        print lat2
+        print ap
+        print bp
+        print cosap
+        print cosbp
+        print sinap
+        print sinbp
+        print degrees(cos(1.616667))
+        print acos((cosap * cosbp + sinap * sinbp * cos(1.616667 * pi / 180)) * pi / 180)
+
+        distance = acos((cosap * cosbp + sinap * sinbp * cos(1.616667 * pi / 180)) * pi / 180) * 111.1'''
+
+        distance = sqrt(pow((lat2 - lat1), 2) + cos(lat1 * pi / 180) * pow((lon2 - lon1), 2)) * 40075.704 / 360
+
+        return distance
+
+    def of_the_track(self, x1, y1, x2, y2, x, y):
+        print "ulamek"
+        print x1
+        print y1
+        print x2
+        print y2
+        print x
+        print y
+        a = (y2 - y1)
+        b = (x2 - x1)
+        ab = a / b
+        abx = ab * x
+        c = x2 * y1 - x1 * y2
+        d = x2 - x1
+        cd = c / d
+
+        nominator = abs(abx - y + cd)
+        dominator = sqrt(pow(((y2 - y1) / x2 - x1), 2) + 1)
+
+        z = nominator / dominator
+        print z
+        print "z"
+        if z >= .6e-05:
+            return True
+        else:
+            return False
+                
     def redraw_route(self):
         for layer in self.ids["mapView"]._layers:
             if layer.id == 'line_map_layer':
@@ -1887,7 +1977,7 @@ class MainApp(App):
         gps.stop()
 
     @mainthread
-    def on_location(self, **kwargs):
+    def on_location(self, speed, **kwargs):
         duration = (
             datetime.datetime.combine(datetime.date.today(),
                                       datetime.datetime.now().time()) - datetime.datetime.combine(
@@ -1914,7 +2004,7 @@ class MainApp(App):
                         break
             #MainApp.znacznik = 1'''
 
-            speed = Speed(float(kwargs['speed']))
+            speed = Speed(float(speed))
             if speed > self.highest_speed_float:
                 self.highest_speed_float = speed
             self.gps_speed = speed
@@ -1950,6 +2040,70 @@ class MainApp(App):
 
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
+
+            punkty = MainApp.get_running_app().root.carousel.slides[0].punkty
+            #punkty.setNode(0, float(MainApp.lat), float(MainApp.lon))
+
+            group_screen = MainApp.get_running_app().root.carousel.slides[0]
+
+            #obliczenie odleglosci miedzy aktualnym punktem a najblizszym punktem w nawigacji do ktorego zmierzamy
+            if group_screen.route_calculated == True:
+                x1 = punkty.getLat(group_screen.actual_point)
+                y1 = punkty.getLon(group_screen.actual_point)
+                x2 = punkty.getLat(group_screen.actual_point + 1)
+                y2 = punkty.getLon(group_screen.actual_point + 1)
+                x = MainApp.lat
+                y = MainApp.lon
+
+                if group_screen.of_the_track(x1, y1, x2, y2, x, y):
+                    group_screen.calculate_route_nodes_run()
+
+                distance1 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point)))
+                distance2 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point + 1)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point + 1)))
+
+                print "dystans"
+                print distance1
+                print distance2
+
+                #sprawdzenie czy nie ominelismy najblizszego punktu
+
+                instruction_points = GraphHopperAndroid.getInstructionPoints(group_screen.actual_instruction)
+
+                if distance2 > distance1:
+                    if distance1 < 0.01:
+                        #sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
+                        if instruction_points.getLatitude(0) == punkty.getLat(group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(group_screen.actual_point):
+                            group_screen.actual_instruction += 1
+                        group_screen.actual_point += 1
+
+                        print "instrukcje"
+                        print instruction_points.getLatitude(0)
+                        print instruction_points.getLongitude(0)
+
+                        if group_screen.actual_point == (punkty.getSize() - 1):
+                            group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
+
+
+                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lat = float(group_screen.punkty.getLat(group_screen.actual_point))
+                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lon = float(group_screen.punkty.getLon(group_screen.actual_point))
+
+                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lat = float(group_screen.punkty.getLat(group_screen.actual_point + 1))
+                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lon = float(group_screen.punkty.getLon(group_screen.actual_point + 1))
+
+
+                else:
+                    #sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
+                    if instruction_points.getLatitude(0) == punkty.getLat(group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(group_screen.actual_point):
+                        group_screen.actual_instruction += 1
+                    group_screen.actual_point += 1
+                    print "instrukcje"
+                    print instruction_points.getLatitude(0)
+                    print instruction_points.getLongitude(0)
+                    if group_screen.actual_point == (punkty.getSize() - 1):
+                        group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
+
+                group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(group_screen.actual_instruction)
+
             # if flaga_gps == 1:
             #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = lat_2
             #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = lat_2

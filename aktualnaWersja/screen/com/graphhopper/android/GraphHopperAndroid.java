@@ -36,6 +36,11 @@ import com.graphhopper.util.Parameters.Routing;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.ProgressListener;
 import com.graphhopper.util.StopWatch;
+import com.graphhopper.util.TranslationMap;
+import com.graphhopper.util.Translation;
+import com.graphhopper.util.InstructionList;
+import com.graphhopper.util.Instruction;
+import com.graphhopper.util.PointList;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -44,6 +49,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Locale;
 
 public class GraphHopperAndroid{
 	
@@ -63,6 +69,10 @@ public class GraphHopperAndroid{
     private String downloadURL;
     private File mapsFolder;
 	public PathWrapper resp;
+	private Translation tr;
+	private final TranslationMap trMap = new TranslationMap().doImport();
+	private InstructionList instructionList;
+	private Locale locale = new Locale("pl");
     //private ItemizedLayer<MarkerItem> itemizedLayer;
 	//private PathLayer pathLayer;
 	
@@ -148,10 +158,13 @@ public class GraphHopperAndroid{
 			GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).
 					setAlgorithm(Algorithms.DIJKSTRA_BI);
 			req.getHints().
-					put(Routing.INSTRUCTIONS, "false");
+					put(Routing.INSTRUCTIONS, "true");
 			GHResponse resp = hopper.route(req);
 			time = sw.stop().getSeconds();
 			PathWrapper resp1 = resp.getBest();
+			//this.locale = req.getLocale();
+			System.out.println("jezyk" + locale.toString());
+			this.tr = trMap.getWithFallBack(locale);
 
 			if (!resp1.hasErrors()) {
 				System.out.println("from:" + fromLat + "," + fromLon + " to:" + toLat + ","
@@ -170,8 +183,18 @@ public class GraphHopperAndroid{
 	
 	private void calcPathResp(PathWrapper resp){
 		this.resp = resp;
+		this.instructionList = resp.getInstructions();
 	}
 	
+	public String getTurnDescription(int index){
+		Instruction instruction = this.instructionList.get(index);
+		String turnDescription = instruction.getTurnDescription(this.tr);
+		return turnDescription;
+	}
 	
-	
+	public PointList getInstructionPoints(int index){
+		Instruction instruction = this.instructionList.get(index);
+		PointList points = instruction.getPoints();
+		return points;
+	}
 }

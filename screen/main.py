@@ -14,7 +14,7 @@ from kivy.garden.mapview import MapLayer
 from kivy.graphics.context_instructions import Translate, Scale
 from kivy.graphics.transformation import Matrix
 from kivy.properties import StringProperty, BooleanProperty
-from plyer import call
+#from plyer import call
 from plyer import gps
 
 
