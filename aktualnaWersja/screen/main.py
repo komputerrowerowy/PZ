@@ -1752,12 +1752,13 @@ class LineMapLayer(MapLayer):
             print float(group_screen.punkty.getLat(10))
             punkty_size = group_screen.punkty.getSize()
             print punkty_size
-            for j in xrange(punkty_size - 1):
+            point_list.extend(mapview.get_window_xy_from(float(MainApp.lat), float(MainApp.lon), mapview.zoom))
+            for j in xrange(group_screen.actual_point, punkty_size - 1):
                 lat = float(group_screen.punkty.getLat(j))
                 lon = float(group_screen.punkty.getLon(j))
-                print lat
+                #print lat
                 lat1 = round(group_screen.punkty.getLat(j), 4)
-                print lat1
+                #print lat1
                 point_list.extend(mapview.get_window_xy_from(lat, lon, mapview.zoom))
 
             print "dupa1"
