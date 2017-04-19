@@ -1019,6 +1019,8 @@ class GroupScreen(Screen):
             self.actual_point = 0
             self.actual_instruction = 0
             self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
+            wskazuwka = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
+            activity.speaker.speak(wskazuwka)
         except:
             pass
 
