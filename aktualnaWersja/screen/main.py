@@ -9,6 +9,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
+from kivy.uix.image import Image
 from math import radians, sin, cos, acos, degrees, pi
 
 import requests
@@ -1582,12 +1583,86 @@ class Weather(Screen):
 
         print 'zxzxzx'
         print data_forecast['list'][1]
-        temp=data['main']['temp']-273.15
+        temp = data_forecast['list'][0]['main']['temp'] - 273.15
         temp_forecast=data_forecast['list'][1]['main']['temp']-273.15
+        temp=round(temp,2)
+        temp_forecast=round(temp_forecast,2)
+
+        try:
+            rain=data_forecast['list'][0]['rain']['3h']
+            rain=round(rain,2)
+        except:
+            rain=0
+        try:
+            rain_forecast = data_forecast['list'][1]['rain']['3h']
+            rain_forecast = round(rain_forecast, 2)
+        except:
+            rain_forecast=0
+
+        humidity = data_forecast['list'][0]['main']['humidity']
+        humidity_forecast = data_forecast['list'][1]['main']['humidity']
+
+        #place=data_forecast['city']['coord']['name']
+        #name=data_forecast['list'][0]['weather']['main']
+
+        wind = data_forecast['list'][0]['wind']['speed']
+        wind=round(wind,2)
+        wind_forecast = data_forecast['list'][1]['wind']['speed']
+        wind_forecast=round(wind_forecast,2)
+
+        kier=data_forecast['list'][0]['wind']['speed']
+        if kier<=22.5 or kier>337.5:
+            kierunek='N'
+        if kier <= 67.5 and kier > 22.5:
+            kierunek = 'NE'
+        if kier <= 112.5 and kier > 67.5:
+            kierunek = 'E'
+        if kier <= 157.5 and kier > 112.5:
+            kierunek = 'SE'
+        if kier <= 202.5 and kier > 157.5:
+            kierunek = 'S'
+        if kier <= 247.5 and kier > 202.5:
+            kierunek = 'SW'
+        if kier <= 292.5 and kier > 247.5:
+            kierunek = 'W'
+        if kier <= 337.5 and kier > 292.5:
+            kierunek = 'NW'
+
+        kier_forecast=data_forecast['list'][1]['wind']['speed']
+        if kier_forecast<22.5 or kier_forecast>=337.5:
+            kierunek_forecast='N'
+        if kier_forecast < 67.5 and kier_forecast >= 22.5:
+            kierunek_forecast = 'NE'
+        if kier_forecast < 112.5 and kier_forecast >= 67.5:
+            kierunek_forecast = 'E'
+        if kier_forecast < 157.5 and kier_forecast >= 112.5:
+            kierunek_forecast = 'SE'
+        if kier_forecast < 202.5 and kier_forecast >= 157.5:
+            kierunek_forecast = 'S'
+        if kier_forecast < 247.5 and kier_forecast > 202.5:
+            kierunek_forecast = 'SW'
+        if kier_forecast < 292.5 and kier_forecast >= 247.5:
+            kierunek_forecast = 'W'
+        if kier_forecast < 337.5 and kier_forecast >= 292.5:
+            kierunek_forecast = 'NW'
+
         print 'koniec zxzxzx'
         #location=(data['sys']['country'],data['name'])
-        MainApp.get_running_app().root.carousel.slides[5].ids["temperature_now"].text = str(temp)+str('°C')
-        MainApp.get_running_app().root.carousel.slides[5].ids["temperature_forecast"].text = str(temp_forecast) + str('°C')
+        MainApp.get_running_app().root.carousel.slides[5].ids["label_temperatura"].text = str(temp)+str('°C')
+        MainApp.get_running_app().root.carousel.slides[5].ids["label_opady"].text = str(rain) + str(' mm')
+        MainApp.get_running_app().root.carousel.slides[5].ids["label_wilgotnosc"].text = str(humidity) + str('%')
+        MainApp.get_running_app().root.carousel.slides[5].ids["label_wiatr"].text = str(wind) + str('m/s ') + str(kierunek)
+        #MainApp.get_running_app().root.carousel.slides[5].ids["label_miejscowosc"].text = str(place)
+        #MainApp.get_running_app().root.carousel.slides[5].ids["label_czas"].text = str(time)
+        #MainApp.get_running_app().root.carousel.slides[5].ids["label_nazwa_pogody"].text = str(name)
+
+        MainApp.get_running_app().root.carousel.slides[5].ids["label_forecast_temperatura"].text = str(temp_forecast) + str('°C')
+        MainApp.get_running_app().root.carousel.slides[5].ids["label_forecast_opady"].text = str(rain_forecast) + str(
+            ' mm')
+        MainApp.get_running_app().root.carousel.slides[5].ids["label_forecast_wilgotnosc"].text = str(humidity_forecast) + str(
+            '%')
+        MainApp.get_running_app().root.carousel.slides[5].ids["label_forecast_wiatr"].text = str(wind_forecast) + str(
+            'm/s ') + str(kierunek_forecast)
 
 class ScreenSettings(Screen):
     def build(self):

@@ -8,9 +8,9 @@
                 pos: self.pos
                 size: self.size
         Button:
-            text: 'Wcisnij'
+            text:'Prognozuj'
             size_hint_y: 20
-            on_release: root.ustal_pogode()
+            on_release:root.ustal_pogode()
         Label:
             canvas.before:
                 Color:
@@ -19,10 +19,25 @@
                     pos: self.pos
                     size: self.size
             size_hint_y: 10
-            text: "Temperatura:"
+            text: "Pogoda:"
             color: 1, 1, 1, 1
         Label:
-            id:temperature_now
+            id:label_temperatura
+            size_hint_y: 40
+            font_size: self.height / 3
+            color: 0.235, 0.529, 0.572, 1
+        Label:
+            id:label_opady
+            size_hint_y: 40
+            font_size: self.height / 3
+            color: 0.235, 0.529, 0.572, 1
+        Label:
+            id:label_wilgotnosc
+            size_hint_y: 40
+            font_size: self.height / 3
+            color: 0.235, 0.529, 0.572, 1
+        Label:
+            id:label_wiatr
             size_hint_y: 40
             font_size: self.height / 3
             color: 0.235, 0.529, 0.572, 1
@@ -35,10 +50,26 @@
                     pos: self.pos
                     size: self.size
             size_hint_y: 10
-            text: "Temperatura za 3h:"
+            text: "Pogoda za 3h:"
             color: 1, 1, 1, 1
+
         Label:
-            id:temperature_forecast
+            id:label_forecast_temperatura
+            size_hint_y: 40
+            font_size: self.height / 3
+            color: 0.235, 0.529, 0.572, 1
+        Label:
+            id:label_forecast_opady
+            size_hint_y: 40
+            font_size: self.height / 3
+            color: 0.235, 0.529, 0.572, 1
+        Label:
+            id:label_forecast_wilgotnosc
+            size_hint_y: 40
+            font_size: self.height / 3
+            color: 0.235, 0.529, 0.572, 1
+        Label:
+            id:label_forecast_wiatr
             size_hint_y: 40
             font_size: self.height / 3
             color: 0.235, 0.529, 0.572, 1
