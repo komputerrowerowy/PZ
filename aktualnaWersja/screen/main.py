@@ -31,6 +31,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.popup import Popup
+from kivy.uix.label import Label
+
 import time
 import threading
 from Contact import Contact
