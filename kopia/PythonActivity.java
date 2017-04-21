@@ -151,7 +151,7 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
             
     //Sphinx
             
-    private static final String KWS_SEARCH = "JEDEN";
+    private static final String KWS_SEARCH = "BIKOM";
     private static final String FORECAST_SEARCH = "DWA";
     private static final String DIGITS_SEARCH = "ODBIERZ";
     private static final String PHONE_SEARCH = "DWA";
@@ -468,10 +468,10 @@ private final int CHECK_CODE = 0x1;
             return;
 
         String text = hypothesis.getHypstr();
-        /*if (text.equals(KEYPHRASE)){
+        if (text.equals(KEYPHRASE)){
 			lastState = KEYPHRASE;
-            switchSearch(DIGITS_SEARCH);
-		}*/
+            switchSearch("menu");
+		}
         /*if (text.equals(INCOMING_CALL_SEARCH)){
 			lastState = text;
             switchSearch(INCOMING_CALL_SEARCH);
@@ -511,8 +511,8 @@ private final int CHECK_CODE = 0x1;
     public void onEndOfSpeech() {
         //if (!recognizer.getSearchName().equals(KWS_SEARCH))
         System.out.println("nojuzniewiem");    
-		//switchSearch(KWS_SEARCH);
-		switchSearch(INCOMING_CALL_SEARCH);
+		switchSearch(KWS_SEARCH);
+		//switchSearch(INCOMING_CALL_SEARCH);
         //makeText(getApplicationContext(), "endSpeach", Toast.LENGTH_SHORT).show();
 		//recognizer.stop();
         ;
@@ -535,6 +535,8 @@ private final int CHECK_CODE = 0x1;
             recognizer.startListening(searchName, 10000);
 			System.out.println("test11");
 		}
+		
+		lastState = searchName;
 
         //String caption = getResources().getString(captions.get(searchName));
         //((TextView) findViewById(R.id.caption_text)).setText(caption);
@@ -577,6 +579,9 @@ private final int CHECK_CODE = 0x1;
 		
 		File incomingCallGrammar = new File(mPath, "sphinx/incomingcall.gram");
 		recognizer.addGrammarSearch(INCOMING_CALL_SEARCH, incomingCallGrammar);
+		
+		File menuGrammar = new File(mPath, "sphinx/menu.gram");
+		recognizer.addGrammarSearch("menu", menuGrammar);
         
         /*// Create language model search
         File languageModel = new File(assetsDir, "weather.dmp");
@@ -595,7 +600,7 @@ private final int CHECK_CODE = 0x1;
 
     @Override
     public void onTimeout() {
-        ;
+        switchSearch(KWS_SEARCH);
     }
             
             
