@@ -359,7 +359,7 @@ class ShowTime(Screen):
                 music_screen.backSong()
                 activity.lastWord = ""
             if commands[0] == "NASTĘPNY" or activity.lastWord == "NASTĘPNA":
-                music_screen.backSong()
+                music_screen.nextSong()
                 activity.lastWord = ""
             if commands[0] == "STOP" or activity.lastWord == "START" or activity.lastWord == "MUZYKA":
                 music_screen.stopSong()
@@ -535,53 +535,61 @@ class MusicPlayer(Screen):
     songs2 = []  # Lista utworów
     flaga = 1
     indeks = 0
+    songsLoaded = False
 
+    def __init__(self, **kwargs):
+        super(MusicPlayer, self).__init__()
+        self.songsLoaded = False
+    
     #funkcja wywoływana na przycisku stop/play
     def stopSong(self):
-        self.flaga = 88
-        self.ids.playSongg.source = "resources/play.png"
-        if self.nowPlaying == '':
-            #title = self.songs[0]
-            self.nowPlaying = SoundLoader.load(self.songs[0].pelna_sciezka)
-            self.ids.nowplay.text = self.songs[0].nazwa
-            self.ids.playSongg.source = "resources/stop_music.png"
-        if self.nowPlaying.state == 'stop':
-            self.flaga = 5
-
-            self.nowPlaying.play()
-            if self.flaga == 5:
-                self.flaga = 6
-                if self.flaga == 6:
-                    self.nowPlaying.bind(on_stop=self.stop_event_flaga)
-                    self.ids.playSongg.source = "resources/stop_music.png"
-
-        else:
-            self.flaga = 99
-            self.nowPlaying.stop()
+        if self.songsLoaded:
+            self.flaga = 88
             self.ids.playSongg.source = "resources/play.png"
+            if self.nowPlaying == '':
+                #title = self.songs[0]
+                self.nowPlaying = SoundLoader.load(self.songs[0].pelna_sciezka)
+                self.ids.nowplay.text = self.songs[0].nazwa
+                self.ids.playSongg.source = "resources/stop_music.png"
+            if self.nowPlaying.state == 'stop':
+                self.flaga = 5
+
+                self.nowPlaying.play()
+                if self.flaga == 5:
+                    self.flaga = 6
+                    if self.flaga == 6:
+                        self.nowPlaying.bind(on_stop=self.stop_event_flaga)
+                        self.ids.playSongg.source = "resources/stop_music.png"
+
+            else:
+                self.flaga = 99
+                self.nowPlaying.stop()
+                self.ids.playSongg.source = "resources/play.png"
 
     # funkcja wywoływana na przycisku Następny utwór
     def nextSong(self):
-        self.flaga = 1
-        if self.nowPlaying == '':
-            pass
-        else:
-            self.nowPlaying.stop()
-        print("nextkSong")
-        if self.flaga == 1:
-            self.nowPlaying.bind(on_stop=self.stop_event_flaga)
+        if self.songsLoaded:
+            self.flaga = 1
+            if self.nowPlaying == '':
+                pass
+            else:
+                self.nowPlaying.stop()
+            print("nextkSong")
+            if self.flaga == 1:
+                self.nowPlaying.bind(on_stop=self.stop_event_flaga)
 
     # funkcja wywoływana na przycisku Poprzedni utwór
     def backSong(self):
-        self.flaga = 0
-        dl = len(self.songs) - 1
-        if self.nowPlaying == '':
-            pass
-        else:
-            self.nowPlaying.stop()
-        print("backSong")
-        if self.flaga == 0:
-            self.nowPlaying.bind(on_stop=self.stop_event_flaga)
+        if self.songsLoaded:
+            self.flaga = 0
+            dl = len(self.songs) - 1
+            if self.nowPlaying == '':
+                pass
+            else:
+                self.nowPlaying.stop()
+            print("backSong")
+            if self.flaga == 0:
+                self.nowPlaying.bind(on_stop=self.stop_event_flaga)
 
     #odczytanie ścieżki folderu z pliku
     def getpath(self):
@@ -657,6 +665,9 @@ class MusicPlayer(Screen):
 
 
             self.songs.sort(key=lambda song: song.nazwa)
+            
+            if len(self.songs) > 0:
+                self.songsLoaded = True
 
 
         #funkcja uruchamiana w momencie kliknięcia utworu na liście
@@ -736,62 +747,64 @@ class MusicPlayer(Screen):
 
     #funkcja która odtwarza kolejny utwór z listy
     def nextSong2(self, songfile, dt):
-        self.flaga = 1
-        self.ids.playSongg.source = "resources/stop_music.png"
-        dl = len(self.songs)
-        a = 0
-        b = int(a)
-        next2 = 0
-        for song in self.songs:
+        if self.songsLoaded:
+            self.flaga = 1
+            self.ids.playSongg.source = "resources/stop_music.png"
+            dl = len(self.songs)
+            a = 0
+            b = int(a)
+            next2 = 0
+            for song in self.songs:
 
-            if self.songs[b].nazwa == self.ids.nowplay.text:
-                next1 = b + 1
-                next2 = int(next1)
-                if next2 >= dl:
-                    next2 = 0
-                b = 0
+                if self.songs[b].nazwa == self.ids.nowplay.text:
+                    next1 = b + 1
+                    next2 = int(next1)
+                    if next2 >= dl:
+                        next2 = 0
+                    b = 0
+                else:
+                    b += 1
+
+            if self.nowPlaying.state == 'stop':
+                pass
             else:
-                b += 1
-
-        if self.nowPlaying.state == 'stop':
-            pass
-        else:
-            self.nowPlaying.stop()
-        #title = self.songs[next2]
-        self.nowPlaying = SoundLoader.load(self.songs[next2].pelna_sciezka)
-        self.nowPlaying.play()
-        self.ids.nowplay.text = self.songs[next2].nazwa
-        print("nextSong2")
-        if self.flaga == 1:
-            self.nowPlaying.bind(on_stop=self.stop_event_flaga)
+                self.nowPlaying.stop()
+            #title = self.songs[next2]
+            self.nowPlaying = SoundLoader.load(self.songs[next2].pelna_sciezka)
+            self.nowPlaying.play()
+            self.ids.nowplay.text = self.songs[next2].nazwa
+            print("nextSong2")
+            if self.flaga == 1:
+                self.nowPlaying.bind(on_stop=self.stop_event_flaga)
 
     # funkcja która odtwarza poprzedni utwór z listy
     def backSong2(self, songfile, dt):
-        self.flaga = 1
-        self.ids.playSongg.source = "resources/stop_music.png"
-        a = 0
-        b = int(a)
-        next2 = 0
-        for song in self.songs:
+        if self.songsLoaded:
+            self.flaga = 1
+            self.ids.playSongg.source = "resources/stop_music.png"
+            a = 0
+            b = int(a)
+            next2 = 0
+            for song in self.songs:
 
-            if self.songs[b].nazwa == self.ids.nowplay.text:
-                next1 = b - 1
-                next2 = int(next1)
-                b = 0
+                if self.songs[b].nazwa == self.ids.nowplay.text:
+                    next1 = b - 1
+                    next2 = int(next1)
+                    b = 0
+                else:
+                    b += 1
+
+            if self.nowPlaying.state == 'stop':
+                pass
             else:
-                b += 1
-
-        if self.nowPlaying.state == 'stop':
-            pass
-        else:
-            self.nowPlaying.stop()
-        #title = self.songs[next2]
-        self.nowPlaying = SoundLoader.load(self.songs[next2].pelna_sciezka)
-        self.nowPlaying.play()
-        self.ids.nowplay.text = self.songs[next2].nazwa
-        print("backSong2")
-        if self.flaga == 1:
-            self.nowPlaying.bind(on_stop=self.stop_event_flaga)
+                self.nowPlaying.stop()
+            #title = self.songs[next2]
+            self.nowPlaying = SoundLoader.load(self.songs[next2].pelna_sciezka)
+            self.nowPlaying.play()
+            self.ids.nowplay.text = self.songs[next2].nazwa
+            print("backSong2")
+            if self.flaga == 1:
+                self.nowPlaying.bind(on_stop=self.stop_event_flaga)
 
 
 class GroupScreen(Screen):
@@ -2141,7 +2154,6 @@ class MainApp(App):
             # print lat_2
             # print lon_2fes
             # print flaga_gps
-            Weather().ustal_pogode()
 
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
