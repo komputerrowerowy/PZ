@@ -1,5 +1,15 @@
 #JSGF V1.0;
 
-grammar menu;
+grammar menus;
 
-public <item> = digits | forecast | phones;
+<menu> = DALEJ   |
+          WSTECZ  |
+          POPRZEDNI |
+          POPRZEDNIA |
+          NASTĘPNY   |
+          NASTĘPNA  |
+          STOP      |
+          START     |
+          MUZYKA  ;
+
+public <menus> = <menu>+;

@@ -346,6 +346,25 @@ class ShowTime(Screen):
 
     def check2(self, fla):
         # pass
+        if activity.lastWord != '':
+            music_screen = MainApp.get_running_app().root.carousel.slides[3]
+            commands = activity.lastWord.split(" ")
+            if commands[0] == "DALEJ":
+                MainApp.get_running_app().root.carousel.load_next(mode = 'next')
+                activity.lastWord = ""
+            if commands[0] == "WSTECZ":
+                MainApp.get_running_app().root.carousel.load_previous()
+                activity.lastWord = ""
+            if commands[0] == "POPRZEDNI" or activity.lastWord == "POPRZEDNIA":
+                music_screen.backSong()
+                activity.lastWord = ""
+            if commands[0] == "NASTĘPNY" or activity.lastWord == "NASTĘPNA":
+                music_screen.backSong()
+                activity.lastWord = ""
+            if commands[0] == "STOP" or activity.lastWord == "START" or activity.lastWord == "MUZYKA":
+                music_screen.stopSong()
+                activity.lastWord = ""
+        
         if activity.isIncoming:
             if self.flagaCall == 1:
                 self.flagaCall = 2
@@ -1020,8 +1039,8 @@ class GroupScreen(Screen):
             self.actual_point = 0
             self.actual_instruction = 0
             self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
-            wskazuwka = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
-            activity.speaker.speak(wskazuwka)
+            #wskazowka = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
+            #MainApp.lastInstruction = wskazowka
         except:
             pass
 
@@ -1074,11 +1093,17 @@ class GroupScreen(Screen):
         print y
         a = (y2 - y1)
         b = (x2 - x1)
-        ab = a / b
+        if b == 0:
+            ab = 0
+        else:
+            ab = a / b
         abx = ab * x
         c = x2 * y1 - x1 * y2
         d = x2 - x1
-        cd = c / d
+        if d == 0:
+            cd = 0
+        else:
+            cd = c / d
 
         nominator = abs(abx - y + cd)
         dominator = sqrt(pow(((y2 - y1) / x2 - x1), 2) + 1)
@@ -2016,6 +2041,7 @@ class MainApp(App):
     route_nodes = BooleanProperty(False)
     prev_time = datetime.datetime.now().time()
     gr = GroupScreen()
+    lastInstruction = ''
     # try:
     #     gr.do_toggle()
     # except:
@@ -2147,6 +2173,8 @@ class MainApp(App):
 
                 instruction_points = GraphHopperAndroid.getInstructionPoints(group_screen.actual_instruction)
 
+                group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(group_screen.actual_instruction)
+                
                 if distance2 > distance1:
                     if distance1 < 0.01:
                         #sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
@@ -2162,11 +2190,12 @@ class MainApp(App):
                             group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
 
 
-                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lat = float(group_screen.punkty.getLat(group_screen.actual_point))
+                    #pomocnicze markery zawierajace 2 najblizsze punkty
+                    '''MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lat = float(group_screen.punkty.getLat(group_screen.actual_point))
                     MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lon = float(group_screen.punkty.getLon(group_screen.actual_point))
 
                     MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lat = float(group_screen.punkty.getLat(group_screen.actual_point + 1))
-                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lon = float(group_screen.punkty.getLon(group_screen.actual_point + 1))
+                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lon = float(group_screen.punkty.getLon(group_screen.actual_point + 1))'''
 
 
                 else:
@@ -2179,8 +2208,11 @@ class MainApp(App):
                     print instruction_points.getLongitude(0)
                     if group_screen.actual_point == (punkty.getSize() - 1):
                         group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
-
-                group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(group_screen.actual_instruction)
+                
+                if self.lastInstruction != group_screen.ids.label_instruction.text:
+                    activity.speaker.speak(group_screen.ids.label_instruction.text)
+                    self.lastInstruction = group_screen.ids.label_instruction.text
+                
 
             # if flaga_gps == 1:
             #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = lat_2
