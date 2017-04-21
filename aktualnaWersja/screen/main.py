@@ -2011,10 +2011,73 @@ class ZoneCheckBoxes(ToggleButtonBehavior, GridLayout):
 class ZoneButton(Button):
     _instance_count = -1
     _zoneNames = ZoneList.ListaNazw
-    
+    Kontakty = []
+
     def __init__(self, **kwargs):
         super(ZoneButton, self).__init__(**kwargs)
         ZoneButton._instance_count += 1
+
+    def pop(self, tytul):
+
+        activity = autoclass("org.renpy.android.PythonActivity").mActivity
+        GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
+        Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
+        Data = autoclass("android.provider.ContactsContract$Data")
+        RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
+        content_resolver = activity.getApplicationContext()
+        resolver = content_resolver.getContentResolver()
+
+        for i in range(0, len(ZoneList.ListaNazw)):
+            if tytul == ZoneList.ListaNazw[i]:
+                groupID = ZoneList.ListaId[i]
+                break
+
+        projection = [RawContactsColumns.CONTACT_ID, GroupMembership.CONTACT_ID]
+
+        grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None, None)
+        group = grupa
+
+        while (grupa.moveToNext()):
+            id = group.getString(group.getColumnIndex("CONTACT_ID"))
+
+            grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
+            group2 = grupa2
+
+            while (grupa2.moveToNext()):
+                nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
+                if nazwa not in ZoneButton.Kontakty:
+                    ZoneButton.Kontakty.append(nazwa)
+
+            grupa2.close()
+        grupa.close()
+
+        content = GridLayout(cols=1)
+        zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
+
+        if groupID == '999':
+            ZoneButton.Kontakty = []
+            ZoneButton.Kontakty.append("Ta grupa przeznaczona jest\ndla nieznanych numerów i nie\nzawiera żadnego kontaktu.")
+
+        elif len(ZoneButton.Kontakty) < 1:
+            ZoneButton.Kontakty = []
+            ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
+
+        for i in range(0, len(ZoneButton.Kontakty)):
+            content.add_widget(Label(text=ZoneButton.Kontakty[i], color=(.235, .529, .572, 1)))
+
+        content.add_widget(zamknij)
+
+        popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
+                      separator_color=(.235, .529, .572, 1),
+                      content=content, auto_dismiss=False,
+                      size_hint=(None, None),
+                      size=(400, 400))
+        popup.normal_color = (1, 1, 1, 0)
+
+        zamknij.bind(on_release=popup.dismiss)
+        popup.open()
+
+        ZoneButton.Kontakty = []
 
 
 class ZoneLayout(BoxLayout):
