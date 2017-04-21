@@ -2141,6 +2141,7 @@ class MainApp(App):
             # print lat_2
             # print lon_2fes
             # print flaga_gps
+            Weather().ustal_pogode()
 
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
