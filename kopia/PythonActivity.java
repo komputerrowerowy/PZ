@@ -88,7 +88,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -109,15 +108,12 @@ import static android.widget.Toast.makeText;
 
 
 
-
-
-
-
 public class PythonActivity extends Activity implements Runnable, RecognitionListener {
     private static String TAG = "Python";
 
     // The audio thread for streaming audio...
     private static AudioThread mAudioThread = null;
+    public MusicIntentReceiver myReceiver;
 
     // The SDLSurfaceView we contain.
     public static SDLSurfaceView mView = null;
@@ -151,7 +147,7 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
             
     //Sphinx
             
-    private static final String KWS_SEARCH = "BIKOM";
+    private static final String KWS_SEARCH = "JEDEN";
     private static final String FORECAST_SEARCH = "DWA";
     private static final String DIGITS_SEARCH = "ODBIERZ";
     private static final String PHONE_SEARCH = "DWA";
@@ -168,6 +164,8 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
     private HashMap<String, Integer> captions;
 	public String lastWord = "";
 	public String lastState = "";
+    public boolean HeadsetIsPlugged = false;
+    public boolean AlwaysReadSms = false;
             
             
             
@@ -193,6 +191,27 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
             System.out.println("Permission error. Access to notification not granted to the app.");
         }
     }*/
+    
+    private class MusicIntentReceiver extends BroadcastReceiver {
+    @Override public void onReceive(Context context, Intent intent) {
+        if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+            int state = intent.getIntExtra("state", -1);
+            switch (state) {
+            case 0:
+                Log.d(TAG, "Headset is unplugged");
+                HeadsetIsPlugged = false;
+                break;
+            case 1:
+                Log.d(TAG, "Headset is plugged");
+                HeadsetIsPlugged = true;
+                break;
+            default:
+                Log.d(TAG, "I have no idea what the headset state is");
+                HeadsetIsPlugged = false;
+            }
+        }
+    }
+}
 
 
 
@@ -233,10 +252,13 @@ private final int CHECK_CODE = 0x1;
                         SmsMessage message = SmsMessage.createFromPdu(pdu);
                         String text = message.getDisplayMessageBody();
                         String sender = getContactName(message.getOriginatingAddress());
-                        speaker.pause(LONG_DURATION);
-                        speaker.speak("Masz nową wiadomość od: " + sender + "!");
-                        speaker.pause(SHORT_DURATION);
-                        speaker.speak(text);
+                        if(HeadsetIsPlugged == true || AlwaysReadSms == true){
+                            speaker.pause(LONG_DURATION);
+                            speaker.speak("Masz nową wiadomość od: " + sender + "!");
+                            speaker.pause(SHORT_DURATION);
+                            speaker.speak(text);
+                        }
+                        
                         System.out.println("NARESZCIEDZIALA");
                         System.out.println(text);
                         //speaker.speak(text);
@@ -468,10 +490,10 @@ private final int CHECK_CODE = 0x1;
             return;
 
         String text = hypothesis.getHypstr();
-        if (text.equals(KEYPHRASE)){
+        /*if (text.equals(KEYPHRASE)){
 			lastState = KEYPHRASE;
-            switchSearch("menu");
-		}
+            switchSearch(DIGITS_SEARCH);
+		}*/
         /*if (text.equals(INCOMING_CALL_SEARCH)){
 			lastState = text;
             switchSearch(INCOMING_CALL_SEARCH);
@@ -511,8 +533,8 @@ private final int CHECK_CODE = 0x1;
     public void onEndOfSpeech() {
         //if (!recognizer.getSearchName().equals(KWS_SEARCH))
         System.out.println("nojuzniewiem");    
-		switchSearch(KWS_SEARCH);
-		//switchSearch(INCOMING_CALL_SEARCH);
+		//switchSearch(KWS_SEARCH);
+		switchSearch(INCOMING_CALL_SEARCH);
         //makeText(getApplicationContext(), "endSpeach", Toast.LENGTH_SHORT).show();
 		//recognizer.stop();
         ;
@@ -535,8 +557,6 @@ private final int CHECK_CODE = 0x1;
             recognizer.startListening(searchName, 10000);
 			System.out.println("test11");
 		}
-		
-		lastState = searchName;
 
         //String caption = getResources().getString(captions.get(searchName));
         //((TextView) findViewById(R.id.caption_text)).setText(caption);
@@ -579,14 +599,10 @@ private final int CHECK_CODE = 0x1;
 		
 		File incomingCallGrammar = new File(mPath, "sphinx/incomingcall.gram");
 		recognizer.addGrammarSearch(INCOMING_CALL_SEARCH, incomingCallGrammar);
-		
-		File menuGrammar = new File(mPath, "sphinx/menu.gram");
-		recognizer.addGrammarSearch("menu", menuGrammar);
         
         /*// Create language model search
         File languageModel = new File(assetsDir, "weather.dmp");
         recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
-
         // Phonetic search
         File phoneticModel = new File(assetsDir, "en-phone.dmp");
         recognizer.addAllphoneSearch(PHONE_SEARCH, phoneticModel);*/
@@ -600,7 +616,7 @@ private final int CHECK_CODE = 0x1;
 
     @Override
     public void onTimeout() {
-        switchSearch(KWS_SEARCH);
+        ;
     }
             
             
@@ -614,6 +630,10 @@ private final int CHECK_CODE = 0x1;
 
 
         System.out.println("ccccccccccccccccc");
+        myReceiver = new MusicIntentReceiver();
+        
+        //zablokowanie wygaszacza ekranu, włączony przez cały czas
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
 
@@ -872,6 +892,7 @@ private final int CHECK_CODE = 0x1;
     protected void onPause() {
         _isPaused = true;
         super.onPause();
+        unregisterReceiver(myReceiver);
 
         if (mView != null) {
             mView.onPause();
@@ -880,6 +901,8 @@ private final int CHECK_CODE = 0x1;
 
     @Override
     protected void onResume() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(myReceiver, filter);
         super.onResume();
         _isPaused = false;
 

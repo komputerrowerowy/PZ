@@ -31,8 +31,6 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.popup import Popup
-from kivy.uix.label import Label
-
 import time
 import threading
 from Contact import Contact
@@ -100,7 +98,6 @@ GrupyId = []
 Builder.load_string('''
 <ConfirmPopup>:
     cols:1
-
     BoxLayout:
         orientation: 'vertical'
         size_hint_y: 1
@@ -116,7 +113,6 @@ Builder.load_string('''
                 source: 'resources/odbierz.png'
                 height: self.parent.height
                 #width: self.parent.width
-
         Button:
             background_normal: ''
             background_color: .83, .18, .18,1
@@ -129,8 +125,6 @@ Builder.load_string('''
                 source: 'resources/odrzuc.png'
                 height: self.parent.height
                 #width: self.parent.width
-
-
 <StartScreen>:
     canvas.before:
         Rectangle:
@@ -145,7 +139,6 @@ Builder.load_string('''
             size_hint_x: 0.1
             size_hint_y: 0.5
             background_color: 0.235, 0.529, 0.572, 0
-
         Button:
             text: "Rozpocznij"
             size_hint_x: 0.8
@@ -162,7 +155,6 @@ Builder.load_string('''
                 #source: 'resources/btn.png'
                 #height: self.parent.height
                 #width: self.parent.width
-
         Button:
             size_hint_x: 0.1
             size_hint_y: 0.5
@@ -283,7 +275,7 @@ class ShowTime(Screen):
                                size_hint=(0.9, 0.75),
                                auto_dismiss=False)
             self.popup.open()
-            
+
             activity.lastWord = ""
             activity.switchSearch("ODBIERZ")
             self.incoming_call_clock = Clock.schedule_interval(self.accept_call_voice, 1)
@@ -297,7 +289,7 @@ class ShowTime(Screen):
         self.send_sms(sms_recipient, sms_message)
         # sms2 = AndroidSms()
         # sms2.send('663889095', 'wiadomosc sms')
-        
+
     def accept_call_voice(self, lalala):
         #print "dupa" + " " + activity.lastWord
         if activity.callState == 1:
@@ -366,7 +358,7 @@ class ShowTime(Screen):
             if commands[0] == "STOP" or activity.lastWord == "START" or activity.lastWord == "MUZYKA":
                 music_screen.stopSong()
                 activity.lastWord = ""
-        
+
         if activity.isIncoming:
             if self.flagaCall == 1:
                 self.flagaCall = 2
@@ -542,7 +534,7 @@ class MusicPlayer(Screen):
     def __init__(self, **kwargs):
         super(MusicPlayer, self).__init__()
         self.songsLoaded = False
-    
+
     #funkcja wywoływana na przycisku stop/play
     def stopSong(self):
         if self.songsLoaded:
@@ -667,7 +659,7 @@ class MusicPlayer(Screen):
 
 
             self.songs.sort(key=lambda song: song.nazwa)
-            
+
             if len(self.songs) > 0:
                 self.songsLoaded = True
 
@@ -827,7 +819,7 @@ class GroupScreen(Screen):
     punkty = []
     actual_point = 0
     actual_instruction = 0
-    
+
     '''def __init__(self, **kwargs):
         super(GroupScreen, self).__init__()
         self.licznikTemp = False'''
@@ -837,9 +829,9 @@ class GroupScreen(Screen):
 
 
 
-        
-        
-        
+
+
+
     def test2(self):
         GraphHopperAndroid.loadGraphStorage()
 
@@ -910,13 +902,10 @@ class GroupScreen(Screen):
 
         '''if (wsp2 > self.needle_angle2):
             self.kat = wsp2 - self.needle_angle2
-
         if (wsp2 == self.needle_angle2):
             self.kat = wsp2 - self.needle_angle2
-
         if (wsp2 < self.needle_angle2):
             self.kat = self.needle_angle2 - wsp2
-
         if self.kat > 10:
             self.needle_angle2 = wsp2'''
         print "wsp2 = " + str(self.wsp2)
@@ -1080,7 +1069,6 @@ class GroupScreen(Screen):
         cosbp = cos(bp * pi / 180)
         sinap = sin(ap * pi / 180)
         sinbp = sin(bp * pi / 180)
-
         print lat1
         print lat2
         print ap
@@ -1091,7 +1079,6 @@ class GroupScreen(Screen):
         print sinbp
         print degrees(cos(1.616667))
         print acos((cosap * cosbp + sinap * sinbp * cos(1.616667 * pi / 180)) * pi / 180)
-
         distance = acos((cosap * cosbp + sinap * sinbp * cos(1.616667 * pi / 180)) * pi / 180) * 111.1'''
 
         distance = sqrt(pow((lat2 - lat1), 2) + cos(lat1 * pi / 180) * pow((lon2 - lon1), 2)) * 40075.704 / 360
@@ -1130,7 +1117,7 @@ class GroupScreen(Screen):
             return True
         else:
             return False
-                
+
     def redraw_route(self):
         for layer in self.ids["mapView"]._layers:
             if layer.id == 'line_map_layer':
@@ -1543,12 +1530,12 @@ class Weather(Screen):
         #print w.get_pressure()
         #print w.get_temperature(unit='celsius')
         search_template="http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&appid=b26433c9a2c69c16c1d138cc5710fd57"
-        search_url=search_template.format(53.01,18.53)
+        search_url=search_template.format(MainApp.lat, MainApp.lon)
         data=requests.get(search_url).json()
 
         print "pobieranie prognozy"
         search_template_forecast="http://api.openweathermap.org/data/2.5/forecast?lat={}&lon={}&appid=b26433c9a2c69c16c1d138cc5710fd57"
-        search_url_forecast=search_template_forecast.format(53.01,18.53)
+        search_url_forecast=search_template_forecast.format(MainApp.lat, MainApp.lon)
         data_forecast=requests.get(search_url_forecast).json()
         print "koniec pobierania prognozy"
 
@@ -1688,20 +1675,20 @@ class Weather(Screen):
 
         print 'koniec zxzxzx'
         #location=(data['sys']['country'],data['name'])
-        MainApp.get_running_app().root.carousel.slides[5].ids["label_temperatura"].text = str(temp)+str('°C')
-        MainApp.get_running_app().root.carousel.slides[5].ids["label_opady"].text = str(rain) + str(' mm')
-        MainApp.get_running_app().root.carousel.slides[5].ids["label_wilgotnosc"].text = str(humidity) + str('%')
-        MainApp.get_running_app().root.carousel.slides[5].ids["label_wiatr"].text = str(wind) + str('m/s ') + str(kierunek)
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_temperatura"].text = str(temp)+str('°C')
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_opady"].text = str(rain) + str(' mm')
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_wilgotnosc"].text = str(humidity) + str('%')
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_wiatr"].text = str(wind) + str('m/s ') + str(kierunek)
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_miejscowosc"].text = str(place)
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_czas"].text = str(time)
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_nazwa_pogody"].text = str(name)
 
-        MainApp.get_running_app().root.carousel.slides[5].ids["label_forecast_temperatura"].text = str(temp_forecast) + str('°C')
-        MainApp.get_running_app().root.carousel.slides[5].ids["label_forecast_opady"].text = str(rain_forecast) + str(
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_temperatura"].text = str(temp_forecast) + str('°C')
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_opady"].text = str(rain_forecast) + str(
             ' mm')
-        MainApp.get_running_app().root.carousel.slides[5].ids["label_forecast_wilgotnosc"].text = str(humidity_forecast) + str(
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wilgotnosc"].text = str(humidity_forecast) + str(
             '%')
-        MainApp.get_running_app().root.carousel.slides[5].ids["label_forecast_wiatr"].text = str(wind_forecast) + str(
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text = str(wind_forecast) + str(
             'm/s ') + str(kierunek_forecast)
 
 class ScreenSettings(Screen):
@@ -1880,7 +1867,7 @@ class LineMapLayer(MapLayer):
 
             print "dupa1"
             print point_list
-            
+
             scatter = mapview._scatter
             x, y, s = scatter.x, scatter.y, scatter.scale
 
@@ -2013,73 +2000,10 @@ class ZoneCheckBoxes(ToggleButtonBehavior, GridLayout):
 class ZoneButton(Button):
     _instance_count = -1
     _zoneNames = ZoneList.ListaNazw
-    Kontakty = []
 
     def __init__(self, **kwargs):
         super(ZoneButton, self).__init__(**kwargs)
         ZoneButton._instance_count += 1
-
-    def pop(self, tytul):
-
-        activity = autoclass("org.renpy.android.PythonActivity").mActivity
-        GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
-        Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
-        Data = autoclass("android.provider.ContactsContract$Data")
-        RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
-        content_resolver = activity.getApplicationContext()
-        resolver = content_resolver.getContentResolver()
-
-        for i in range(0, len(ZoneList.ListaNazw)):
-            if tytul == ZoneList.ListaNazw[i]:
-                groupID = ZoneList.ListaId[i]
-                break
-
-        projection = [RawContactsColumns.CONTACT_ID, GroupMembership.CONTACT_ID]
-
-        grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None, None)
-        group = grupa
-
-        while (grupa.moveToNext()):
-            id = group.getString(group.getColumnIndex("CONTACT_ID"))
-
-            grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
-            group2 = grupa2
-
-            while (grupa2.moveToNext()):
-                nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
-                if nazwa not in ZoneButton.Kontakty:
-                    ZoneButton.Kontakty.append(nazwa)
-
-            grupa2.close()
-        grupa.close()
-
-        content = GridLayout(cols=1)
-        zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
-
-        if groupID == '999':
-            ZoneButton.Kontakty = []
-            ZoneButton.Kontakty.append("Ta grupa przeznaczona jest\ndla nieznanych numerów i nie\nzawiera żadnego kontaktu.")
-
-        elif len(ZoneButton.Kontakty) < 1:
-            ZoneButton.Kontakty = []
-            ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
-
-        for i in range(0, len(ZoneButton.Kontakty)):
-            content.add_widget(Label(text=ZoneButton.Kontakty[i], color=(.235, .529, .572, 1)))
-
-        content.add_widget(zamknij)
-
-        popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
-                      separator_color=(.235, .529, .572, 1),
-                      content=content, auto_dismiss=False,
-                      size_hint=(None, None),
-                      size=(400, 400))
-        popup.normal_color = (1, 1, 1, 0)
-
-        zamknij.bind(on_release=popup.dismiss)
-        popup.open()
-
-        ZoneButton.Kontakty = []
 
 
 class ZoneLayout(BoxLayout):
@@ -2113,13 +2037,15 @@ class MainApp(App):
     Builder.load_file("callscreen.kv")
     Builder.load_file("musicplayer.kv")
     Builder.load_file("grupy.kv")
-    Builder.load_file("speedometer.kv")
+    # Zakomentowane w pliku main.kv
+    # Builder.load_file("speedometer.kv")
     Builder.load_file("weather.kv")
     znacznik = 0
     route_nodes = BooleanProperty(False)
     prev_time = datetime.datetime.now().time()
     gr = GroupScreen()
     lastInstruction = ''
+    flagaWygladu = True
     # try:
     #     gr.do_toggle()
     # except:
@@ -2139,17 +2065,22 @@ class MainApp(App):
         # modyfikacja 3
         gr = GroupScreen()
 
+        def UstawFlage(self):
+            self.flagaWygladu = True
+
+
 
         Clock.schedule_interval(show_time.check2, 1)
+        Clock.schedule_interval(UstawFlage, 3600)
         try:
             gps.configure(on_location=self.on_location, on_status=self.on_status)
             self.start(1000, 0)
         except NotImplementedError:
             self.gps_status = 'GPS is not implemented for your platform'
 
-        
+
         activity.runRecognizerSetup();
-            
+
         return show_time
 
     def start(self, minTime, minDistance):
@@ -2197,8 +2128,11 @@ class MainApp(App):
             self.gps_speed=round(self.gps_speed,2)
             self.highest_speed = self.highest_speed * 18 / 5
             self.highest_speed = round(self.highest_speed, 2)
-            MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
-            MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
+            # MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
+            # MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
+
+            MainApp.get_running_app().root.carousel.slides[0].ids["label_speed2"].text = str(self.gps_speed)
+            MainApp.get_running_app().root.carousel.slides[0].ids["label_max_speed2"].text = str(self.highest_speed)
 
             mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
             if MainApp.znacznik == 0:
@@ -2219,6 +2153,13 @@ class MainApp(App):
             # print lat_2
             # print lon_2fes
             # print flaga_gps
+
+            #Weather().ustal_pogode()
+
+            if self.flagaWygladu == True:
+                Weather().ustal_pogode()
+                #MusicPlayer().getSongs()
+                self.flagaWygladu = False
 
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
@@ -2252,7 +2193,7 @@ class MainApp(App):
                 instruction_points = GraphHopperAndroid.getInstructionPoints(group_screen.actual_instruction)
 
                 group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(group_screen.actual_instruction)
-                
+
                 if distance2 > distance1:
                     if distance1 < 0.01:
                         #sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
@@ -2271,7 +2212,6 @@ class MainApp(App):
                     #pomocnicze markery zawierajace 2 najblizsze punkty
                     '''MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lat = float(group_screen.punkty.getLat(group_screen.actual_point))
                     MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lon = float(group_screen.punkty.getLon(group_screen.actual_point))
-
                     MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lat = float(group_screen.punkty.getLat(group_screen.actual_point + 1))
                     MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lon = float(group_screen.punkty.getLon(group_screen.actual_point + 1))'''
 
@@ -2286,11 +2226,11 @@ class MainApp(App):
                     print instruction_points.getLongitude(0)
                     if group_screen.actual_point == (punkty.getSize() - 1):
                         group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
-                
+
                 if self.lastInstruction != group_screen.ids.label_instruction.text:
                     activity.speaker.speak(group_screen.ids.label_instruction.text)
                     self.lastInstruction = group_screen.ids.label_instruction.text
-                
+
 
             # if flaga_gps == 1:
             #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = lat_2

@@ -17,6 +17,7 @@
                     pos: self.pos
                     size: self.size
             size_hint_y: .1
+            font_size: self.height / 3
             text: "Pogoda:"
             color: 1, 1, 1, 1
         BoxLayout:
@@ -25,7 +26,13 @@
             size_hint_y: .175
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_x: .02
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_x: .49
+
                 BoxLayout:
+                    size_hint_x: .3
                     orientation: 'vertical'
                     Image:
                         size_hint_y: .8
@@ -39,12 +46,15 @@
                         text: 'Temperatura'
                 Label:
                     id:label_temperatura
+                    size_hint_x: .7
                     font_size: self.height / 6
                     color: 0.235, 0.529, 0.572, 1
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_x: .49
                 BoxLayout:
                     orientation: 'vertical'
+                    size_hint_x: .3
                     Image:
                         size_hint_y: .8
                         center_x: self.parent.center_x
@@ -57,6 +67,7 @@
                         text: 'Opady'
                 Label:
                     id:label_opady
+                    size_hint_x: .7
                     font_size: self.height / 6
                     color: 0.235, 0.529, 0.572, 1
 
@@ -66,7 +77,12 @@
             spacing: 5
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_x: .02
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_x: .49
                 BoxLayout:
+                    size_hint_x: .3
                     orientation: 'vertical'
                     Image:
                         size_hint_y: .8
@@ -80,11 +96,14 @@
                         text: 'Wilgotność'
                 Label:
                     id:label_wilgotnosc
+                    size_hint_x: .7
                     font_size: self.height / 6
                     color: 0.235, 0.529, 0.572, 1
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_x: .49
                 BoxLayout:
+                    size_hint_x: .3
                     orientation: 'vertical'
                     Image:
                         size_hint_y: .8
@@ -98,6 +117,7 @@
                         text: 'Wiatr'
                 Label:
                     id:label_wiatr
+                    size_hint_x: .7
                     font_size: self.height / 6
                     color: 0.235, 0.529, 0.572, 1
 
@@ -111,6 +131,7 @@
                     pos: self.pos
                     size: self.size
             size_hint_y: .1
+            font_size: self.height / 3
             text: "Pogoda za 3h:"
             color: 1, 1, 1, 1
         BoxLayout:
@@ -119,7 +140,13 @@
             size_hint_y: .175
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_x: .02
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_x: .49
+
                 BoxLayout:
+                    size_hint_x: .3
                     orientation: 'vertical'
                     Image:
                         size_hint_y: .8
@@ -133,12 +160,15 @@
                         text: 'Temperatura'
                 Label:
                     id:label_forecast_temperatura
+                    size_hint_x: .7
                     font_size: self.height / 6
                     color: 0.235, 0.529, 0.572, 1
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_x: .49
                 BoxLayout:
                     orientation: 'vertical'
+                    size_hint_x: .3
                     Image:
                         size_hint_y: .8
                         center_x: self.parent.center_x
@@ -151,6 +181,7 @@
                         text: 'Opady'
                 Label:
                     id:label_forecast_opady
+                    size_hint_x: .7
                     font_size: self.height / 6
                     color: 0.235, 0.529, 0.572, 1
 
@@ -160,7 +191,12 @@
             spacing: 5
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_x: .02
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_x: .49
                 BoxLayout:
+                    size_hint_x: .3
                     orientation: 'vertical'
                     Image:
                         size_hint_y: .8
@@ -174,11 +210,14 @@
                         text: 'Wilgotność'
                 Label:
                     id:label_forecast_wilgotnosc
+                    size_hint_x: .7
                     font_size: self.height / 6
                     color: 0.235, 0.529, 0.572, 1
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_x: .49
                 BoxLayout:
+                    size_hint_x: .3
                     orientation: 'vertical'
                     Image:
                         size_hint_y: .8
@@ -192,12 +231,16 @@
                         text: 'Wiatr'
                 Label:
                     id:label_forecast_wiatr
+                    size_hint_x: .7
                     font_size: self.height / 6
                     color: 0.235, 0.529, 0.572, 1
-        Button:
-            text:'Prognozuj'
-            size_hint_y: .1
-            background_normal: ''
-            font_size: self.height / 2
-            background_color: 0.235, 0.529, 0.572, 1
-            on_release:root.ustal_pogode()
+        Label:
+            size_hint_y: .03
+            text: ''
+#        Button:
+#            text:'Prognozuj'
+#            size_hint_y: .1
+#            background_normal: ''
+#            font_size: self.height / 2
+#            background_color: 0.235, 0.529, 0.572, 1
+#            on_release:root.ustal_pogode()
