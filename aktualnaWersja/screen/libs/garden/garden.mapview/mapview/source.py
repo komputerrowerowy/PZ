@@ -43,7 +43,7 @@ class MapSource(object):
 
     def __init__(self,
         url="http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        cache_key=None, min_zoom=0, max_zoom=19, tile_size=256,
+        cache_key=None, min_zoom=6, max_zoom=19, tile_size=256,
         image_ext="png",
         attribution="© OpenStreetMap contributors",
         subdomains="abc"):
