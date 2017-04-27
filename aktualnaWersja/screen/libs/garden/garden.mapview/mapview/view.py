@@ -250,6 +250,9 @@ class MapView(Widget):
     """MapView is the widget that control the map displaying, navigation, and
     layers management.
     """
+    
+    globalLon = -1
+    globalLat = -1
 
     lon = NumericProperty()
     """Longitude at the center of the widget
@@ -572,6 +575,32 @@ class MapView(Widget):
             self._scale_target += d
         Clock.unschedule(self._animate_scale)
         Clock.schedule_interval(self._animate_scale, 1 / 60.)
+        
+    def Pobierz_lat_lon(self, d, x, y):
+        self._scale_target_time = 1.
+        self._scale_target_pos = x, y
+        vx, vy = self.viewport_pos
+        scale = self._scale
+        print('wartosc x: ', x / scale + vx)
+        print('wartosc y: ', y / scale + vy)
+        
+        PunktLat=self.map_source.get_lat(self._zoom, y / scale + vy)
+        PunktLon=self.map_source.get_lon(self._zoom, x / scale + vx)
+        #PunktLat = PunktLat / (-5)
+        #PunktLon = PunktLon / (-5)
+        print('wypisz pos lat: ',PunktLat)
+        print('wypisz pos lon: ',PunktLon)
+        
+        self.globalLon = PunktLon
+        self.globalLat = PunktLat
+        
+       
+        
+        #PunktY2=self.map_source.get_y(self._zoom, 53.01)
+        #PunktX2=self.map_source.get_x(self._zoom, 18.57)
+        #print('wypisz pos y: ',PunktY2)
+        #print('wypisz pos x: ',PunktX2)
+        
 
     def _animate_scale(self, dt):
         diff = self._scale_target / 3.
@@ -612,6 +641,35 @@ class MapView(Widget):
         elif touch.is_double_tap and self.double_tap_zoom:
             self.animated_diff_scale_at(1, *touch.pos)
             return True
+        if touch.is_double_tap:
+            self.Pobierz_lat_lon(1, *touch.pos)
+            print "slef wszedzie selfy"
+            print self
+            print self.parent
+            print self.parent.parent
+            print self.parent.parent.parent
+            print self.parent.parent.parent
+            print self.parent.parent.parent.parent
+            group_screen = self.parent.parent.parent.parent
+            mark = MapMarker(lon = self.globalLon, lat = self.globalLat)
+            self.add_marker(mark)
+            group_screen.ids.mapView.marker_list.append(mark)
+            #group_screen.ids.mapView.marker_list.append(MapMarker())
+            #marker_list_size = len(group_screen.ids.mapView.marker_list)
+            #group_screen.ids.mapView.marker_list[marker_list_size - 1].lat = self.globalLat
+            #group_screen.ids.mapView.marker_list[marker_list_size - 1].lon = self.globalLon
+            #group_screen.ids.marker2.lat = self.globalLat
+            #group_screen.ids.marker2.lon = self.globalLon
+            group_screen.hide_list_points()
+            
+            '''print('wypisz pos x i y: ',touch.pos)
+            print('wypisz pos x: ',touch.pos[1])
+            print('wypisz pos y: ',touch.pos[0])
+            PunktLat=self.map_source.get_lat(self._zoom, touch.pos[0])
+            PunktLon=self.map_source.get_lon(self._zoom, touch.pos[1])
+            print('wypisz pos lat: ',PunktLat)
+            print('wypisz pos lon: ',PunktLon)'''
+            
         touch.grab(self)
         self._touch_count += 1
         if self._touch_count == 1:

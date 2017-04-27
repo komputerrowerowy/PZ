@@ -14,6 +14,7 @@ from math import radians, sin, cos, acos, degrees, pi
 
 import requests
 from kivy.garden.mapview import MapLayer
+from kivy.garden.mapview import MapView
 from kivy.graphics.context_instructions import Translate, Scale
 from kivy.graphics.transformation import Matrix
 from kivy.properties import StringProperty, BooleanProperty
@@ -59,6 +60,7 @@ import ctypes
 from route import Router
 from loadOsm import LoadOsm
 import json
+from kivy.uix.label import Label
 
 #import pyowm
 
@@ -340,6 +342,26 @@ class ShowTime(Screen):
 
     def check2(self, fla):
         # pass
+        mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+
+
+        print('LonZmapview', mapview.globalLon)
+        print('LatZmapview', mapview.globalLat)
+
+        if mapview.globalLon >= 0 and mapview.globalLat >= 0:
+
+
+
+            MainApp.get_running_app().root.carousel.slides[0].latGPS = mapview.globalLat
+            MainApp.get_running_app().root.carousel.slides[0].lonGPS = mapview.globalLon
+            MainApp.get_running_app().root.carousel.slides[0].calculate_route_nodes_run_add()
+            # MainApp.get_running_app().root.carousel.slides[0].centerTarget()
+
+            mapview.globalLat = -1
+            mapview.globalLon = -1
+
+
+
         if activity.lastWord != '':
             music_screen = MainApp.get_running_app().root.carousel.slides[3]
             commands = activity.lastWord.split(" ")
@@ -817,8 +839,23 @@ class GroupScreen(Screen):
     route_calculated = False
     licznikTemp = False
     punkty = []
+    instructions = []
     actual_point = 0
     actual_instruction = 0
+    punkty_aktualne2 = []
+    punkty_aktualne = []
+    instructions_aktualne = []
+    flagaPunktow = 0
+    TymczasoweLat = 0
+    TymczasoweLon = 0
+    PunktyKontrolneLon = []
+    PunktyKontrolneLat = []
+    travelled_points = 0
+    route_size = []
+    list_points_shown = True
+    Nawiguj = False
+    removeFlag = False
+
 
     '''def __init__(self, **kwargs):
         super(GroupScreen, self).__init__()
@@ -837,21 +874,45 @@ class GroupScreen(Screen):
 
     def show_search_bar(self):
         if self.search_bar_shown == False:
-            self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] + self.height
-            self.ids.SearchInput.pos[0] = self.ids.SearchInput.pos[0] + self.height
+            self.ids.SearchInputShow.pos[0] = self.ids.SearchInputShow.pos[0] + self.height
+            self.ids.SearchLayout.pos[0] = self.ids.SearchLayout.pos[0] + self.height
             self.search_bar_shown = True
         else:
-            self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] - self.height
-            self.ids.SearchInput.pos[0] = self.ids.SearchInput.pos[0] - self.height
+            self.hide_list_points()
+            self.ids.SearchInputShow.pos[0] = self.ids.SearchInputShow.pos[0] - self.height
+            self.ids.SearchLayout.pos[0] = self.ids.SearchLayout.pos[0] - self.height
             self.search_bar_shown = False
 
     def hide_search_bar(self):
         print "test1"
-        #self.ids.SearchLocation.pos = self.search_location_position_temp
-        #self.ids.SearchInput.pos = self.search_search_input_position_temp
-        self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] - self.height
-        self.ids.SearchInput.pos[0] = self.ids.SearchInput.pos[0] - self.height
-        self.search_bar_shown = False
+        if self.search_bar_shown == True:
+            #self.ids.SearchLocation.pos = self.search_location_position_temp
+            #self.ids.SearchInput.pos = self.search_search_input_position_temp
+            self.hide_list_points()
+            self.ids.SearchInputShow.pos[0] = self.ids.SearchInputShow.pos[0] - self.height
+            self.ids.SearchLayout.pos[0] = self.ids.SearchLayout.pos[0] - self.height
+            self.search_bar_shown = False
+
+
+
+    def show_list_points(self):
+        if self.list_points_shown == False:
+            # self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] + self.height
+            self.ids.scrollPoints.pos[0] = self.ids.scrollPoints.pos[0] + self.height
+            self.list_points_shown = True
+        else:
+            # self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] - self.height
+            self.ids.scrollPoints.pos[0] = self.ids.scrollPoints.pos[0] - self.height
+            self.list_points_shown = False
+
+    def hide_list_points(self):
+        print "test1"
+        if self.list_points_shown == True:
+            #self.ids.SearchLocation.pos = self.search_location_position_temp
+            #self.ids.SearchInput.pos = self.search_search_input_position_temp
+            # self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] - self.height
+            self.ids.scrollPoints.pos[0] = self.ids.scrollPoints.pos[0] - self.height
+            self.list_points_shown = False
 
     def obliczanie_y1(self, x, y, z):
         if y == 0:
@@ -952,9 +1013,23 @@ class GroupScreen(Screen):
         scatter.apply_transform(r, post_multiply=True,
                                 anchor=scatter.to_local(scatter.parent.center_x, scatter.parent.center_y))
 
+    def navi(self):
+        if self.Nawiguj == False:
+            self.center()
+            self.ids.img_navi.source = "resources/map.png"
+        else:
+            self.ZerujTrase()
+            self.ids.img_navi.source = "resources/route.png"
+
     def center(self):
         MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(float(MainApp.lat), float(MainApp.lon))
         self.auto_center = True
+        self.route_calculated = True
+        self.Nawiguj = True
+        self.hide_search_bar()
+        # self.hide_list_points()
+        self.ids.img_center.source = "resources/center_red.png"
+        self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
         self.redraw_route()
 
     def centerTarget(self):
@@ -965,9 +1040,11 @@ class GroupScreen(Screen):
             MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
             # self.auto_center = True
             #self.redraw_route()
-            self.hide_search_bar()
+            # self.hide_search_bar()
             MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = float(self.latGPS)
             MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = float(self.lonGPS)
+            self.calculate_route_nodes_run_add()
+            # self.calculate_route_nodes_run_add()
         except:
             pass
 
@@ -992,41 +1069,12 @@ class GroupScreen(Screen):
             self.redraw_route()
 
 
-    def calculate_route_nodes_run(self):
-        #self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
-        try:
-            GraphHopperAndroid.calcPath(float(MainApp.lat), float(MainApp.lon), float(self.latGPS), float(self.lonGPS))
-            self.licznikTemp = True
-
-            self.punkty = GraphHopperAndroid.resp.getPoints()
-            self.route_calculated = True
-            print self.punkty.toString()
-            self.czy_wyznacozno_trase = True
-            self.center()
-            self.ids.img_center.source = "resources/center_red.png"
-                #self.redraw_route()
-            print "respInMain"
-            MainApp.route_nodes = True
-        except:
-            pass
-
-    def calculate_route_nodes(self, lat1, lon1, lat2, lon2):
-        MainApp.cos = -1
-        self.czy_wyznacozno_trase = True
-        self.center()
-        self.ids.img_center.source = "resources/center_red.png"
-
-        '''potrzebne do testowania na komputerze'''
-        MainApp.on_location(MainApp.get_running_app())
-
-        for layer in MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]._layers:
-            if layer.id == 'line_map_layer':
-                layer.routeToGpx(lat1, lon1, lat2, lon2, "cycle", "Route", "track")
-                break
 
     def calculate_route_nodes_run(self):
         #self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
         try:
+
+
             GraphHopperAndroid.calcPath(float(MainApp.lat), float(MainApp.lon), float(self.latGPS), float(self.lonGPS))
             self.licznikTemp = True
 
@@ -1045,6 +1093,416 @@ class GroupScreen(Screen):
             self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
             #wskazowka = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
             #MainApp.lastInstruction = wskazowka
+        except:
+            pass
+
+
+
+    def calculate_route_nodes_run_add(self):
+        # self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
+        print('cooooooooooooooooooooooooooooooooooooooooooo')
+
+        if self.removeFlag == True:
+            self.TymczasoweLat = self.PunktyKontrolneLat[(len(self.PunktyKontrolneLon) - 1)]
+            self.TymczasoweLon = self.PunktyKontrolneLon[(len(self.PunktyKontrolneLon) - 1)]
+            self.removeFlag = False
+
+        if self.flagaPunktow == 0:
+            GraphHopperAndroid.calcPath(True, float(MainApp.lat), float(MainApp.lon), float(self.latGPS),
+                                        float(self.lonGPS))
+            self.punkty = GraphHopperAndroid.resp.getPoints()
+            self.instructions = GraphHopperAndroid.instructionList
+            self.PunktyKontrolneLat.append(float(MainApp.lat))
+            self.PunktyKontrolneLon.append(float(MainApp.lon))
+            self.PunktyKontrolneLat.append(float(self.latGPS))
+            self.PunktyKontrolneLon.append(float(self.lonGPS))
+            self.route_size.append(self.punkty.getSize())
+            if self.list_points_shown == True:
+                self.hide_list_points
+        else:
+            GraphHopperAndroid.calcPath(False, float(self.TymczasoweLat), float(self.TymczasoweLon), float(self.latGPS),
+                                        float(self.lonGPS))
+            self.punkty_aktualne = GraphHopperAndroid.resp.getPoints()
+            punkty_size = self.punkty_aktualne.getSize()
+            self.punkty.removeLast()
+            for j in xrange(0, punkty_size):
+                lat = float(self.punkty_aktualne.getLat(j))
+                lon = float(self.punkty_aktualne.getLon(j))
+                ele = float(self.punkty_aktualne.getEle(j))
+
+                self.punkty.add(lat, lon, ele)
+
+            GraphHopperAndroid.connectInstructions()
+            self.instructions = GraphHopperAndroid.instructionList
+            self.PunktyKontrolneLat.append(float(self.latGPS))
+            self.PunktyKontrolneLon.append(float(self.lonGPS))
+            self.route_size.append(self.punkty.getSize() - 1)
+            self.route_size.append(punkty_size)
+
+        self.licznikTemp = True
+
+        self.route_calculated = True
+        print('wypisane punkty')
+        print self.punkty.toString()
+        self.czy_wyznacozno_trase = True
+        # self.center()
+        # self.ids.img_center.source = "resources/center_red.png"
+        self.redraw_route()
+        print "respInMain"
+        MainApp.route_nodes = True
+        self.actual_point = 0
+        self.actual_instruction = 0
+        if self.auto_center == True:
+            self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
+        self.flagaPunktow += 1
+        self.TymczasoweLat = self.latGPS
+        self.TymczasoweLon = self.lonGPS
+
+        self.ids.scrollPoints.clear_widgets(children=None)
+
+        def addPointList(bt):
+            self.ids.scrollPoints.clear_widgets(children=None)
+            for indeks in xrange(0, len(self.PunktyKontrolneLon)):
+                # btn1 = Button(text=contact.display_name, on_release=callPhone)
+                tekst = '' + str(self.PunktyKontrolneLat[indeks]) + ', ' + str(self.PunktyKontrolneLon[indeks])
+                # btn2 = Button(text='^', on_release=self.upPoint(self.id))
+                btn3 = Button(text='x', on_release=removePoint)
+                btn2 = Button(text='V', on_release=downPoint)
+                btn1 = Button(text='^', on_release=upPoint)
+                btn = Button(text=tekst)
+                # btn = Button(text=contact.display_name + "  " + contact.group_id + "  " +contact.number, on_release=callPhone)
+                if indeks > 0:
+                    btn3.id = 'BtnXX' + str(indeks)
+                    btn3.color = (1, 1, 1, 0)
+                    # btn3.background_normal = ''
+                    btn3.text = str(indeks)
+                    btn3.background_down = "resources/removeA.png"
+                    btn3.background_normal = "resources/remove30.png"
+                    btn3.background_color = (1, 1, 1, 1)
+                    btn3.size_hint_x = 0.1
+
+                    btn1.id = 'BtnG' + str(indeks)
+                    btn1.color = (1, 1, 1, 0)
+                    # btn1.background_normal = ''
+                    btn1.text = str(indeks)
+                    btn1.background_down = "resources/upA.png"
+                    btn1.background_normal = "resources/up30.png"
+                    btn1.background_color = (1, 1, 1, 1)
+                    btn1.size_hint_x = 0.1
+
+                    btn2.id = 'BtnD' + str(indeks)
+                    btn2.color = (1, 1, 1, 0)
+                    # btn2.background_normal = ''
+                    btn2.text = str(indeks)
+                    btn2.background_down = "resources/downA.png"
+                    btn2.background_normal = "resources/down30.png"
+                    btn2.background_color = (1, 1, 1, 1)
+                    btn2.size_hint_x = 0.1
+
+                    btn.id = 'BtnT' + str(indeks)
+                    btn.color = (1, 1, 1, 1)
+                    btn.background_normal = ''
+                    btn.background_down = ''
+                    btn.background_color = (0, 0, 0, .3)
+                    btn.size_hint_x = 0.7
+                else:
+                    btn3.id = 'BtnXX' + str(indeks)
+                    btn3.color = (1, 1, 1, 0)
+                    btn3.background_normal = ''
+                    btn3.text = str(indeks)
+                    # btn3.background_down = "resources/remove.png"
+                    # btn3.background_normal = "resources/remove.png"
+                    btn3.background_color = (0, 0, 0, .3)
+                    btn3.size_hint_x = 0.1
+
+                    btn1.id = 'BtnG' + str(indeks)
+                    btn1.color = (1, 1, 1, 0)
+                    btn1.background_normal = ''
+                    btn1.text = str(indeks)
+                    # btn1.background_down = "resources/up2.png"
+                    # btn1.background_normal = "resources/up2.png"
+                    btn1.background_color = (0, 0, 0, .3)
+                    btn1.size_hint_x = 0.1
+
+                    btn2.id = 'BtnD' + str(indeks)
+                    btn2.color = (1, 1, 1, 0)
+                    btn2.background_normal = ''
+                    btn2.text = str(indeks)
+                    # btn2.background_down = "resources/down2.png"
+                    # btn2.background_normal = "resources/down2.png"
+                    btn2.background_color = (0, 0, 0, .3)
+                    btn2.size_hint_x = 0.1
+
+                    btn.id = 'BtnT' + str(indeks)
+                    btn.color = (1, 1, 1, 1)
+                    btn.background_normal = ''
+                    btn.background_down = ''
+                    btn.background_color = (0, 0, 0, .3)
+                    btn.size_hint_x = 0.7
+
+                self.ids.scrollPoints.add_widget(btn3)
+                self.ids.scrollPoints.add_widget(btn1)
+                self.ids.scrollPoints.add_widget(btn2)
+                self.ids.scrollPoints.add_widget(btn)
+
+        def upPoint(bt):
+            indeks = int(bt.text)
+
+
+            if indeks > 1:
+                TymLon = self.PunktyKontrolneLon[indeks]
+                TymLat = self.PunktyKontrolneLat[indeks]
+                TymSize = self.route_size[indeks]
+                self.PunktyKontrolneLon[indeks] = self.PunktyKontrolneLon[indeks - 1]
+                self.PunktyKontrolneLat[indeks] = self.PunktyKontrolneLat[indeks - 1]
+                self.route_size[indeks] = self.route_size[indeks - 1]
+                self.PunktyKontrolneLon[indeks - 1] = TymLon
+                self.PunktyKontrolneLat[indeks - 1] = TymLat
+                self.route_size[indeks - 1] = TymSize
+                TymMark = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks - 1]
+                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks - 1] = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks -2]
+                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks - 2] = TymMark
+                # self.ZerujTrase()
+                # self.calculate_route_nodes_run_add()
+                # self.recalculate_tras()
+
+                addPointList(bt)
+
+
+                self.recalculate_route()
+
+        def downPoint(bt):
+            indeks = int(bt.text)
+
+            if indeks < (len(self.PunktyKontrolneLon) - 1):
+                TymLon = self.PunktyKontrolneLon[indeks]
+                TymLat = self.PunktyKontrolneLat[indeks]
+                TymSize = self.route_size[indeks]
+                TymMark = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks - 1]
+                self.PunktyKontrolneLon[indeks] = self.PunktyKontrolneLon[indeks + 1]
+                self.PunktyKontrolneLat[indeks] = self.PunktyKontrolneLat[indeks + 1]
+                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks - 1] = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks]
+                self.route_size[indeks] = self.route_size[indeks + 1]
+                self.PunktyKontrolneLon[indeks + 1] = TymLon
+                self.PunktyKontrolneLat[indeks + 1] = TymLat
+                self.route_size[indeks + 1] = TymSize
+                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks] = TymMark
+                # self.ZerujTrase()
+                # self.calculate_route_nodes_run_add()
+                # self.recalculate_tras()
+
+                addPointList(bt)
+
+                self.recalculate_route()
+
+        def removePoint(bt):
+            indeks = str(bt.text)
+            indeks2 = -1
+
+            print "popy popy popy"
+            print self
+            print self.parent
+            print self.parent.parent
+            print self.parent.parent.parent
+            print self.parent.parent.parent
+            print self.parent.parent.parent.parent
+            group_screen = self.parent.parent.parent.parent
+
+
+
+
+
+            if int(indeks) > 0:
+                print('tttttttttttttttt', int(indeks))
+
+
+                for i in xrange(0, len(self.PunktyKontrolneLon)):
+                    if str(i) == str(indeks):
+                        indeks2 = int(i)
+
+                # self.TymczasoweLat = self.PunktyKontrolneLat[(len(self.PunktyKontrolneLon) - 1)]
+                # self.TymczasoweLon = self.PunktyKontrolneLon[(len(self.PunktyKontrolneLon) - 1)]
+
+                # if indeks2 == (len(self.PunktyKontrolneLon) - 1):
+                #     self.removeFlag = True
+                self.removeFlag = True
+                Marker = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.pop(indeks2-1)
+
+                map = MapView()
+                map.remove_marker(Marker)
+
+
+                self.PunktyKontrolneLon.pop(int(indeks2))
+                self.PunktyKontrolneLat.pop(int(indeks2))
+                self.route_size.pop(int(indeks2 - 1))
+
+                if len(self.PunktyKontrolneLon) == 1:
+                    self.PunktyKontrolneLon.pop(0)
+                    self.PunktyKontrolneLat.pop(0)
+                    self.flagaPunktow = 0
+                    self.route_calculated = False
+                    self.czy_wyznacozno_trase = False
+                    MainApp.route_nodes = False
+                    self.licznikTemp = False
+                    self.auto_center = False
+                    self.Nawiguj = False
+                    self.removeFlag = False
+                    self.ids.scrollPoints.clear_widgets(children=None)
+                    for layer in self.ids["mapView"]._layers:
+                        if layer.id == 'line_map_layer':
+                            layer.czysc_trase()
+                            break
+
+                addPointList(bt)
+
+
+
+
+                # self.calculate_route_nodes_run_add()
+
+                self.recalculate_route()
+
+
+        addPointList(self)
+
+
+
+
+
+
+    def ZerujTrase(self):
+        self.flagaPunktow = 0
+        self.route_calculated = False
+        self.czy_wyznacozno_trase = False
+        MainApp.route_nodes = False
+        self.licznikTemp = False
+        self.auto_center = False
+        self.Nawiguj = False
+
+        self.ids.scrollPoints.clear_widgets(children=None)
+        self.ids.img_center.source = "resources/center_white.png"
+        self.ids.label_instruction.text = ''
+        MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = -82
+        MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = 112
+
+        localSize = len(self.PunktyKontrolneLon)
+
+        for i in xrange(1, localSize):
+            Marker = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.pop()
+
+            map = MapView()
+            map.remove_marker(Marker)
+
+
+        for i in xrange(1, localSize):
+            indeks = localSize - i
+
+            self.PunktyKontrolneLon.pop(indeks)
+            self.PunktyKontrolneLat.pop(indeks)
+            self.route_size.pop(indeks-1)
+
+        try:
+            self.PunktyKontrolneLon.pop(0)
+            self.PunktyKontrolneLat.pop(0)
+        except:
+            pass
+        # self.recalculate_route()
+
+        for layer in self.ids["mapView"]._layers:
+            if layer.id == 'line_map_layer':
+                layer.czysc_trase()
+                break
+
+
+
+    def recalculate_tras(self):
+        try:
+
+
+
+            for i in xrange(0, len(self.PunktyKontrolneLat)-1):
+                GraphHopperAndroid.calcPath(False, float(self.PunktyKontrolneLat[i]),
+                                                         float(self.PunktyKontrolneLon[i]),
+                                                         float(self.PunktyKontrolneLat[i + 1]),
+                                                         float(self.PunktyKontrolneLon[i + 1]))
+                self.punkty_aktualne = GraphHopperAndroid.resp.getPoints()
+                punkty_size = self.punkty_aktualne.getSize()
+                self.punkty.removeLast()
+                for j in xrange(0, punkty_size):
+                    lat = float(self.punkty_aktualne.getLat(j))
+                    lon = float(self.punkty_aktualne.getLon(j))
+                    ele = float(self.punkty_aktualne.getEle(j))
+
+                    self.punkty.add(lat, lon, ele)
+
+                self.route_size[i + 1] = punkty_size
+
+                GraphHopperAndroid.connectInstructions()
+                # self.punkty.removeLast()
+
+            # self.auto_center = False
+            self.route_calculated = True
+            self.czy_wyznacozno_trase = True
+            MainApp.route_nodes = True
+            self.actual_point = 0
+            self.actual_instruction = 0
+            if self.auto_center == True:
+                self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
+            # self.center()
+
+            for layer in self.ids["mapView"]._layers:
+                if layer.id == 'line_map_layer':
+                    layer.czysc_trase()
+                    break
+        except:
+            pass
+
+    def recalculate_route(self):
+        try:
+            print 'test usuwania tras'
+
+            GraphHopperAndroid.calcPath(True, float(MainApp.lat), float(MainApp.lon),
+                                        float(self.PunktyKontrolneLat[self.travelled_points + 1]),
+                                        float(self.PunktyKontrolneLon[self.travelled_points + 1]))
+            self.punkty = GraphHopperAndroid.resp.getPoints()
+            self.instructions = GraphHopperAndroid.instructionList
+
+            self.route_size[self.travelled_points + 1] = (self.punkty.getSize())
+
+            self.actual_point = 0
+            self.actual_instruction = 0
+            if self.auto_center == True:
+                self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
+
+
+
+            if (self.travelled_points + 1) < (len(self.PunktyKontrolneLat)-1):
+                for i in xrange(self.travelled_points + 1, len(self.PunktyKontrolneLat) - 1):
+                    GraphHopperAndroid.calcPath(False, float(self.PunktyKontrolneLat[i]),
+                                                             float(self.PunktyKontrolneLon[i]),
+                                                             float(self.PunktyKontrolneLat[i + 1]),
+                                                             float(self.PunktyKontrolneLon[i + 1]))
+                    self.punkty_aktualne = GraphHopperAndroid.resp.getPoints()
+                    punkty_size = self.punkty_aktualne.getSize()
+                    self.punkty.removeLast()
+                    for j in xrange(0, punkty_size):
+                        lat = float(self.punkty_aktualne.getLat(j))
+                        lon = float(self.punkty_aktualne.getLon(j))
+                        ele = float(self.punkty_aktualne.getEle(j))
+
+                        self.punkty.add(lat, lon, ele)
+
+                    self.route_size[i + 1] = punkty_size
+
+                    GraphHopperAndroid.connectInstructions()
+                    # self.punkty.removeLast()
+
+            self.route_calculated = True
+            self.czy_wyznacozno_trase = True
+            MainApp.route_nodes = True
+            self.redraw_route()
+
+
         except:
             pass
 
@@ -1829,6 +2287,9 @@ class LineMapLayer(MapLayer):
 
     '''Funkcja rysowania linii'''
 
+    def czysc_trase(self):
+        self.canvas.clear()
+
     def draw_line(self):
         if MainApp.get_running_app().root.carousel.slides[0].route_calculated == True:
             mapview = self.parent
@@ -1853,7 +2314,7 @@ class LineMapLayer(MapLayer):
                     # mapview.get_window_xy_from(float(self.parent.node[j][0]), float(self.parent.node[j][1]), mapview.zoom))
                 print str(self.parent.node[j][1])
                 print str(self.parent.node[j][0])'''
-            print float(group_screen.punkty.getLat(10))
+            #print float(group_screen.punkty.getLat(10))
             punkty_size = group_screen.punkty.getSize()
             print punkty_size
             point_list.extend(mapview.get_window_xy_from(float(MainApp.lat), float(MainApp.lon), mapview.zoom))
@@ -2001,9 +2462,75 @@ class ZoneButton(Button):
     _instance_count = -1
     _zoneNames = ZoneList.ListaNazw
 
+    Kontakty = []
+
     def __init__(self, **kwargs):
         super(ZoneButton, self).__init__(**kwargs)
         ZoneButton._instance_count += 1
+
+    def pop(self, tytul):
+
+        # activity = autoclass("org.renpy.android.PythonActivity").mActivity
+        # GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
+        # Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
+        # Data = autoclass("android.provider.ContactsContract$Data")
+        # RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
+        # content_resolver = activity.getApplicationContext()
+        # resolver = content_resolver.getContentResolver()
+        #
+        # for i in range(0, len(ZoneList.ListaNazw)):
+        #     if tytul == ZoneList.ListaNazw[i]:
+        #         groupID = ZoneList.ListaId[i]
+        #         break
+        #
+        # projection = [RawContactsColumns.CONTACT_ID, GroupMembership.CONTACT_ID]
+        #
+        # grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None, None)
+        # group = grupa
+        #
+        # while (grupa.moveToNext()):
+        #     id = group.getString(group.getColumnIndex("CONTACT_ID"))
+        #
+        #     grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
+        #     group2 = grupa2
+        #
+        #     while (grupa2.moveToNext()):
+        #         nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
+        #         if nazwa not in ZoneButton.Kontakty:
+        #             ZoneButton.Kontakty.append(nazwa)
+        #
+        #     grupa2.close()
+        # grupa.close()
+        #
+        # content = GridLayout(cols=1)
+        # zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
+        #
+        # if groupID == '999':
+        #     ZoneButton.Kontakty = []
+        #     ZoneButton.Kontakty.append(
+        #         "Ta grupa przeznaczona jest\ndla nieznanych numerów i nie\nzawiera żadnego kontaktu.")
+        #
+        # elif len(ZoneButton.Kontakty) < 1:
+        #     ZoneButton.Kontakty = []
+        #     ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
+        #
+        # for i in range(0, len(ZoneButton.Kontakty)):
+        #     content.add_widget(Label(text=ZoneButton.Kontakty[i], color=(.235, .529, .572, 1)))
+        #
+        # content.add_widget(zamknij)
+        #
+        # popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
+        #               separator_color=(.235, .529, .572, 1),
+        #               content=content, auto_dismiss=False,
+        #               size_hint=(None, None),
+        #               size=(400, 400))
+        # popup.normal_color = (1, 1, 1, 0)
+        #
+        # zamknij.bind(on_release=popup.dismiss)
+        # popup.open()
+        #
+        # ZoneButton.Kontakty = []
+        pass
 
 
 class ZoneLayout(BoxLayout):
@@ -2157,7 +2684,7 @@ class MainApp(App):
             #Weather().ustal_pogode()
 
             if self.flagaWygladu == True:
-                Weather().ustal_pogode()
+                #Weather().ustal_pogode()
                 #MusicPlayer().getSongs()
                 self.flagaWygladu = False
 
@@ -2170,7 +2697,7 @@ class MainApp(App):
             group_screen = MainApp.get_running_app().root.carousel.slides[0]
 
             #obliczenie odleglosci miedzy aktualnym punktem a najblizszym punktem w nawigacji do ktorego zmierzamy
-            if group_screen.route_calculated == True:
+            if group_screen.route_calculated == True and group_screen.Nawiguj == True:
                 x1 = punkty.getLat(group_screen.actual_point)
                 y1 = punkty.getLon(group_screen.actual_point)
                 x2 = punkty.getLat(group_screen.actual_point + 1)
@@ -2179,7 +2706,7 @@ class MainApp(App):
                 y = MainApp.lon
 
                 if group_screen.of_the_track(x1, y1, x2, y2, x, y):
-                    group_screen.calculate_route_nodes_run()
+                    group_screen.recalculate_route()
 
                 distance1 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point)))
                 distance2 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point + 1)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point + 1)))
@@ -2230,6 +2757,9 @@ class MainApp(App):
                 if self.lastInstruction != group_screen.ids.label_instruction.text:
                     activity.speaker.speak(group_screen.ids.label_instruction.text)
                     self.lastInstruction = group_screen.ids.label_instruction.text
+
+                if group_screen.actual_point >= group_screen.route_size[group_screen.travelled_points]:
+                    group_screen.travelled_points += 1
 
 
             # if flaga_gps == 1:

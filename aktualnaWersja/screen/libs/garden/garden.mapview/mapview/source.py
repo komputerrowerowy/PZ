@@ -60,6 +60,7 @@ class MapSource(object):
         self.attribution = attribution
         self.subdomains = subdomains
         self.cache_fmt = "{cache_key}_{zoom}_{tile_x}_{tile_y}.{image_ext}"
+        #self.cache_fmt = "{zoom}/{tile_x}/{tile_y}.{image_ext}"
         self.dp_tile_size = min(dp(self.tile_size), self.tile_size * 2)
         self.default_lat = self.default_lon = self.default_zoom = None
         self.bounds = None

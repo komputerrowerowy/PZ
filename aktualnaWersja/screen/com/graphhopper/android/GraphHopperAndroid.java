@@ -71,10 +71,11 @@ public class GraphHopperAndroid{
 	public PathWrapper resp;
 	private Translation tr;
 	private final TranslationMap trMap = new TranslationMap().doImport();
-	private InstructionList instructionList;
+	public InstructionList instructionList;
 	private Locale locale = new Locale("pl");
     //private ItemizedLayer<MarkerItem> itemizedLayer;
 	//private PathLayer pathLayer;
+    private InstructionList instructionList2;
 	
 	public GraphHopperAndroid(File mapsFolder){
 		System.out.println("graphConstructor");
@@ -148,7 +149,7 @@ public class GraphHopperAndroid{
         prepareInProgress = false;
 	}
 	
-	public void calcPath(final double fromLat, final double fromLon,
+    public void calcPath(boolean firstInstructionList, final double fromLat, final double fromLon,
                          final double toLat, final double toLon) {
 
         System.out.println("calculating path ...");
@@ -157,6 +158,9 @@ public class GraphHopperAndroid{
 			StopWatch sw = new StopWatch().start();
 			GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).
 					setAlgorithm(Algorithms.DIJKSTRA_BI);
+            // zmiana rodzaju rowerów
+			req.setVehicle("bike");
+			//req.setVehicle("mtb");
 			req.getHints().
 					put(Routing.INSTRUCTIONS, "true");
 			GHResponse resp = hopper.route(req);
@@ -174,17 +178,34 @@ public class GraphHopperAndroid{
 				System.out.println("the route is " + (int) (resp1.getDistance() / 100) / 10f
 						+ "km long, time:" + resp1.getTime() / 60000f + "min, debug:" + time);
 				System.out.println(resp1.getPoints().toString());
-				calcPathResp(resp1);
+				calcPathResp(resp1, firstInstructionList);
 			} else {
 				System.out.println("Error:" + resp1.getErrors());
 			}
 			shortestPathRunning = false;
 	}
 	
-	private void calcPathResp(PathWrapper resp){
+	private void calcPathResp(PathWrapper resp, boolean firstInstructionList) {
 		this.resp = resp;
-		this.instructionList = resp.getInstructions();
+		if (firstInstructionList){
+			this.instructionList = resp.getInstructions();
+		}
+		else{
+			this.instructionList2 = resp.getInstructions();
+		}
 	}
+    
+    public void connectInstructions(){
+        int index = this.instructionList.size() - 1;
+        this.instructionList.remove(index);
+		for (int i = 0; i < this.instructionList2.size(); i++) {
+			Instruction instruction = this.instructionList2.get(i);
+			this.instructionList.add(instruction);
+		}
+        System.out.println("wypisane instrukcje");
+        System.out.println(this.instructionList.toString());
+	}
+
 	
 	public String getTurnDescription(int index){
 		Instruction instruction = this.instructionList.get(index);
