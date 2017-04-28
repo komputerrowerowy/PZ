@@ -61,6 +61,7 @@ from route import Router
 from loadOsm import LoadOsm
 import json
 from kivy.uix.label import Label
+from SOAPpy import WSDL
 
 #import pyowm
 
@@ -127,6 +128,41 @@ Builder.load_string('''
                 source: 'resources/odrzuc.png'
                 height: self.parent.height
                 #width: self.parent.width
+<StormPopup>:
+    cols:1
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: 1
+        Label:
+            id: storm_label_achtung
+            background_normal: ''
+            canvas.before:
+                Color:
+                    rgba: 1, 0, 0, .3
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: 0.4
+            halign:'center'
+            valign:'middle'
+            text: root.text
+            font_size: self.height/16
+            color: 1, 1, 1, 1
+            center_x: self.parent.center_x
+            center_y: self.parent.center_y
+        Image:
+            size_hint_y: .4
+            canvas.before:
+                Color:
+                    rgba: 1, 0, 0, .3
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            center_x: self.parent.center_x
+            source: root.ktory_radar
+            height: self.parent.height*2
+            width: self.parent.width*2
+
 <StartScreen>:
     canvas.before:
         Rectangle:
@@ -190,16 +226,27 @@ class ConfirmPopup(GridLayout):
     def on_answer(self, *args):
         pass
 
+class StormPopup(GridLayout):
+    text = StringProperty()
+    ktory_radar=''
 
+    def __init__(self, **kwargs):
+        self.register_event_type('on_answer2')
+        super(StormPopup, self).__init__(**kwargs)
+
+    def on_answer2(self, *args):
+        pass
 
 class StartScreen(Screen):
     pass
+
 
 
 class ShowTime(Screen):
     popup_shown = False
     flagaCall = 1
     prev = 0
+    powtorka=0
 
     def __init__(self, **kwargs):
         super(ShowTime, self).__init__()
@@ -283,6 +330,17 @@ class ShowTime(Screen):
             self.incoming_call_clock = Clock.schedule_interval(self.accept_call_voice, 1)
             # time.sleep(1)
 
+    def stormListener(self):
+        content = StormPopup()
+        content.bind(on_answer=self._on_answer2)
+        self.popup2 = Popup(title="Ostrzezenie o burzy: ",
+                           content=content,
+                           size_hint=(0.9, 0.75),
+                           auto_dismiss=True)
+        self.popup2.open()
+    #def closestormListener(self):
+     #   self.popup2.dismiss()
+
     def check(self, sms_recipient, sms_message):
 
         print"nieWiem"
@@ -329,6 +387,23 @@ class ShowTime(Screen):
                 self.rejectIncomingCall()
                 self.popup.dismiss()
         self.popup.dismiss()
+        self.popup_shown = False
+
+    def _on_answer2(self, instance, answer):
+        print "USER ANSWER2: ", repr(answer)
+        if answer == "Odbierz":
+
+            #self.flagaCall = 1
+            self.popup2.dismiss()
+            #AcceptIncomingCall2.acceptCall()
+        else:
+            if answer == "Odrzuc":
+
+                #self.flagaCall = 1
+
+                #self.rejectIncomingCall()
+                self.popup2.dismiss()
+        self.popup2.dismiss()
         self.popup_shown = False
 
     def rejectIncomingCall(self):
@@ -478,6 +553,11 @@ class ShowTime(Screen):
                 self.popup.dismiss()
                 self.popup_shown = False
                 self.flagaCall = 1
+
+        print "Tutaj sprawdzam Weather.czy_burza=" + str(Weather.czy_burza)
+        if Weather.czy_burza==0 and self.powtorka==0:
+            self.powtorka=1
+            self.stormListener()
 
 
 class ChooseFile(FloatLayout):
@@ -1975,6 +2055,8 @@ class Speedometer(Screen):
         pass
 
 class Weather(Screen):
+    czy_burza = 0.5
+    miejscowosc=StringProperty()
     def ustal_pogode(self):
         print 'makarena'
         #obs = owm.weather_at_coords(52, 18)
@@ -2067,7 +2149,10 @@ class Weather(Screen):
         #     u'dt': 1492268400, u'main': {u'
 
         print 'zxzxzx'
+        print data_forecast
         print data_forecast['list'][1]
+        print data_forecast['city']['name']
+        self.miejscowosc=str(data_forecast['city']['name'])
         temp = data_forecast['list'][0]['main']['temp'] - 273.15
         temp_forecast=data_forecast['list'][1]['main']['temp']-273.15
         temp=round(temp,2)
@@ -2148,6 +2233,78 @@ class Weather(Screen):
             '%')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text = str(wind_forecast) + str(
             'm/s ') + str(kierunek_forecast)
+
+    def burze_api(self,key, wsdl_file, city, range_detect):
+        server = WSDL.Proxy(wsdl_file)
+        xy = server.miejscowosc(city, key)
+        ostrzezenia = server.ostrzezenia_pogodowe(xy['y'], xy['x'], key)
+        burza = server.szukaj_burzy(xy['y'], xy['x'], range_detect, key)
+        return [ostrzezenia, burza]
+
+    def print_burza(self,burza):
+        print "=== Wykrywanie burzy ==="
+        if burza['liczba'] == 0:
+            Weather.czy_burza=0
+            print "Weather().czy_burza="+str(self.czy_burza)
+            print "whahahaha mamy radarN"
+            StormPopup.ktory_radar = "resources/radarN.png"
+            StormPopup.text="Uwaga!\nTak naprawde to nie ma burzy ;)"
+            #self.czy_burza = 0
+            #MainApp.get_running_app().root.carousel.slides[0].ids["label_burza"].color = (0, 1, 0, 0.3)
+            print "Brak burzy"
+        else:
+            Weather.czy_burza=1
+            print "Weather().czy_burza=" + str(Weather().czy_burza)
+            print "Uwaga! Wyladowania atmosferyczne w odleglosci ", str(burza['odleglosc']), "km"
+            print "Kierunek: ", str(burza['kierunek'])
+            if str(burza['kierunek'])=='N':
+                print "whahahaha mamy radarN"
+                StormPopup.ktory_radar = "resources/radarE.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: NE"
+            elif str(burza['kierunek'])=='NE':
+                print "whahahaha mamy radarNE"
+                StormPopup.ktory_radar = "resources/radarNE.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: NE"
+            elif str(burza['kierunek'])=='E':
+                print "whahahaha mamy radarE"
+                StormPopup.ktory_radar = "resources/radarE.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: E"
+            elif str(burza['kierunek'])=='SE':
+                print "whahahaha mamy radarSE"
+                StormPopup.ktory_radar = "resources/radarSE.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: SE"
+            elif str(burza['kierunek'])=='S':
+                print "whahahaha mamy radarS"
+                StormPopup.ktory_radar = "resources/radarS.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: S"
+            elif str(burza['kierunek'])=='SW':
+                print "whahahaha mamy radarSW"
+                StormPopup.ktory_radar = "resources/radarSW.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: SW"
+            elif str(burza['kierunek'])=='W':
+                print "whahahaha mamy radarW"
+                StormPopup.ktory_radar = "resources/radarW.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: W"
+            elif str(burza['kierunek'])=='NW':
+                print "whahahaha mamy radarNW"
+                StormPopup.ktory_radar = "resources/radarNW.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: NW"
+            print "Liczba: ", str(burza['liczba'])
+            print "Odleglosc: ", str(burza['odleglosc']), "km"
+            print "Okres: ", str(burza['okres']), "min"
+
+    def print_ostrzezenia(self,ostrzezenia):
+        print "=== Ostrzezenia pogodowe==="
+        print "Mroz: {0} {1} {2}".format(ostrzezenia['mroz'], ostrzezenia['mroz_od_dnia'], ostrzezenia['mroz_od_dnia'])
+        print "Upal: {0} {1} {2}".format(ostrzezenia['upal'], ostrzezenia['upal_od_dnia'], ostrzezenia['upal_od_dnia'])
+        print "Wiatr: {0} {1} {2}".format(ostrzezenia['wiatr'], ostrzezenia['wiatr_od_dnia'],
+                                          ostrzezenia['wiatr_od_dnia'])
+        print "Opad: {0} {1} {2}".format(ostrzezenia['opad'], ostrzezenia['opad_od_dnia'], ostrzezenia['opad_od_dnia'])
+        print "Burza: {0} {1} {2}".format(ostrzezenia['burza'], ostrzezenia['burza_od_dnia'],
+                                          ostrzezenia['burza_od_dnia'])
+        print "Traba: {0} {1} {2}".format(ostrzezenia['traba'], ostrzezenia['traba_od_dnia'],
+                                          ostrzezenia['traba_od_dnia'])
+
 
 class ScreenSettings(Screen):
     def build(self):
@@ -2684,9 +2841,18 @@ class MainApp(App):
             #Weather().ustal_pogode()
 
             if self.flagaWygladu == True:
+                Weather().ustal_pogode()
+                wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
+                key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
+                city = str(Weather.miejscowosc)
+                range_detect = 50
+                ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
+                Weather().print_burza(burza)
+                Weather().print_ostrzezenia(ostrzezenia)
+                # MusicPlayer().getSongs()
+                self.flagaWygladu = False
                 #Weather().ustal_pogode()
                 #MusicPlayer().getSongs()
-                self.flagaWygladu = False
 
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
             MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
