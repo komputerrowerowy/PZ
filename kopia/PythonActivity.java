@@ -634,6 +634,12 @@ private final int CHECK_CODE = 0x1;
         
         //zablokowanie wygaszacza ekranu, włączony przez cały czas
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        
+        //przesłoniecie ekrnau blokady
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
+            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
 
 
