@@ -14,7 +14,7 @@ from math import radians, sin, cos, acos, degrees, pi
 
 import requests
 from kivy.garden.mapview import MapLayer
-from kivy.garden.mapview import MapView
+from kivy.garden.mapview import MapView, MapMarker
 from kivy.graphics.context_instructions import Translate, Scale
 from kivy.graphics.transformation import Matrix
 from kivy.properties import StringProperty, BooleanProperty
@@ -1117,14 +1117,16 @@ class GroupScreen(Screen):
             print self.returnLon()
             lon = float(self.returnLon())
             lat = float(self.returnLat())
+            self.latGPS = float(self.returnLat())
+            self.lonGPS = float(self.returnLon())
+            map = MapView()
             MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
-            # self.auto_center = True
-            #self.redraw_route()
-            # self.hide_search_bar()
-            MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = float(self.latGPS)
-            MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = float(self.lonGPS)
+
+            mark = MapMarker(lon=self.lonGPS, lat=self.latGPS)
+            map.add_marker(mark)
+            MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
+
             self.calculate_route_nodes_run_add()
-            # self.calculate_route_nodes_run_add()
         except:
             pass
 
