@@ -97,6 +97,13 @@ class Tile(Rectangle):
             cache_key=map_source.cache_key,
             **self.__dict__)
         return join(CACHE_DIR, fn)
+    
+    @property
+    def folders_cache(self):
+        map_source = self.map_source
+        dir_create = map_source.dir_cache.format(
+            **self.__dict__)
+        return join(CACHE_DIR, dir_create)
 
     def set_source(self, cache_fn):
         self.source = cache_fn

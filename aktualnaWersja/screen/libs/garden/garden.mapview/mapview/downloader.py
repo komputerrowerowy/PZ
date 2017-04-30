@@ -11,12 +11,16 @@ import requests
 import traceback
 from time import time
 from mapview import CACHE_DIR
+import mapview
+from kivy.clock import Clock
 
 
 class Downloader(object):
     _instance = None
     MAX_WORKERS = 5
     CAP_TIME = 0.064  # 15 FPS
+    
+    
 
     @staticmethod
     def instance():
@@ -43,6 +47,9 @@ class Downloader(object):
         self._futures.append(future)
 
     def download_tile(self, tile):
+        folders_cache = str(tile.folders_cache)
+        if not exists(folders_cache):
+            makedirs(folders_cache)
         future = self.executor.submit(self._load_tile, tile)
         self._futures.append(future)
 

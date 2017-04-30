@@ -9,7 +9,7 @@
                 pos: self.pos
                 size: self.size
         ScrollView:
-            size_hint: 1, 0.8
+            size_hint: 1, 0.9
             size_x: root.width
             GridLayout:
                 id: scroll
@@ -29,26 +29,6 @@
             size_hint_y: 0.02
         Button:
             size_hint_y: 0.1
-            #text: "Pokaz kontakty"
-            background_normal: ''
-            background_color: 0.235, 0.529, 0.572, 1
-            on_release: root.submit_contact()
-            Image:
-                id: sdasddasad
-                center_x: self.parent.center_x
-                center_y: (self.parent.center_y - (self.parent.height/2))
-                source: 'resources/kontakty.png'
-                height: self.parent.height
-        Label:
-            canvas.before:
-                Color:
-                    rgb: 1, 1, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-            size_hint_y: 0.001
-        Button:
-            size_hint_y: 0.1
             #text: "Wpisz numer"
             background_normal: ''
             background_color: 0.235, 0.529, 0.572, 1
@@ -59,6 +39,15 @@
                 center_y: (self.parent.center_y - (self.parent.height/2))
                 source: 'resources/numbers.png'
                 height: self.parent.height
+        Label:
+            canvas.before:
+                Color:
+                    rgb: 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: 0.001
+
 
 <ChooseNumber>:
     canvas.before:

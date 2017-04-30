@@ -149,7 +149,7 @@ public class GraphHopperAndroid{
         prepareInProgress = false;
 	}
 	
-    public void calcPath(boolean firstInstructionList, final double fromLat, final double fromLon,
+    public void calcPath(boolean firstInstructionList, String typeBike,  final double fromLat, final double fromLon,
                          final double toLat, final double toLon) {
 
         System.out.println("calculating path ...");
@@ -159,7 +159,7 @@ public class GraphHopperAndroid{
 			GHRequest req = new GHRequest(fromLat, fromLon, toLat, toLon).
 					setAlgorithm(Algorithms.DIJKSTRA_BI);
             // zmiana rodzaju rowerów
-			req.setVehicle("bike");
+			req.setVehicle(typeBike);
 			//req.setVehicle("mtb");
 			req.getHints().
 					put(Routing.INSTRUCTIONS, "true");

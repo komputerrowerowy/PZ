@@ -20,7 +20,7 @@
                     marker_list: []
                     lat: 53.0102
                     lon: 18.5946
-                    zoom: 16
+                    zoom: 14
                     node: []
                     MapMarker:
                         id: marker
@@ -37,7 +37,7 @@
         size_hint: 1, 1
         Label:
             id: label_instruction
-            size_hint: 1, 0.1
+            size_hint: 1, 0.075
             canvas.before:
                 Color:
                     rgba: 0.235, 0.529, 0.572, 0.8
@@ -45,7 +45,7 @@
                     pos: self.pos
                     size: self.size
             color: 1, 1, 1, 1
-            font_size: self.height / 4
+            font_size: self.height / 3
             text: ''
         BoxLayout:
             id: SearchLayout
@@ -63,9 +63,9 @@
                 Image:
                     id: img_tempasdad
                     center_x: self.parent.center_x
-                    center_y: (self.parent.center_y - (self.parent.height/2))
+                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
                     source: 'resources/remove.png'
-                    height: self.parent.height
+                    height: self.parent.height * 0.8
 
             TextInput:
                 id: SearchInput
@@ -92,7 +92,7 @@
         BoxLayout:
             id: SearchInputShow
             orientation: 'horizontal'
-            size_hint: 1, 0.035
+            size_hint: 1, 0.045
 #            Button:
 #                id: BtnX
 #                background_normal: ''
@@ -102,28 +102,61 @@
 #                on_release: root.ZerujTrase()
 
             Button:
+                id: BtnBike
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .7
+                size_hint_x: 0.15
+                text: ''
+                on_release: root.TypeBikeBike()
+                Image:
+                    id: img_Bike
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
+                    source: 'resources/bikeicon.png'
+                    height: self.parent.height * 0.8
+            Button:
+                id: BtnMTB
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .7
+                size_hint_x: 0.15
+                text: ''
+                on_release: root.TypeBikeMtb()
+                Image:
+                    id: img_Mtb
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
+                    source: 'resources/mtbicon.png'
+                    height: self.parent.height * 0.8
+            Button:
                 id: BtnV
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, .7
-                size_hint_x: 1
+                size_hint_x: 0.55
                 text: ''
                 on_release: root.show_list_points()
                 Image:
                     id: img_tempasdsd
-                    center_x: self.parent.center_x
+                    center_x: (self.parent.center_x - (self.parent.width/6))
                     center_y: (self.parent.center_y - (self.parent.height/2))
                     source: 'resources/down.png'
                     height: self.parent.height
 
-#            Button:
-#                id: BtnO
-#                background_normal: ''
-#                background_color: 0.235, 0.529, 0.572, .7
-#                size_hint_x: 0.5
-#                text: 'O'
+            Button:
+                id: BtnO
+                size_hint_x: 0.15
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .7
+                text: ''
+                on_release: root.fileSelect()
+                Image:
+                    id: img_folder
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
+                    source: 'resources/folder.png'
+                    height: self.parent.height * 0.8
         BoxLayout:
             orientation: 'vertical'
-            size_hint: 1, 0.54
+            size_hint: 1, 0.555
 #            ScrollView:
 #                id: scrollPoints2
 #                size_hint: 1, 1
@@ -312,3 +345,53 @@
                     height: self.parent.height
 
 
+
+<ChooseFile>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            size_hint_y: .85
+            id: filechooser
+        #color: 0.521, 0.521, 0.513, 1
+
+        BoxLayout:
+            size_hint_y: .15
+            canvas.before:
+                Color:
+                    rgb: 0.235, 0.529, 0.572
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Zamknij"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.cancel()
+                Image:
+                    id: anulujbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/anuluj.png'
+                    height: self.parent.height
+
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Wybierz folder"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.select(filechooser.path)
+                Image:
+                    id: okbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/ok.png'
+                    height: self.parent.height

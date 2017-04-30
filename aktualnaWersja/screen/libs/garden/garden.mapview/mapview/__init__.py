@@ -7,16 +7,32 @@ MapView
 
 MapView is a Kivy widget that display maps.
 """
+from os import listdir, path
+from os import makedirs
+from os.path import join, exists
+
 
 __all__ = ["Coordinate", "Bbox", "MapView", "MapSource", "MapMarker",
            "MapLayer", "MarkerMapLayer", "MapMarkerPopup"]
 __version__ = "0.2"
 
+
+if not exists('/sdcard/Bicom/path/sav.dat'):
+    makedirs('/sdcard/Bicom/path')
+    ff = open("/sdcard/Bicom/path/sav.dat", "w")
+    ff.write('/sdcard/Bicom/Mapy')
+    ff.close()
+f = open("/sdcard/Bicom/path/sav.dat", "r")
+CACHE_DIR = str(f.readline())
+
+f.close()
+
 MIN_LATITUDE = -90.
 MAX_LATITUDE = 90.
 MIN_LONGITUDE = -180.
 MAX_LONGITUDE = 180.
-CACHE_DIR = "cache"
+# CACHE_DIR = "cache"
+#CACHE_DIR = "/sdcard/Bicom/Tiles"
 
 try:
     # fix if used within garden

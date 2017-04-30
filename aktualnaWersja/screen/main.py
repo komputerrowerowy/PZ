@@ -79,12 +79,8 @@ Context = autoclass('android.content.Context')
 activity = autoclass("org.renpy.android.PythonActivity").mActivity
 Grupy = autoclass("android.provider.ContactsContract$Groups")
 
-print "test1"
-print "ugabuga"
 GraphHopperAndroid = autoclass("com.graphhopper.android.GraphHopperAndroid")(activity.mPath)
 GraphHopperAndroid.loadGraphStorage()
-print "test2"
-print GraphHopperAndroid
 
 AcceptIncomingCall2 = activity
 
@@ -200,21 +196,6 @@ Builder.load_string('''
 ''')
 
 
-#
-# class AndroidSms(Sms):
-#
-#     def _send(self, **kwargs):
-#         sms = SmsManager.getDefault()
-#
-#         recipient = kwargs.get('665544954')
-#         message = kwargs.get('test smsa xD Syntezator przeczytał?')
-#
-#         if sms:
-#             sms.sendTextMessage(recipient, None, message, None, None)
-
-
-
-
 
 class ConfirmPopup(GridLayout):
     text = StringProperty()
@@ -251,7 +232,6 @@ class ShowTime(Screen):
     def __init__(self, **kwargs):
         super(ShowTime, self).__init__()
         self.add_widget(StartScreen())
-        #MainApp.get_running_app().root.carousel.slides[0].hide_search_bar()
 
     def build(self):
         pass
@@ -302,8 +282,6 @@ class ShowTime(Screen):
             c.current_slide.carousel.anim_move_duration = 0.5
 
     def send_sms(self, sms_recipient, sms_message):
-        # sms.send(recipient=self.sms_recipient, message=self.sms_message)
-        # sms.send(self.sms_recipient, self.sms_message)
         print "SMS"
         sms.send(recipient=sms_recipient, message=sms_message)
 
@@ -338,17 +316,8 @@ class ShowTime(Screen):
                            size_hint=(0.9, 0.75),
                            auto_dismiss=True)
         self.popup2.open()
-    #def closestormListener(self):
-     #   self.popup2.dismiss()
 
-    def check(self, sms_recipient, sms_message):
 
-        print"nieWiem"
-        # self.send_sms()
-        self.callListener()
-        self.send_sms(sms_recipient, sms_message)
-        # sms2 = AndroidSms()
-        # sms2.send('663889095', 'wiadomosc sms')
 
     def accept_call_voice(self, lalala):
         #print "dupa" + " " + activity.lastWord
@@ -415,7 +384,7 @@ class ShowTime(Screen):
         telephonyService.endCall()
         # self.popup.dismiss()
 
-    def check2(self, fla):
+    def check(self, fla):
         # pass
         mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
 
@@ -468,15 +437,6 @@ class ShowTime(Screen):
 
                 numTel = num
 
-                # for contact in contacts3:
-                #     try:
-                #         print "dane_kontaktow_test"
-                #         print "name: " + str(contact.display_name)
-                #         print "tel: " + str(contact.number)
-                #         print "grupa: " + str(contact.group_id)
-                #     except:
-                #         pass
-
                 for contact in contacts3:
                     if str(numTel) == str(contact.number):
                         GrupyId.append(contact.group_id)
@@ -494,12 +454,6 @@ class ShowTime(Screen):
                     nrGrupy = 999
                     GrupyId.append(nrGrupy)
                     print "wyjatek: ", sys.exc_info()
-                    # wykona sie jesli dzwoni obcy nr
-                    # for x in dane:
-                    #     if str(nrGrupy) == str(x[0]):
-                    #         self.callListener()
-                    #     else:
-                    #         self.rejectIncomingCall()
 
                 c.execute("SELECT ID_GRUPY FROM Grupy WHERE REAKCJA = '1'")
                 dane = c.fetchall()
@@ -560,9 +514,6 @@ class ShowTime(Screen):
             self.stormListener()
 
 
-class ChooseFile(FloatLayout):
-    select = ObjectProperty(None)
-    cancel = ObjectProperty(None)
 
 
 class ChooseNumber(FloatLayout):
@@ -687,83 +638,35 @@ class MusicPlayer(Screen):
             if self.flaga == 0:
                 self.nowPlaying.bind(on_stop=self.stop_event_flaga)
 
-    #odczytanie ścieżki folderu z pliku
-    def getpath(self):
-        try:
-            f = open("sav.dat", "r")
-            self.ids.direct.text = str(f.readline())
-            f.close()
-            #self.ids.searchBtn.text = "Wybierz folder"
-            self.getSongs()
-        except:
-            self.ids.direct.text = ''
-            #jak odkomentuje wyswieli wszystkie utwory
-            #self.getSongs()
 
-    #zapisanie ścieżki folderu do pliku
-    def savepath(self, path):
-        f = open("sav.dat", "w")
-        f.write(path)
-        f.close()
-
-    def dismiss_popup(self):
-        self._popup.dismiss()
-
-    def fileSelect(self):
-        content = ChooseFile(select=self.select,
-                             cancel=self.dismiss_popup)
-
-        self._popup = Popup(title="Wybierz folder", content=content,
-                            size_hint=(0.9, 0.9))
-        self._popup.open()
-
-    def select(self, path):
-        self.directory = path
-        #self.ids.direct.text = self.directory
-        #self.ids.searchBtn.text = "Wybierz folder"
-        self.savepath(self.directory)
-        self.songs = []
-        self.getSongs()
-        self.dismiss_popup()
-
-    # proba wyczyszczenia listy utworow po dodaniu nowego folderu
-    def onPressSongs(self):
-        self.fileSelect()
 
     #główna funkcja służąca do otwarzania muzyki i tworzenia listy utworów
     def getSongs(self):
 
         self.directory = self.ids.direct.text  # przypisanie katalogu z etykiety
 
+        self.ids.status.text = ''
 
-        # sprawdza czy ścieżka katalogu kończy się znakiem '/'
-        if not self.directory.endswith('/'):
-            self.directory += '/'
+        self.ids.scroll.bind(minimum_height=self.ids.scroll.setter('height'))
 
+        # get mp3 files from directory
+        print "utwory"
+        for root, dirs, files in os.walk('/storage'):
+            for f in files:
+                filename = os.path.join(root, f)
+                if filename.endswith('.mp3'):
+                    self.songs.append(Utwor(f, filename))
 
-
-            self.ids.status.text = ''
-
-            self.ids.scroll.bind(minimum_height=self.ids.scroll.setter('height'))
-
-            # get mp3 files from directory
-            print "utwory"
-            for root, dirs, files in os.walk('/storage'):
-                for f in files:
-                    filename = os.path.join(root, f)
-                    if filename.endswith('.mp3'):
-                        self.songs.append(Utwor(f, filename))
-
-            # Jeśli nie znaleziono plików mp3 w wybranym katalogu
-            if self.songs == []:
-                self.ids.status.text = 'Nie znaleziono muzyki!'
-                self.ids.status.color = (1, 0, 0, 1)
+        # Jeśli nie znaleziono plików mp3 w wybranym katalogu
+        if self.songs == []:
+            self.ids.status.text = 'Nie znaleziono muzyki!'
+            self.ids.status.color = (1, 0, 0, 1)
 
 
-            self.songs.sort(key=lambda song: song.nazwa)
+        self.songs.sort(key=lambda song: song.nazwa)
 
-            if len(self.songs) > 0:
-                self.songsLoaded = True
+        if len(self.songs) > 0:
+            self.songsLoaded = True
 
 
         #funkcja uruchamiana w momencie kliknięcia utworu na liście
@@ -935,6 +838,8 @@ class GroupScreen(Screen):
     list_points_shown = True
     Nawiguj = False
     removeFlag = False
+    TypeBike = 'bike'
+    directory = ''
 
 
     '''def __init__(self, **kwargs):
@@ -944,10 +849,27 @@ class GroupScreen(Screen):
     def test111(self):
         print "test69"
 
+    def savepath(self, path):
+        f = open("/sdcard/Bicom/path/sav.dat", "w")
+        f.write(path)
+        f.close()
 
+    def dismiss_popup(self):
+        self._popup.dismiss()
 
+    def fileSelect(self):
+        content = ChooseFile(select=self.select,
+                             cancel=self.dismiss_popup)
 
+        self._popup = Popup(title="Wybierz folder", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
 
+    def select(self, path):
+        self.directory = path
+        self.savepath(self.directory)
+
+        self.dismiss_popup()
 
     def test2(self):
         GraphHopperAndroid.loadGraphStorage()
@@ -964,10 +886,7 @@ class GroupScreen(Screen):
             self.search_bar_shown = False
 
     def hide_search_bar(self):
-        print "test1"
         if self.search_bar_shown == True:
-            #self.ids.SearchLocation.pos = self.search_location_position_temp
-            #self.ids.SearchInput.pos = self.search_search_input_position_temp
             self.hide_list_points()
             self.ids.SearchInputShow.pos[0] = self.ids.SearchInputShow.pos[0] - self.height
             self.ids.SearchLayout.pos[0] = self.ids.SearchLayout.pos[0] - self.height
@@ -977,20 +896,15 @@ class GroupScreen(Screen):
 
     def show_list_points(self):
         if self.list_points_shown == False:
-            # self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] + self.height
             self.ids.scrollPoints.pos[0] = self.ids.scrollPoints.pos[0] + self.height
             self.list_points_shown = True
         else:
-            # self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] - self.height
             self.ids.scrollPoints.pos[0] = self.ids.scrollPoints.pos[0] - self.height
             self.list_points_shown = False
 
     def hide_list_points(self):
         print "test1"
         if self.list_points_shown == True:
-            #self.ids.SearchLocation.pos = self.search_location_position_temp
-            #self.ids.SearchInput.pos = self.search_search_input_position_temp
-            # self.ids.SearchLocation.pos[0] = self.ids.SearchLocation.pos[0] - self.height
             self.ids.scrollPoints.pos[0] = self.ids.scrollPoints.pos[0] - self.height
             self.list_points_shown = False
 
@@ -1019,11 +933,6 @@ class GroupScreen(Screen):
 
     # rotacja_mapy
     def get_readings(self, dt):
-        print "test_rotacjajajajajajajajaja"
-        val = compass.orientation
-        # x = round(int(val[0]), 2)
-        # y = round(int(val[1]), 2)
-        # z = round(int(val[2]), 2)
 
         (x, y, z) = Hardware.magneticFieldSensorReading()
 
@@ -1040,18 +949,6 @@ class GroupScreen(Screen):
         except:
             pass
         o_ile_obrot = int(self.wsp) - ShowTime.prev
-
-        '''if (wsp2 > self.needle_angle2):
-            self.kat = wsp2 - self.needle_angle2
-        if (wsp2 == self.needle_angle2):
-            self.kat = wsp2 - self.needle_angle2
-        if (wsp2 < self.needle_angle2):
-            self.kat = self.needle_angle2 - wsp2
-        if self.kat > 10:
-            self.needle_angle2 = wsp2'''
-        print "wsp2 = " + str(self.wsp2)
-
-        print "o ile obrot = " + str(o_ile_obrot)
 
         if int(o_ile_obrot) > 10 or int(o_ile_obrot) < -10:
             scatter = MainApp.get_running_app().root.carousel.slides[0].ids["scatter2"]
@@ -1107,7 +1004,6 @@ class GroupScreen(Screen):
         self.route_calculated = True
         self.Nawiguj = True
         self.hide_search_bar()
-        # self.hide_list_points()
         self.ids.img_center.source = "resources/center_red.png"
         self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
         self.redraw_route()
@@ -1151,38 +1047,15 @@ class GroupScreen(Screen):
             self.redraw_route()
 
 
+    def TypeBikeBike(self):
+        self.TypeBike = 'bike'
+        self.recalculate_route()
 
-    def calculate_route_nodes_run(self):
-        #self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
-        try:
-
-
-            GraphHopperAndroid.calcPath(float(MainApp.lat), float(MainApp.lon), float(self.latGPS), float(self.lonGPS))
-            self.licznikTemp = True
-
-            self.punkty = GraphHopperAndroid.resp.getPoints()
-            self.instructions = GraphHopperAndroid.resp.getInstructions()
-            self.route_calculated = True
-            print self.punkty.toString()
-            self.czy_wyznacozno_trase = True
-            self.center()
-            self.ids.img_center.source = "resources/center_red.png"
-                #self.redraw_route()
-            print "respInMain"
-            MainApp.route_nodes = True
-            self.actual_point = 0
-            self.actual_instruction = 0
-            self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
-            #wskazowka = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
-            #MainApp.lastInstruction = wskazowka
-        except:
-            pass
-
-
+    def TypeBikeMtb(self):
+        self.TypeBike = 'mtb'
+        self.recalculate_route()
 
     def calculate_route_nodes_run_add(self):
-        # self.calculate_route_nodes(self.latGPS, self.lonGPS, self.latGPS, self.lonGPS)
-        print('cooooooooooooooooooooooooooooooooooooooooooo')
 
         if self.removeFlag == True:
             self.TymczasoweLat = self.PunktyKontrolneLat[(len(self.PunktyKontrolneLon) - 1)]
@@ -1190,7 +1063,7 @@ class GroupScreen(Screen):
             self.removeFlag = False
 
         if self.flagaPunktow == 0:
-            GraphHopperAndroid.calcPath(True, float(MainApp.lat), float(MainApp.lon), float(self.latGPS),
+            GraphHopperAndroid.calcPath(True, self.TypeBike, float(MainApp.lat), float(MainApp.lon), float(self.latGPS),
                                         float(self.lonGPS))
             self.punkty = GraphHopperAndroid.resp.getPoints()
             self.instructions = GraphHopperAndroid.instructionList
@@ -1202,7 +1075,7 @@ class GroupScreen(Screen):
             if self.list_points_shown == True:
                 self.hide_list_points
         else:
-            GraphHopperAndroid.calcPath(False, float(self.TymczasoweLat), float(self.TymczasoweLon), float(self.latGPS),
+            GraphHopperAndroid.calcPath(False, self.TypeBike, float(self.TymczasoweLat), float(self.TymczasoweLon), float(self.latGPS),
                                         float(self.lonGPS))
             self.punkty_aktualne = GraphHopperAndroid.resp.getPoints()
             punkty_size = self.punkty_aktualne.getSize()
@@ -1224,13 +1097,13 @@ class GroupScreen(Screen):
         self.licznikTemp = True
 
         self.route_calculated = True
-        print('wypisane punkty')
-        print self.punkty.toString()
+        # print('wypisane punkty')
+        # print self.punkty.toString()
         self.czy_wyznacozno_trase = True
         # self.center()
         # self.ids.img_center.source = "resources/center_red.png"
         self.redraw_route()
-        print "respInMain"
+        # print "respInMain"
         MainApp.route_nodes = True
         self.actual_point = 0
         self.actual_instruction = 0
@@ -1245,14 +1118,11 @@ class GroupScreen(Screen):
         def addPointList(bt):
             self.ids.scrollPoints.clear_widgets(children=None)
             for indeks in xrange(0, len(self.PunktyKontrolneLon)):
-                # btn1 = Button(text=contact.display_name, on_release=callPhone)
                 tekst = '' + str(self.PunktyKontrolneLat[indeks]) + ', ' + str(self.PunktyKontrolneLon[indeks])
-                # btn2 = Button(text='^', on_release=self.upPoint(self.id))
                 btn3 = Button(text='x', on_release=removePoint)
                 btn2 = Button(text='V', on_release=downPoint)
                 btn1 = Button(text='^', on_release=upPoint)
                 btn = Button(text=tekst)
-                # btn = Button(text=contact.display_name + "  " + contact.group_id + "  " +contact.number, on_release=callPhone)
                 if indeks > 0:
                     btn3.id = 'BtnXX' + str(indeks)
                     btn3.color = (1, 1, 1, 0)
@@ -1344,13 +1214,8 @@ class GroupScreen(Screen):
                 TymMark = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks - 1]
                 MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks - 1] = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks -2]
                 MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks - 2] = TymMark
-                # self.ZerujTrase()
-                # self.calculate_route_nodes_run_add()
-                # self.recalculate_tras()
 
                 addPointList(bt)
-
-
                 self.recalculate_route()
 
         def downPoint(bt):
@@ -1369,9 +1234,6 @@ class GroupScreen(Screen):
                 self.PunktyKontrolneLat[indeks + 1] = TymLat
                 self.route_size[indeks + 1] = TymSize
                 MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list[indeks] = TymMark
-                # self.ZerujTrase()
-                # self.calculate_route_nodes_run_add()
-                # self.recalculate_tras()
 
                 addPointList(bt)
 
@@ -1381,19 +1243,6 @@ class GroupScreen(Screen):
             indeks = str(bt.text)
             indeks2 = -1
 
-            print "popy popy popy"
-            print self
-            print self.parent
-            print self.parent.parent
-            print self.parent.parent.parent
-            print self.parent.parent.parent
-            print self.parent.parent.parent.parent
-            group_screen = self.parent.parent.parent.parent
-
-
-
-
-
             if int(indeks) > 0:
                 print('tttttttttttttttt', int(indeks))
 
@@ -1402,11 +1251,6 @@ class GroupScreen(Screen):
                     if str(i) == str(indeks):
                         indeks2 = int(i)
 
-                # self.TymczasoweLat = self.PunktyKontrolneLat[(len(self.PunktyKontrolneLon) - 1)]
-                # self.TymczasoweLon = self.PunktyKontrolneLon[(len(self.PunktyKontrolneLon) - 1)]
-
-                # if indeks2 == (len(self.PunktyKontrolneLon) - 1):
-                #     self.removeFlag = True
                 self.removeFlag = True
                 Marker = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.pop(indeks2-1)
 
@@ -1437,13 +1281,7 @@ class GroupScreen(Screen):
 
                 addPointList(bt)
 
-
-
-
-                # self.calculate_route_nodes_run_add()
-
                 self.recalculate_route()
-
 
         addPointList(self)
 
@@ -1497,53 +1335,12 @@ class GroupScreen(Screen):
 
 
 
-    def recalculate_tras(self):
-        try:
-
-
-
-            for i in xrange(0, len(self.PunktyKontrolneLat)-1):
-                GraphHopperAndroid.calcPath(False, float(self.PunktyKontrolneLat[i]),
-                                                         float(self.PunktyKontrolneLon[i]),
-                                                         float(self.PunktyKontrolneLat[i + 1]),
-                                                         float(self.PunktyKontrolneLon[i + 1]))
-                self.punkty_aktualne = GraphHopperAndroid.resp.getPoints()
-                punkty_size = self.punkty_aktualne.getSize()
-                self.punkty.removeLast()
-                for j in xrange(0, punkty_size):
-                    lat = float(self.punkty_aktualne.getLat(j))
-                    lon = float(self.punkty_aktualne.getLon(j))
-                    ele = float(self.punkty_aktualne.getEle(j))
-
-                    self.punkty.add(lat, lon, ele)
-
-                self.route_size[i + 1] = punkty_size
-
-                GraphHopperAndroid.connectInstructions()
-                # self.punkty.removeLast()
-
-            # self.auto_center = False
-            self.route_calculated = True
-            self.czy_wyznacozno_trase = True
-            MainApp.route_nodes = True
-            self.actual_point = 0
-            self.actual_instruction = 0
-            if self.auto_center == True:
-                self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
-            # self.center()
-
-            for layer in self.ids["mapView"]._layers:
-                if layer.id == 'line_map_layer':
-                    layer.czysc_trase()
-                    break
-        except:
-            pass
 
     def recalculate_route(self):
         try:
             print 'test usuwania tras'
 
-            GraphHopperAndroid.calcPath(True, float(MainApp.lat), float(MainApp.lon),
+            GraphHopperAndroid.calcPath(True, self.TypeBike, float(MainApp.lat), float(MainApp.lon),
                                         float(self.PunktyKontrolneLat[self.travelled_points + 1]),
                                         float(self.PunktyKontrolneLon[self.travelled_points + 1]))
             self.punkty = GraphHopperAndroid.resp.getPoints()
@@ -1560,7 +1357,7 @@ class GroupScreen(Screen):
 
             if (self.travelled_points + 1) < (len(self.PunktyKontrolneLat)-1):
                 for i in xrange(self.travelled_points + 1, len(self.PunktyKontrolneLat) - 1):
-                    GraphHopperAndroid.calcPath(False, float(self.PunktyKontrolneLat[i]),
+                    GraphHopperAndroid.calcPath(False, self.TypeBike, float(self.PunktyKontrolneLat[i]),
                                                              float(self.PunktyKontrolneLon[i]),
                                                              float(self.PunktyKontrolneLat[i + 1]),
                                                              float(self.PunktyKontrolneLon[i + 1]))
@@ -1672,44 +1469,17 @@ class CallScreen(Screen):
     telefony2 = []
     lista = {}
 
-    #def weather(self):
-        #print 'makarena'
-        #obs = owm.weather_at_coords(52, 18)
-        #print obs.get_reception_time(timeformat='iso')
-        #w = obs.get_weather()
-        #print w
-        #print w.get_clouds()
-        #print w.get_rain()
-        #print w.get_wind()
-        #print w.get_humidity()
-        #print w.get_pressure()
-        #print w.get_temperature(unit='celsius')
-        #MainApp.get_running_app().root.carousel.slides[5].ids["temperature_now"].text = str(5)
-
 
     def dismiss_popup(self):
         self._popup.dismiss()
 
     def numberSelect(self):
-        content = ChooseNumber(select=self.select,
-                               cancel=self.dismiss_popup)
+        content = ChooseNumber(cancel=self.dismiss_popup)
 
         self._popup = Popup(title="Wybierz numer", content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
 
-    def select(self, path):
-        # self.directory = path
-        # self.ids.direct.text = self.directory
-        # self.ids.searchBtn.text = "Wybierz folder"
-        # self.savepath(self.directory)
-        # self.songs = []
-        # self.getSongs()
-        self.dismiss_popup()
-
-    # def addNum(self):
-    #     def addNumber(bt):
-    #         self.ids.nrTelefonu.text = bt.text
 
     def read_groups(self):
         content_resolver = activity.getApplicationContext()
@@ -1727,29 +1497,17 @@ class CallScreen(Screen):
         grupa.close()
 
 
-    def submit_contact(self):
+    def view_contact(self):
         if platform() == 'android':
             Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
-            ContactsContract = autoclass("android.provider.ContactsContract$Contacts")
             GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
-
-            ContentResolver = autoclass('android.content.Context')
 
             content_resolver = activity.getApplicationContext()
 
             resolver = content_resolver.getContentResolver()
-
-            ApplicationContext = autoclass('android.app.Activity')
-            # app = ApplicationContext.getApplicationContext()
-            Toast = autoclass("android.widget.Toast")
-            Cursor = autoclass("android.database.Cursor")
-            Data = autoclass("android.provider.ContactsContract$Data")
             phones = resolver.query(Phone.CONTENT_URI, None, None, None, None)
-            # phones = resolver.query(Data.CONTENT_URI, None, None, None, None)
-            pho = phones
 
             def callPhone(bt):
-                Context = autoclass('android.content.Context')
                 Uri = autoclass('android.net.Uri')
                 Intent = autoclass('android.content.Intent')
                 PythonActivity = autoclass('org.renpy.android.PythonActivity')
@@ -1759,8 +1517,6 @@ class CallScreen(Screen):
                         tel = contact.number
                 num = "tel:"
                 num = num + tel
-                print "to jest "
-                print num
                 intent = Intent(Intent.ACTION_CALL)
                 intent.setData(Uri.parse(num))
                 currentActivity = cast('android.app.Activity', PythonActivity.mActivity)
@@ -1769,44 +1525,12 @@ class CallScreen(Screen):
             self.read_groups()
 
             RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
-            projection = [GroupMembership.GROUP_ROW_ID, RawContactsColumns.CONTACT_ID]
-            # projection = [GroupMembership.GROUP_ROW_ID, "contact_id"]
-            Cursor = autoclass("android.database.Cursor")
-            # c = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID+"="+groups,None, None)
-            a = 1
-            print "cosik4"
-            # while (phones.moveToNext()):
-            #     name = pho.getString(pho.getColumnIndex("display_name"))
-            #     phoneNumber = pho.getString(pho.getColumnIndex(Phone.NUMBER))
-            #     contact_group_id = pho.getString(pho.getColumnIndex(GroupMembership.GROUP_ROW_ID))
-            #     contact_group_name = -1
-            #     for group in groups:
-            #         if contact_group_id == group.id:
-            #             contact_group_name = group.name
-            #     if name == "Daniel":
-            #         print contact_group_id
-            #         print "przerwa"
-
-            # if a == 3:
-            #     phoneNumber2 = contact_group_id
-            #     print "numerrrrrrrr"
-            #     print str(phoneNumber2)
-            # a = a + 1
-            # if a == 4:
-            #     a = 1
-
-            # dl = len(contact_group_id)
-            # if dl <= 1:
-            # current_contact = Contact(str(name), str(phoneNumber), str(contact_group_id), str(contact_group_name))
-            # contacts.append(current_contact)
-
             self.ids.scroll.bind(minimum_height=self.ids.scroll.setter('height'))
 
             contacts.sort(key=lambda contact: contact.display_name)
             for contact in contacts:
                 btn1 = Button(text=contact.display_name, on_release=callPhone)
                 btn = Button(text=contact.display_name)
-                # btn = Button(text=contact.display_name + "  " + contact.group_id + "  " +contact.number, on_release=callPhone)
                 if contacts.index(contact) % 2 == 0:
                     btn1.color = (0.235, 0.529, 0.572, 0)
                     #btn1.background_normal = ''
@@ -1836,24 +1560,17 @@ class CallScreen(Screen):
 
                 self.ids.scroll.add_widget(btn1)
                 self.ids.scroll.add_widget(btn)
-                # contactsGroups[contact.number] = contact.group_id
 
-    def submit_contact2(self):
+
+
+    def download_contact(self):
         if platform() == 'android':
             Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
-            ContactsContract = autoclass("android.provider.ContactsContract$Contacts")
             GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
-
-            ContentResolver = autoclass('android.content.Context')
 
             content_resolver = activity.getApplicationContext()
 
             resolver = content_resolver.getContentResolver()
-
-            ApplicationContext = autoclass('android.app.Activity')
-            # app = ApplicationContext.getApplicationContext()
-            Toast = autoclass("android.widget.Toast")
-            Cursor = autoclass("android.database.Cursor")
             Data = autoclass("android.provider.ContactsContract$Data")
             phones = resolver.query(Phone.CONTENT_URI, None, None, None, None)
             phones2 = resolver.query(Data.CONTENT_URI, None, None, None, None)
@@ -1863,11 +1580,6 @@ class CallScreen(Screen):
             self.read_groups()
 
             RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
-            projection = [GroupMembership.GROUP_ROW_ID, RawContactsColumns.CONTACT_ID]
-            # projection = [GroupMembership.GROUP_ROW_ID, "contact_id"]
-            Cursor = autoclass("android.database.Cursor")
-            # c = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID+"="+groups,None, None)
-            a = 1
             print "cosik4"
             while (phones2.moveToNext()):
                 name = pho2.getString(pho2.getColumnIndex("display_name"))
@@ -1878,106 +1590,6 @@ class CallScreen(Screen):
                     if contact_group_id == group.id:
                         contact_group_name = group.name
 
-                # dl = len(contact_group_id)
-                try:
-                    if contact_group_id is not None:
-                        dl = len(contact_group_id)
-                        print "test1"
-                        print contact_group_id
-                        if dl <= 1:
-                            current_contact = Contact(str(name), str(phoneNumber), str(contact_group_id),
-                                                      str(contact_group_name))
-                            contacts2.append(current_contact)
-
-                            if name == "Daniel":
-                                print name
-                                print phoneNumber
-                                print "przerwa2"
-                except:
-                    pass
-
-            while (phones.moveToNext()):
-                name = pho.getString(pho.getColumnIndex("display_name"))
-                phoneNumber = pho.getString(pho.getColumnIndex(Phone.NUMBER))
-                contact_group_id = pho.getString(pho.getColumnIndex(GroupMembership.GROUP_ROW_ID))
-                contact_group_name = -1
-                for group in groups:
-                    if contact_group_id == group.id:
-                        contact_group_name = group.name
-                if name == "Daniel":
-                    print name
-                    print phoneNumber
-                    print "przerwa"
-
-                # if a == 3:
-                #     phoneNumber2 = contact_group_id
-                #     print "numerrrrrrrr"
-                #     print str(phoneNumber2)
-                # a = a + 1
-                # if a == 4:
-                #     a = 1
-
-                # dl = len(contact_group_id)
-                # if dl <= 1:
-
-                num = str(phoneNumber)
-                num = num.replace(" ", "")
-                num = num.replace("-", "")
-                if num[0] == "+":
-                    num = num[-9:]
-
-                current_contact = Contact(str(name), str(num), str(contact_group_id), str(contact_group_name))
-                contacts.append(current_contact)
-
-            contacts.sort(key=lambda contact: contact.display_name)
-            contacts2.sort(key=lambda contact: contact.display_name)
-
-            for contact in contacts:
-                contactsGroups[contact.number] = contact.display_name
-            for contact in contacts2:
-                contactsGroups2[contact.display_name] = contact.number
-
-    def submit_contact3(self):
-        if platform() == 'android':
-            Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
-            ContactsContract = autoclass("android.provider.ContactsContract$Contacts")
-            GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
-
-            ContentResolver = autoclass('android.content.Context')
-
-            content_resolver = activity.getApplicationContext()
-
-            resolver = content_resolver.getContentResolver()
-
-            ApplicationContext = autoclass('android.app.Activity')
-            # app = ApplicationContext.getApplicationContext()
-            Toast = autoclass("android.widget.Toast")
-            Cursor = autoclass("android.database.Cursor")
-            Data = autoclass("android.provider.ContactsContract$Data")
-            phones = resolver.query(Phone.CONTENT_URI, None, None, None, None)
-            phones2 = resolver.query(Data.CONTENT_URI, None, None, None, None)
-            pho = phones
-            pho2 = phones2
-
-            self.read_groups()
-
-            RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
-            projection = [GroupMembership.GROUP_ROW_ID, RawContactsColumns.CONTACT_ID]
-            # projection = [GroupMembership.GROUP_ROW_ID, "contact_id"]
-            Cursor = autoclass("android.database.Cursor")
-            # c = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID+"="+groups,None, None)
-            a = 1
-            print "cosik4"
-            while (phones2.moveToNext()):
-                name = pho2.getString(pho2.getColumnIndex("display_name"))
-                phoneNumber = pho2.getString(pho2.getColumnIndex(Phone.NUMBER))
-                contact_group_id = pho2.getString(pho2.getColumnIndex(GroupMembership.GROUP_ROW_ID))
-                contact_group_name = -1
-                for group in groups:
-                    if contact_group_id == group.id:
-                        contact_group_name = group.name
-
-                # dl = len(contact_group_id)
                 try:
                     if contact_group_id is not None:
                         dl = len(contact_group_id)
@@ -2001,21 +1613,6 @@ class CallScreen(Screen):
                 for group in groups:
                     if contact_group_id == group.id:
                         contact_group_name = group.name
-                if name == "Test":
-                    print name
-                    print phoneNumber
-                    print "przerwa"
-
-                # if a == 3:
-                #     phoneNumber2 = contact_group_id
-                #     print "numerrrrrrrr"
-                #     print str(phoneNumber2)
-                # a = a + 1
-                # if a == 4:
-                #     a = 1
-
-                # dl = len(contact_group_id)
-                # if dl <= 1:
 
                 num = str(phoneNumber)
                 num = num.replace(" ", "")
@@ -2046,7 +1643,6 @@ class CallScreen(Screen):
                                 print "grupa: " + str(contact.group_id)
                             except:
                                 pass
-                                # print contactsGroups2[contactsGroups["881689020"]]
 
 
 class Speedometer(Screen):
@@ -2337,26 +1933,7 @@ class ScreenContacts(Widget):
     pass
 
 
-'''poczatek'''
 
-
-class CallInterface(BoxLayout):
-    pass
-
-
-class DialCallButton(Button):
-    def dial(self, *args):
-        call.dialcall()
-
-
-class MakeCallButton(Button):
-    tel = StringProperty()
-
-    def call(self, *args):
-        call.makecall(tel=self.tel)
-
-
-'''koniec'''
 
 
 class LineMapLayer(MapLayer):
@@ -2366,76 +1943,7 @@ class LineMapLayer(MapLayer):
         super(LineMapLayer, self).__init__()
         self.zoom = 0
 
-    '''Funkcja odpowiadajaca za stworzenie wierzcholkow grafu, ktory jest nasza droga'''
 
-    def parseJSON(self, points):
-        response = self.downloadJSON(points)
-        i = response.text.find('"coordinates":')
-        s = ""
-        close_bracket_count = 0
-        for index in xrange(i + 15, len(response.text)):
-            # s.__add__(response.text[index])
-
-            if response.text[index] == "]":
-                if close_bracket_count == 1:
-                    break
-                close_bracket_count += 1
-            else:
-                close_bracket_count = 0
-            s += response.text[index]
-        s = s.encode('utf-8')
-        slist = s.split('],[')
-        slist[0] = slist[0].replace('[', '')
-        slist[len(slist) - 1] = slist[len(slist) - 1].replace(']', '')
-        i = 0
-        a = []
-        for item in slist:
-            a.append(item.split(','))
-            i += 1
-
-        self.count = 0
-        self.parent.node = []
-        for item in a:
-            self.parent.node.append(item)
-            self.count += + 1
-
-    def downloadJSON(self, points):
-        my_url = 'https://api.mapbox.com/directions/v5/mapbox/cycling/' + points + '?access_token=pk.eyJ1Ijoid2lsY3plazUwMyIsImEiOiJjaXowNnAyMjcwMDE4MzNsd2xvbTd5ZnY0In0.WiuRsomVkCrkN1j78JJ7Aw&overview=full&geometries=geojson'
-        response = requests.get(my_url)
-        return response
-
-    def routeToGpx(self, lat1, lon1, lat2, lon2, transport, description="", style="track"):
-        points = str(MainApp.lon) + ',' + str(MainApp.lat) + ';' + str(lon2) + ',' + str(lat2)
-        self.parseJSON(points)
-
-        # '''Wersja offline'''
-        #
-        # data = LoadOsm(transport)
-        #
-        # # data = LoadOsm('cycle')
-        # #data = LoadOsm('car')
-        # node1 = data.findNode(float(MainApp.lat), float(MainApp.lon))
-        # node2 = data.findNode(float(lat2), float(lon2))
-        #
-        # router = Router(data)
-        # result, route = router.doRoute(node1, node2)
-        # if result != 'success':
-        #     return
-        # # self.count = 0
-        # self.parent.node = []
-        # if (style == 'track'):
-        #     self.count = 0
-        #     for i in route:
-        #         self.parent.node.append(data.rnodes[i])
-        #         self.count = self.count + 1
-        #
-        #
-        # elif (style == 'route'):
-        #     self.count = 0
-        #     for i in route:
-        #         self.parent.node.append(data.rnodes[i])
-        #         self.count = self.count + 1
-        MainApp.route_nodes = True
 
     '''W momencie przemieszczenia mapy przerysowujemy linie'''
 
@@ -2452,37 +1960,18 @@ class LineMapLayer(MapLayer):
     def draw_line(self):
         if MainApp.get_running_app().root.carousel.slides[0].route_calculated == True:
             mapview = self.parent
-            print "testparent"
             group_screen = self.parent.parent.parent.parent.parent
             self.zoom = mapview.zoom
 
-            '''Na ten moment ustawiamy stale wspolrzedne'''
-            geo_dom = [52.9828, 18.5729]
-            geo_wydzial = [53.0102, 18.5946]
-
             point_list = []
             '''Wywolujemy funkcje ktora zwraca nam wspolrzedne trasy o danych wspolzednych poczatkowych i koncowych (Gdzie to przeniesc???)'''
-            # self.routeToGpx(float(geo_dom[0]), float(geo_dom[1]), float(geo_wydzial[0]), float(geo_wydzial[1]))
 
-            print "lista punktow"
-            '''for j in xrange(len(self.parent.node) - 1):
-                point_list.extend(
-                    # wersja online:
-                    mapview.get_window_xy_from(float(self.parent.node[j][1]), float(self.parent.node[j][0]), mapview.zoom))
-                    # wersja offline:
-                    # mapview.get_window_xy_from(float(self.parent.node[j][0]), float(self.parent.node[j][1]), mapview.zoom))
-                print str(self.parent.node[j][1])
-                print str(self.parent.node[j][0])'''
-            #print float(group_screen.punkty.getLat(10))
             punkty_size = group_screen.punkty.getSize()
             print punkty_size
             point_list.extend(mapview.get_window_xy_from(float(MainApp.lat), float(MainApp.lon), mapview.zoom))
             for j in xrange(group_screen.actual_point, punkty_size - 1):
                 lat = float(group_screen.punkty.getLat(j))
                 lon = float(group_screen.punkty.getLon(j))
-                #print lat
-                lat1 = round(group_screen.punkty.getLat(j), 4)
-                #print lat1
                 point_list.extend(mapview.get_window_xy_from(lat, lon, mapview.zoom))
 
             print "dupa1"
@@ -2732,10 +2221,7 @@ class MainApp(App):
     gr = GroupScreen()
     lastInstruction = ''
     flagaWygladu = True
-    # try:
-    #     gr.do_toggle()
-    # except:
-    #     pass
+    flagaWykonania = True
 
     def build(self):
         show_time = ShowTime()
@@ -2744,19 +2230,15 @@ class MainApp(App):
         except:
             print "nie masz kompasu"
         callS = CallScreen()
-        # callS.submit_contact2()
-        callS.submit_contact3()
-        music = MusicPlayer()
-        music.getpath()
-        # modyfikacja 3
-        gr = GroupScreen()
+        callS.download_contact()
 
+        # słuzy do zmiany flagi co godzinę, wykorzystywane przy pobieraniu pogody
         def UstawFlage(self):
             self.flagaWygladu = True
 
 
 
-        Clock.schedule_interval(show_time.check2, 1)
+        Clock.schedule_interval(show_time.check, 1)
         Clock.schedule_interval(UstawFlage, 3600)
         try:
             gps.configure(on_location=self.on_location, on_status=self.on_status)
@@ -2790,18 +2272,6 @@ class MainApp(App):
                 else:
                     if k == "lon":
                         MainApp.lon = float(v)
-            '''W karuzeli dodajemy layer wraz z nasza utworzona klasa LineMapLayer'''
-            print "---------------------"
-            # label = MainApp.get_running_app().root.carousel.slides[0].ids["label1"]
-            # label.text = str(int(label.text) + 1)
-
-            '''Nie jestem pewien czy usuniecie tego nie bedzie powodowalo problemow'''
-            '''if MainApp.znacznik > 0:
-                for layer in MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]._layers:
-                    if layer.id == 'line_map_layer':
-                        MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]._layers.remove(layer)
-                        break
-            #MainApp.znacznik = 1'''
 
             speed = Speed(float(speed))
             if speed > self.highest_speed_float:
@@ -2831,17 +2301,13 @@ class MainApp(App):
             except:
                 pass
 
-            # flaga_gps = group.returnFlag()
-            # lat_2 = group.returnLat()
-            # lon_2 = group.lonGPS
 
-            # print "test_gps"
-            # print lat_2
-            # print lon_2fes
-            # print flaga_gps
-
-            #Weather().ustal_pogode()
-
+            # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów
+            if self.flagaWykonania == True:
+                MainApp.get_running_app().root.carousel.slides[1].view_contact()
+                # MainApp.get_running_app().root.carousel.slides[3].getSongs()
+                self.flagaWykonania = False
+            # wykonywane co godzine, pobieranie pogodty itd
             if self.flagaWygladu == True:
                 Weather().ustal_pogode()
                 wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
