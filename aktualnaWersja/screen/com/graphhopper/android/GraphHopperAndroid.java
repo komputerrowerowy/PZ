@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Locale;
+import com.graphhopper.util.Unzipper;
 
 public class GraphHopperAndroid{
 	
@@ -76,6 +77,7 @@ public class GraphHopperAndroid{
     //private ItemizedLayer<MarkerItem> itemizedLayer;
 	//private PathLayer pathLayer;
     private InstructionList instructionList2;
+    private boolean isCompressed = false;
 	
 	public GraphHopperAndroid(File mapsFolder){
 		System.out.println("graphConstructor");
@@ -106,10 +108,20 @@ public class GraphHopperAndroid{
             }
         });
         Collections.addAll(nameList, files);
-
+        System.out.println("printy printy");
+       
+        if (nameList.get(0).endsWith(".ghz")){
+            isCompressed = true;
+            System.out.println(new File(mapsFolder, currentArea).getAbsolutePath() + "-gh" + " " + nameList.get(0));
+            File compressed = new File(mapsFolder, nameList.get(0));
+            System.out.println(compressed.toString());
+            //File compressed = new File(new File(mapsFolder, currentArea).getAbsolutePath() + "-gh" + nameList.get(0));
+            unzipFile(compressed, new File(mapsFolder, currentArea).getAbsolutePath() + "-gh", true);
+        }
+ 
         if (nameList.isEmpty())
             return;
-
+ 
         /*chooseArea(localButton, localSpinner, nameList,
                 new MySpinnerListener() {
                     @Override
@@ -117,7 +129,17 @@ public class GraphHopperAndroid{
                         initFiles(selectedArea);
                     }
                 });*/
-	}
+    }
+   
+    private void unzipFile(File compressed, String graphHopperFolder, boolean removeZipped){
+        System.out.println("pprinty pprinty");
+        try{
+            new Unzipper().unzip(compressed.getAbsolutePath(), graphHopperFolder, removeZipped);
+        }
+        catch(Exception e){
+            ;
+        }
+    }
 	
 	public void loadGraphStorage() {
         System.out.println("loading graph (" + Constants.VERSION + ") ... ");

@@ -636,6 +636,8 @@ class MapView(Widget):
                              post_multiply=True,
                              anchor=scatter.to_local(x, y))
 
+
+
     def on_touch_down(self, touch):
         if not self.collide_point(*touch.pos):
             return

@@ -514,7 +514,9 @@ class ShowTime(Screen):
             self.stormListener()
 
 
-
+class ChooseFile(FloatLayout):
+    select = ObjectProperty(None)
+    cancel = ObjectProperty(None)
 
 class ChooseNumber(FloatLayout):
     select = ObjectProperty(None)
@@ -842,12 +844,6 @@ class GroupScreen(Screen):
     directory = ''
 
 
-    '''def __init__(self, **kwargs):
-        super(GroupScreen, self).__init__()
-        self.licznikTemp = False'''
-
-    def test111(self):
-        print "test69"
 
     def savepath(self, path):
         f = open("/sdcard/Bicom/path/sav.dat", "w")
@@ -991,7 +987,7 @@ class GroupScreen(Screen):
                                 anchor=scatter.to_local(scatter.parent.center_x, scatter.parent.center_y))
 
     def navi(self):
-        if self.Nawiguj == False:
+        if self.Nawiguj == False and len(self.PunktyKontrolneLon)>=2:
             self.center()
             self.ids.img_navi.source = "resources/map.png"
         else:
@@ -2309,15 +2305,18 @@ class MainApp(App):
                 self.flagaWykonania = False
             # wykonywane co godzine, pobieranie pogodty itd
             if self.flagaWygladu == True:
-                Weather().ustal_pogode()
-                wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
-                key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
-                city = str(Weather.miejscowosc)
-                range_detect = 50
-                ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
-                Weather().print_burza(burza)
-                Weather().print_ostrzezenia(ostrzezenia)
-                # MusicPlayer().getSongs()
+                try:
+                    Weather().ustal_pogode()
+                    wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
+                    key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
+                    city = str(Weather.miejscowosc)
+                    range_detect = 50
+                    ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
+                    Weather().print_burza(burza)
+                    Weather().print_ostrzezenia(ostrzezenia)
+                    # MusicPlayer().getSongs()
+                except:
+                    pass
                 self.flagaWygladu = False
                 #Weather().ustal_pogode()
                 #MusicPlayer().getSongs()

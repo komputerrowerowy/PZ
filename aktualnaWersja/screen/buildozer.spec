@@ -13,7 +13,7 @@ package.domain = org.test
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,dic,params,gram
+source.include_exts = py,png,jpg,kv,atlas,dic,params,gram,ghz
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
@@ -73,7 +73,7 @@ orientation = portrait
 fullscreen = 1
 
 # (list) Permissions
-android.permissions = INTERNET,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,READ_CONTACTS,READ_PHONE_STATE,MODIFY_PHONE_STATE,CALL_PHONE,RECEIVE_SMS,READ_SMS,SEND_SMS,BIND_NOTIFICATION_LISTENER_SERVICE,RECORD_AUDIO
+android.permissions = INTERNET,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,READ_CONTACTS,READ_PHONE_STATE,MODIFY_PHONE_STATE,CALL_PHONE,RECEIVE_SMS,READ_SMS,SEND_SMS,BIND_NOTIFICATION_LISTENER_SERVICE,RECORD_AUDIO,WRITE_EXTERNAL_STORAGE
 
 # (int) Android API to use
 android.api = 23
