@@ -1011,10 +1011,10 @@ class GroupScreen(Screen):
             lat = float(self.returnLat())
             self.latGPS = float(self.returnLat())
             self.lonGPS = float(self.returnLon())
-            map = MapView()
+            map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
             MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(lat, lon)
 
-            mark = MapMarker(lon=self.lonGPS, lat=self.latGPS)
+            mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
             map.add_marker(mark)
             MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
 
