@@ -102,6 +102,8 @@ import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 
 import static android.widget.Toast.makeText;
+import android.support.v4.content.ContextCompat;
+import 	android.support.v4.app.ActivityCompat;
 
 
 
@@ -166,6 +168,8 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
 	public String lastState = "";
     public boolean HeadsetIsPlugged = false;
     public boolean AlwaysReadSms = false;
+    public boolean AlwaysReadStromAlert = false;
+    private static final int REQUEST_WRITE_STORAGE = 112;
             
             
             
@@ -212,6 +216,41 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
         }
     }
 }
+    
+    
+    public void readStormAlerts(String alert){
+        if(HeadsetIsPlugged == true || AlwaysReadStromAlert == true){
+                            speaker.speak(alert);
+                        }
+    }
+    
+    private void sdPermission() {
+        sdPermissionRead();
+        sdPermissionWrite();
+    }
+    
+    private void sdPermissionRead() {
+        
+        String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        int grant = checkSelfPermission((Context)this, permission);
+        if ( grant != PackageManager.PERMISSION_GRANTED) {
+                String[] permission_list = new String[1];
+                permission_list[0] = permission;
+    }
+    }
+        
+    private void sdPermissionWrite() {
+        
+        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        int grant = checkSelfPermission((Context)this, permission);
+        if ( grant != PackageManager.PERMISSION_GRANTED) {
+                String[] permission_list = new String[1];
+                permission_list[0] = permission;
+    }
+    }
+    
+    
+    
 
 
 
@@ -237,7 +276,7 @@ private final int CHECK_CODE = 0x1;
         startActivityForResult(check, CHECK_CODE);
     }
 
-
+    
 
     private void initializeSMSReceiver(){
         smsReceiver = new BroadcastReceiver(){
@@ -690,6 +729,7 @@ private final int CHECK_CODE = 0x1;
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         requestSmsPermission();
+        sdPermission();
 
         getWindowManager().getDefaultDisplay().getMetrics(Hardware.metrics);
 

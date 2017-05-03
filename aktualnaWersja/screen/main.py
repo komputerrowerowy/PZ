@@ -1854,35 +1854,43 @@ class Weather(Screen):
             if str(burza['kierunek'])=='N':
                 print "whahahaha mamy radarN"
                 StormPopup.ktory_radar = "resources/radarE.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: NE"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: N"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: Północy")
             elif str(burza['kierunek'])=='NE':
                 print "whahahaha mamy radarNE"
                 StormPopup.ktory_radar = "resources/radarNE.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: NE"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: Północy wschód")
             elif str(burza['kierunek'])=='E':
                 print "whahahaha mamy radarE"
                 StormPopup.ktory_radar = "resources/radarE.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: E"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: wschodni")
             elif str(burza['kierunek'])=='SE':
                 print "whahahaha mamy radarSE"
                 StormPopup.ktory_radar = "resources/radarSE.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: SE"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowo wschodni")
             elif str(burza['kierunek'])=='S':
                 print "whahahaha mamy radarS"
                 StormPopup.ktory_radar = "resources/radarS.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: S"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowy")
             elif str(burza['kierunek'])=='SW':
                 print "whahahaha mamy radarSW"
                 StormPopup.ktory_radar = "resources/radarSW.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: SW"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowo zachodni")
             elif str(burza['kierunek'])=='W':
                 print "whahahaha mamy radarW"
                 StormPopup.ktory_radar = "resources/radarW.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: W"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: zachodni")
             elif str(burza['kierunek'])=='NW':
                 print "whahahaha mamy radarNW"
                 StormPopup.ktory_radar = "resources/radarNW.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: NW"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: północno zachodni")
             print "Liczba: ", str(burza['liczba'])
             print "Odleglosc: ", str(burza['odleglosc']), "km"
             print "Okres: ", str(burza['okres']), "min"
@@ -2315,9 +2323,10 @@ class MainApp(App):
                     Weather().print_burza(burza)
                     Weather().print_ostrzezenia(ostrzezenia)
                     # MusicPlayer().getSongs()
+                    self.flagaWygladu = False
                 except:
                     pass
-                self.flagaWygladu = False
+                #self.flagaWygladu = False
                 #Weather().ustal_pogode()
                 #MusicPlayer().getSongs()
 
