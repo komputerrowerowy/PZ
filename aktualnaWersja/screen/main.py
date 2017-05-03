@@ -236,25 +236,7 @@ class ShowTime(Screen):
     def build(self):
         pass
 
-    def showScreenSettingsDisplay(self):
-        self.clear_widgets()
-        screen = ScreenSettingsDisplay()
-        self.add_widget(screen)
 
-    def showScreenSettingsAlerts(self):
-        self.clear_widgets()
-        screen = ScreenSettingsAlerts()
-        self.add_widget(screen)
-
-    def showScreenSettingsSocial(self):
-        self.clear_widgets()
-        screen = ScreenSettingsSocial()
-        self.add_widget(screen)
-
-    def showScreenSettingsSMS(self):
-        self.clear_widgets()
-        screen = ScreenSettingsSMS()
-        self.add_widget(screen)
 
     def showScreenSettings(self):
         self.clear_widgets()
@@ -1913,28 +1895,7 @@ class ScreenSettings(Screen):
         pass
 
 
-class ScreenSettingsDisplay(Widget):
-    pass
 
-
-class ScreenSettingsAlerts(Widget):
-    pass
-
-
-class ScreenSettingsSocial(Widget):
-    pass
-
-
-class ScreenSettingsSMS(Widget):
-    pass
-
-
-class ScreenMusic(Widget):
-    pass
-
-
-class ScreenContacts(Widget):
-    pass
 
 
 
