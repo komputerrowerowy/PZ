@@ -134,7 +134,8 @@ Builder.load_string('''
             background_normal: ''
             canvas.before:
                 Color:
-                    rgba: 1, 0, 0, .3
+                    #rgba: 1, 0, 0, .3
+                    rgba: root.color
                 Rectangle:
                     pos: self.pos
                     size: self.size
@@ -150,7 +151,7 @@ Builder.load_string('''
             size_hint_y: .4
             canvas.before:
                 Color:
-                    rgba: 1, 0, 0, .3
+                    rgba: root.color
                 Rectangle:
                     pos: self.pos
                     size: self.size
@@ -210,6 +211,7 @@ class ConfirmPopup(GridLayout):
 class StormPopup(GridLayout):
     text = StringProperty()
     ktory_radar=''
+    color=(1,0,0,.3)
 
     def __init__(self, **kwargs):
         self.register_event_type('on_answer2')
@@ -491,7 +493,7 @@ class ShowTime(Screen):
                 self.flagaCall = 1
 
         print "Tutaj sprawdzam Weather.czy_burza=" + str(Weather.czy_burza)
-        if Weather.czy_burza==0 and self.powtorka==0:
+        if Weather.czy_burza==1 and self.powtorka==0:
             self.powtorka=1
             self.stormListener()
 
@@ -1728,7 +1730,7 @@ class Weather(Screen):
         print data_forecast
         print data_forecast['list'][1]
         print data_forecast['city']['name']
-        self.miejscowosc=str(data_forecast['city']['name'])
+        self.miejscowosc=data_forecast['city']['name']
         temp = data_forecast['list'][0]['main']['temp'] - 273.15
         temp_forecast=data_forecast['list'][1]['main']['temp']-273.15
         temp=round(temp,2)
@@ -1835,43 +1837,91 @@ class Weather(Screen):
             print "Kierunek: ", str(burza['kierunek'])
             if str(burza['kierunek'])=='N':
                 print "whahahaha mamy radarN"
-                StormPopup.ktory_radar = "resources/radarE.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: N"
+                if burza['odleglosc']>=50:
+                    StormPopup.color=(1,1,0,.3)
+                elif burza['odleglosc']>=20 and burza['odleglosc']<50:
+                    StormPopup.color=(1,.5,0,.3)
+                else:
+                    StormPopup.color=(1,0,0,.3)
+                StormPopup.ktory_radar = "resources/radarN.png"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: N"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: Północy")
             elif str(burza['kierunek'])=='NE':
                 print "whahahaha mamy radarNE"
+                if burza['odleglosc']>=50:
+                    StormPopup.color=(1,1,0,.3)
+                elif burza['odleglosc']>=20 and burza['odleglosc']<50:
+                    StormPopup.color=(1,.5,0,.3)
+                else:
+                    StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarNE.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: NE"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: NE"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: Północy wschód")
             elif str(burza['kierunek'])=='E':
                 print "whahahaha mamy radarE"
+                if burza['odleglosc']>=50:
+                    StormPopup.color=(1,1,0,.3)
+                elif burza['odleglosc']>=20 and burza['odleglosc']<50:
+                    StormPopup.color=(1,.5,0,.3)
+                else:
+                    StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarE.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: E"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: E"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: wschodni")
             elif str(burza['kierunek'])=='SE':
                 print "whahahaha mamy radarSE"
+                if burza['odleglosc']>=50:
+                    StormPopup.color=(1,1,0,.3)
+                elif burza['odleglosc']>=20 and burza['odleglosc']<50:
+                    StormPopup.color=(1,.5,0,.3)
+                else:
+                    StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarSE.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: SE"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: SE"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowo wschodni")
             elif str(burza['kierunek'])=='S':
                 print "whahahaha mamy radarS"
+                if burza['odleglosc']>=50:
+                    StormPopup.color=(1,1,0,.3)
+                elif burza['odleglosc']>=20 and burza['odleglosc']<50:
+                    StormPopup.color=(1,.5,0,.3)
+                else:
+                    StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarS.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: S"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: S"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowy")
             elif str(burza['kierunek'])=='SW':
                 print "whahahaha mamy radarSW"
+                if burza['odleglosc']>=50:
+                    StormPopup.color=(1,1,0,.3)
+                elif burza['odleglosc']>=20 and burza['odleglosc']<50:
+                    StormPopup.color=(1,.5,0,.3)
+                else:
+                    StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarSW.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: SW"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: SW"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowo zachodni")
             elif str(burza['kierunek'])=='W':
                 print "whahahaha mamy radarW"
+                if burza['odleglosc']>=50:
+                    StormPopup.color=(1,1,0,.3)
+                elif burza['odleglosc']>=20 and burza['odleglosc']<50:
+                    StormPopup.color=(1,.5,0,.3)
+                else:
+                    StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarW.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: W"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: W"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: zachodni")
             elif str(burza['kierunek'])=='NW':
                 print "whahahaha mamy radarNW"
+                if burza['odleglosc']>=50:
+                    StormPopup.color=(1,1,0,.3)
+                elif burza['odleglosc']>=20 and burza['odleglosc']<50:
+                    StormPopup.color=(1,.5,0,.3)
+                else:
+                    StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarNW.png"
-                StormPopup.text = "Uwaga!\nBurze w odleglosci 5km\nKierunek: NW"
+                StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: NW"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: północno zachodni")
             print "Liczba: ", str(burza['liczba'])
             print "Odleglosc: ", str(burza['odleglosc']), "km"
@@ -2278,9 +2328,15 @@ class MainApp(App):
                     Weather().ustal_pogode()
                     wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
                     key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
-                    city = str(Weather.miejscowosc)
-                    range_detect = 50
+                    print "MIejscowoscc sprawdzana"
+                    print Weather().miejscowosc
+                    print Weather.miejscowosc
+                    #city = Weather().miejscowosc
+                    city='torun'
+                    range_detect = 70
+                    print "Wykonuje burze_api"
                     ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
+                    print "Wykonalem burze_api"
                     Weather().print_burza(burza)
                     Weather().print_ostrzezenia(ostrzezenia)
                     # MusicPlayer().getSongs()
