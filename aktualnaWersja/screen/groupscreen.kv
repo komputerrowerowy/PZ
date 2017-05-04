@@ -200,7 +200,7 @@
             valign: 'bottom'
             BoxLayout:
                 orientation: 'vertical'
-                size_hint: .5, 1
+                size_hint: .33, 1
                 Label:
                     id:label_speed2
                     canvas.before:
@@ -236,9 +236,45 @@
                     color: 1, 1, 1, 1
             BoxLayout:
                 orientation: 'vertical'
-                size_hint: .5, 1
+                size_hint: .33, 1
                 Label:
-                    id:label_max_speed2
+                    id:label_distance
+                    canvas.before:
+                        Color:
+                            rgba: 0, 0, 0, .3
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    size_hint: 1, .7
+                    font_size: self.height / 1.5
+                    color: 1, 1, 1, 1
+                Label:
+                    canvas.before:
+                        Color:
+                            rgba: 0, 0, 0, .3
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    size_hint: 1, .2
+                    font_size: self.height
+                    text: "Dystans"
+                    color: 1, 1, 1, 1
+                Label:
+                    canvas.before:
+                        Color:
+                            rgba: 0, 0, 0, .3
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    size_hint: 1, .1
+                    font_size: self.height
+                    text: ""
+                    color: 1, 1, 1, 1
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: .33, 1
+                Label:
+                    id:label_calories
                     canvas.before:
                         Color:
                             rgba: 0, 0, 0, .3
@@ -258,7 +294,7 @@
                             size: self.size
                     size_hint: 1, .2
                     font_size: self.height
-                    text: "Maksymalna prędkość"
+                    text: "Kalorie"
                     color: 1, 1, 1, 1
                 Label:
                     canvas.before:

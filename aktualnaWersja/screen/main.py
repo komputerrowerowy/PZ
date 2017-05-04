@@ -2217,6 +2217,8 @@ class MainApp(App):
     gps_speed = 0.00
     highest_speed = 0.00
     highest_speed_float = 0.00
+    distance= 0.00
+    calories=0.00
     gps_status = StringProperty('Click Start to get GPS location updates')
     lat = 53.0102
     lon = 18.5946
@@ -2237,6 +2239,10 @@ class MainApp(App):
     lastInstruction = ''
     flagaWygladu = True
     flagaWykonania = True
+    tabela_speed=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] #nie smiac sie! ;)
+    licz=0
+    wystarczy=0
+    avg_speed=0.00
 
     def build(self):
         show_time = ShowTime()
@@ -2289,21 +2295,54 @@ class MainApp(App):
                         MainApp.lon = float(v)
 
             speed = Speed(float(speed))
+            #if speed<4.0:
+             #   speed=0
             if speed > self.highest_speed_float:
                 self.highest_speed_float = speed
+            #self.distance=self.distance+speed
+            #self.distance=round(self.distance,2)
             self.gps_speed = speed
+            self.tabela_speed[self.licz]=speed
+            if self.wystarczy==1:
+                for i in self.tabela_speed:
+                    suma=suma+i
+                self.avg_speed=suma/20
+            if self.licz==19:
+                self.licz=0
+                self.wystarczy=1
+            self.licz=self.licz+1
             self.highest_speed = self.highest_speed_float
+
             print "blblbl"
             print self.gps_speed
             self.gps_speed=self.gps_speed*18/5
             self.gps_speed=round(self.gps_speed,2)
             self.highest_speed = self.highest_speed * 18 / 5
             self.highest_speed = round(self.highest_speed, 2)
+            self.distance=self.distance+(self.gps_speed/1000.00)
+            if self.gps_speed<=9 and self.gps_speed>6:
+                self.calories=self.calories+70*0.06/60.00
+            elif self.gps_speed>9 and self.gps_speed<=13:
+                self.calories=self.calories+70*0.114/60.00
+            elif self.gps_speed>13 and self.gps_speed<=16:
+                self.calories=self.calories+70*0.13/60.00
+            elif self.gps_speed>16 and self.gps_speed<=19:
+                self.calories=self.calories+70*0.149/60.00
+            elif self.gps_speed>19:
+                self.calories=self.calories+70*0.168/60.00
+            self.calories2=round(self.calories,1)
+            self.distance2=round(self.distance,2)
+            self.gps_speed2 = round(self.gps_speed, 1)
             # MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
             # MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
 
-            MainApp.get_running_app().root.carousel.slides[0].ids["label_speed2"].text = str(self.gps_speed)
-            MainApp.get_running_app().root.carousel.slides[0].ids["label_max_speed2"].text = str(self.highest_speed)
+            MainApp.get_running_app().root.carousel.slides[0].ids["label_speed2"].text = str(self.gps_speed2)
+            #MainApp.get_running_app().root.carousel.slides[0].ids["label_max_speed2"].text = str(self.highest_speed)
+            MainApp.get_running_app().root.carousel.slides[0].ids["label_distance"].text = str(self.distance2)
+            MainApp.get_running_app().root.carousel.slides[0].ids["label_calories"].text = str(self.calories2)
+            if self.wystarczy==1:
+                self.avg_speed2=round(self.avg_speed,1)
+                #MainApp.get_running_app().root.carousel.slides[0].ids["label_avg_speed"].text = str(self.avg_speed2)
 
             mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
             if MainApp.znacznik == 0:
