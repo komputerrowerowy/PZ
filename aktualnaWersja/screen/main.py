@@ -1889,7 +1889,7 @@ class Weather(Screen):
                     StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarN.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: N"
-                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: Północy")
+                activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: Północy")
             elif str(burza['kierunek'])=='NE':
                 print "whahahaha mamy radarNE"
                 if burza['odleglosc']>=50:
@@ -1900,7 +1900,7 @@ class Weather(Screen):
                     StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarNE.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: NE"
-                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: Północy wschód")
+                activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: Północy wschód")
             elif str(burza['kierunek'])=='E':
                 print "whahahaha mamy radarE"
                 if burza['odleglosc']>=50:
@@ -1911,7 +1911,7 @@ class Weather(Screen):
                     StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarE.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: E"
-                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: wschodni")
+                activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: wschodni")
             elif str(burza['kierunek'])=='SE':
                 print "whahahaha mamy radarSE"
                 if burza['odleglosc']>=50:
@@ -1922,7 +1922,7 @@ class Weather(Screen):
                     StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarSE.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: SE"
-                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowo wschodni")
+                activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: południowo wschodni")
             elif str(burza['kierunek'])=='S':
                 print "whahahaha mamy radarS"
                 if burza['odleglosc']>=50:
@@ -1933,7 +1933,7 @@ class Weather(Screen):
                     StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarS.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: S"
-                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowy")
+                activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: południowy")
             elif str(burza['kierunek'])=='SW':
                 print "whahahaha mamy radarSW"
                 if burza['odleglosc']>=50:
@@ -1944,7 +1944,7 @@ class Weather(Screen):
                     StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarSW.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: SW"
-                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: południowo zachodni")
+                activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: południowo zachodni")
             elif str(burza['kierunek'])=='W':
                 print "whahahaha mamy radarW"
                 if burza['odleglosc']>=50:
@@ -1955,7 +1955,7 @@ class Weather(Screen):
                     StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarW.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: W"
-                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: zachodni")
+                activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: zachodni")
             elif str(burza['kierunek'])=='NW':
                 print "whahahaha mamy radarNW"
                 if burza['odleglosc']>=50:
@@ -1966,7 +1966,9 @@ class Weather(Screen):
                     StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarNW.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: NW"
-                activity.readStormAlerts("Uwaga! Burze w odleglosci 5km. Kierunek: północno zachodni")
+                print "wykonal sie popup"
+                activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: północno zachodni")
+                print "powinno przeczytac"
             print "Liczba: ", str(burza['liczba'])
             print "Odleglosc: ", str(burza['odleglosc']), "km"
             print "Okres: ", str(burza['okres']), "min"
@@ -2408,6 +2410,7 @@ class MainApp(App):
             # wykonywane co godzine, pobieranie pogodty itd
             if self.flagaWygladu == True:
                 try:
+                    self.flagaWygladu = False
                     Weather().ustal_pogode()
                     wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
                     key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
@@ -2419,11 +2422,13 @@ class MainApp(App):
                     range_detect = 70
                     print "Wykonuje burze_api"
                     ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
-                    print "Wykonalem burze_api"
+                    print "Wykonalem burze_api111"
                     Weather().print_burza(burza)
+                    print "Wykonalem burze_api2"
                     Weather().print_ostrzezenia(ostrzezenia)
+                    print "Wykonalem burze_api3"
                     # MusicPlayer().getSongs()
-                    self.flagaWygladu = False
+                    #self.flagaWygladu = False
                     print "daty daty daty"
                     # print datetime.date.today()
                     # abc = strftime("%Y-%m-%d %H:%M:%S", gmtime())
