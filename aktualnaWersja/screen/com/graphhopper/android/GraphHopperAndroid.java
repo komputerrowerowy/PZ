@@ -51,6 +51,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Locale;
 import com.graphhopper.util.Unzipper;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Date;
+import java.text.DateFormat;
+import java.util.*;
 
 public class GraphHopperAndroid{
 	
@@ -78,6 +83,9 @@ public class GraphHopperAndroid{
 	//private PathLayer pathLayer;
     private InstructionList instructionList2;
     private boolean isCompressed = false;
+    private ArrayList<Float> savedPositionListLat;
+    private ArrayList<Float> savedPositionListLon;
+    private ArrayList<String> savedTimeList;
 	
 	public GraphHopperAndroid(File mapsFolder){
 		System.out.println("graphConstructor");
@@ -95,7 +103,79 @@ public class GraphHopperAndroid{
 			this.mapsFolder.mkdirs();
 		
 		chooseAreaFromLocal();
+        savedPositionListLat = new ArrayList<Float>();
+		savedPositionListLon = new ArrayList<Float>();
+        savedTimeList = new ArrayList<String>();
 	}
+    
+    public void addActualPosition(float lat, float lon, String datePoint) {
+		savedPositionListLat.add(lat);
+		savedPositionListLon.add(lon);
+        savedTimeList.add(datePoint);
+		System.out.println("dodaniePozycji");
+		System.out.println(savedPositionListLon.get(savedPositionListLon.size() - 1));
+	}
+	
+	public void saveActualPositionListToGPX(String filePath, String trackName) {
+		long startTimeMillis = new Date().getTime();
+			
+		DateFormat formatter = Helper.createFormatter();
+		
+		String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
+                + "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " creator=\"Graphhopper version " + Constants.VERSION + "\" version=\"1.1\""
+                // This xmlns:gh acts only as ID, no valid URL necessary.
+                // Use a separate namespace for custom extensions to make basecamp happy.
+                + " xmlns:gh=\"https://graphhopper.com/public/schema/gpx/1.1\">"
+                + "\n<metadata>"
+                + "<copyright author=\"OpenStreetMap contributors\"/>"
+                + "<link href=\"http://graphhopper.com\">"
+                + "<text>GraphHopper GPX</text>"
+                + "</link>"
+                + "<time>" + formatter.format(startTimeMillis) + "</time>"
+                + "</metadata>";
+		StringBuilder gpxOutput = new StringBuilder(header);
+		if (savedPositionListLat.size() > 2) {
+			createWayPointBlock(gpxOutput, 0, "Start");   // Start 
+            createWayPointBlock(gpxOutput, savedPositionListLat.size() - 1, "Koniec!");   // Koniec
+			
+			
+            gpxOutput.append("\n<trk><name>").append(trackName).append("</name>");
+
+            gpxOutput.append("<trkseg>");
+            for (int i = 1; i < savedPositionListLat.size() - 1; i++) {
+                gpxOutput.append("\n<trkpt lat=\"").append(savedPositionListLat.get(i));
+                gpxOutput.append("\" lon=\"").append(savedPositionListLon.get(i)).append("\">");
+                long actialTimeMillis = new Date().getTime();
+                gpxOutput.append("<time>").append(savedTimeList.get(i)).append("</time>");
+                gpxOutput.append("</trkpt>");
+            }
+            gpxOutput.append("\n</trkseg>");
+            gpxOutput.append("\n</trk>");
+			
+			gpxOutput.append("\n</gpx>");
+        
+		}
+		
+		try {
+			PrintWriter out = new PrintWriter(filePath);
+			out.print(gpxOutput.toString());
+			out.close();
+		}
+		catch (Exception e) {
+			System.out.println("jeblo sie");
+			System.out.println(e.toString());
+		}
+	}
+	
+	private void createWayPointBlock(StringBuilder output, int pointIndex, String name) {
+        output.append("\n<wpt ");
+        output.append("lat=\"").append(savedPositionListLat.get(pointIndex));
+        output.append("\" lon=\"").append(savedPositionListLon.get(pointIndex)).append("\">");
+
+        output.append(" <name>").append(name).append("</name>");
+        output.append("</wpt>");
+    }
 	
 	private void chooseAreaFromLocal() {
         List<String> nameList = new ArrayList<String>();
@@ -217,7 +297,7 @@ public class GraphHopperAndroid{
 		}
 	}
     
-    public void connectInstructions(){
+    public void connectInstructions() throws FileNotFoundException{
         int index = this.instructionList.size() - 1;
         this.instructionList.remove(index);
 		for (int i = 0; i < this.instructionList2.size(); i++) {
@@ -226,6 +306,14 @@ public class GraphHopperAndroid{
 		}
         System.out.println("wypisane instrukcje");
         System.out.println(this.instructionList.toString());
+        /*this.instructionList.createGPXList();
+        System.out.println(this.instructionList.createGPX());
+        
+        PrintWriter zapis = new PrintWriter("/sdcard/Bicom/trasa.gpx");
+        zapis.println(this.instructionList.createGPX());
+        zapis.close();*/
+        
+  
 	}
 
 	

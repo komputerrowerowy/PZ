@@ -62,6 +62,8 @@ from loadOsm import LoadOsm
 import json
 from kivy.uix.label import Label
 from SOAPpy import WSDL
+from os import *
+from time import gmtime, strftime, localtime
 
 #import pyowm
 
@@ -159,7 +161,6 @@ Builder.load_string('''
             source: root.ktory_radar
             height: self.parent.height*2
             width: self.parent.width*2
-
 <StartScreen>:
     canvas.before:
         Rectangle:
@@ -502,6 +503,11 @@ class ChooseFile(FloatLayout):
     select = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
+
+class PopupGPX(FloatLayout):
+    selectGpx = ObjectProperty(None)
+    cancelGpx = ObjectProperty(None)
+
 class ChooseNumber(FloatLayout):
     select = ObjectProperty(None)
     cancel = ObjectProperty(None)
@@ -826,6 +832,7 @@ class GroupScreen(Screen):
     removeFlag = False
     TypeBike = 'bike'
     directory = ''
+    recordPosition = False
 
 
 
@@ -850,6 +857,31 @@ class GroupScreen(Screen):
         self.savepath(self.directory)
 
         self.dismiss_popup()
+
+    def dismiss_popupGpx(self):
+        self._popupGpx.dismiss()
+
+    def saveToGpx(self):
+        content = PopupGPX(selectGpx=self.selectGpx,
+                             cancelGpx=self.dismiss_popupGpx)
+
+        self._popupGpx = Popup(title="Zapis do GPX", content=content,
+                            size_hint=(0.9, 0.4))
+        self._popupGpx.open()
+
+    def selectGpx(self):
+        # wersja z -2h czas UTC
+        # actualDate = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        actualDate = strftime("%Y-%m-%d %H:%M:%S", localtime())
+
+        print "abbbbbbbbbb"
+
+        GpxPath = "/sdcard/Bicom/Moje_trasy/" + actualDate + ".gpx"
+
+        #GraphHopperAndroid.saveActualPositionListToGPX("/sdcard/Bicom/trasa1.gpx", str(actualDate))
+        GraphHopperAndroid.saveActualPositionListToGPX(str(GpxPath), str(actualDate))
+
+        self.dismiss_popupGpx()
 
     def test2(self):
         GraphHopperAndroid.loadGraphStorage()
@@ -972,11 +1004,17 @@ class GroupScreen(Screen):
 
     def navi(self):
         if self.Nawiguj == False and len(self.PunktyKontrolneLon)>=2:
+            group_screen = MainApp.get_running_app().root.carousel.slides[0]
             self.center()
             self.ids.img_navi.source = "resources/map.png"
+            group_screen.recordPosition = True
         else:
+            group_screen = MainApp.get_running_app().root.carousel.slides[0]
             self.ZerujTrase()
             self.ids.img_navi.source = "resources/route.png"
+            group_screen.recordPosition = False
+            #GraphHopperAndroid.saveActualPositionListToGPX("/sdcard/Bicom/trasa1.gpx", "trasa1")
+            #self.saveToGpx()
 
     def center(self):
         MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(float(MainApp.lat), float(MainApp.lon))
@@ -1267,7 +1305,13 @@ class GroupScreen(Screen):
 
 
 
-
+    def finishRoute(self):
+        self.route_calculated = False
+        self.czy_wyznacozno_trase = False
+        MainApp.route_nodes = False
+        self.licznikTemp = False
+        self.auto_center = False
+        self.Nawiguj = False
 
 
     def ZerujTrase(self):
@@ -2217,8 +2261,8 @@ class MainApp(App):
     gps_speed = 0.00
     highest_speed = 0.00
     highest_speed_float = 0.00
-    distance= 0.00
-    calories=0.00
+    distance = 0.00
+    calories = 0.00
     gps_status = StringProperty('Click Start to get GPS location updates')
     lat = 53.0102
     lon = 18.5946
@@ -2239,10 +2283,11 @@ class MainApp(App):
     lastInstruction = ''
     flagaWygladu = True
     flagaWykonania = True
-    tabela_speed=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] #nie smiac sie! ;)
-    licz=0
-    wystarczy=0
-    avg_speed=0.00
+    tabela_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # nie smiac sie! ;)
+    licz = 0
+    wystarczy = 0
+    avg_speed = 0.00
+    suma = 0
 
     def build(self):
         show_time = ShowTime()
@@ -2295,54 +2340,53 @@ class MainApp(App):
                         MainApp.lon = float(v)
 
             speed = Speed(float(speed))
-            #if speed<4.0:
-             #   speed=0
+            # if speed<4.0:
+            #   speed=0
             if speed > self.highest_speed_float:
                 self.highest_speed_float = speed
-            #self.distance=self.distance+speed
-            #self.distance=round(self.distance,2)
+            # self.distance=self.distance+speed
+            # self.distance=round(self.distance,2)
             self.gps_speed = speed
-            self.tabela_speed[self.licz]=speed
-            if self.wystarczy==1:
+            self.tabela_speed[self.licz] = speed
+            if self.wystarczy == 1:
                 for i in self.tabela_speed:
-                    suma=suma+i
-                self.avg_speed=suma/20
-            if self.licz==19:
-                self.licz=0
-                self.wystarczy=1
-            self.licz=self.licz+1
+                    self.suma = self.suma + i
+                self.avg_speed = self.suma / 20
+            if self.licz == 19:
+                self.licz = 0
+                self.wystarczy = 1
+            self.licz = self.licz + 1
             self.highest_speed = self.highest_speed_float
-
             print "blblbl"
             print self.gps_speed
-            self.gps_speed=self.gps_speed*18/5
-            self.gps_speed=round(self.gps_speed,2)
+            self.gps_speed = self.gps_speed * 18 / 5
+            self.gps_speed = round(self.gps_speed, 2)
             self.highest_speed = self.highest_speed * 18 / 5
             self.highest_speed = round(self.highest_speed, 2)
-            self.distance=self.distance+(self.gps_speed/1000.00)
-            if self.gps_speed<=9 and self.gps_speed>6:
-                self.calories=self.calories+70*0.06/60.00
-            elif self.gps_speed>9 and self.gps_speed<=13:
-                self.calories=self.calories+70*0.114/60.00
-            elif self.gps_speed>13 and self.gps_speed<=16:
-                self.calories=self.calories+70*0.13/60.00
-            elif self.gps_speed>16 and self.gps_speed<=19:
-                self.calories=self.calories+70*0.149/60.00
-            elif self.gps_speed>19:
-                self.calories=self.calories+70*0.168/60.00
-            self.calories2=round(self.calories,1)
-            self.distance2=round(self.distance,2)
+            self.distance = self.distance + (self.gps_speed / 1000.00)
+            if self.gps_speed <= 9 and self.gps_speed > 6:
+                self.calories = self.calories + 70 * 0.06 / 60.00
+            elif self.gps_speed > 9 and self.gps_speed <= 13:
+                self.calories = self.calories + 70 * 0.114 / 60.00
+            elif self.gps_speed > 13 and self.gps_speed <= 16:
+                self.calories = self.calories + 70 * 0.13 / 60.00
+            elif self.gps_speed > 16 and self.gps_speed <= 19:
+                self.calories = self.calories + 70 * 0.149 / 60.00
+            elif self.gps_speed > 19:
+                self.calories = self.calories + 70 * 0.168 / 60.00
+            self.calories2 = round(self.calories, 1)
+            self.distance2 = round(self.distance, 2)
             self.gps_speed2 = round(self.gps_speed, 1)
             # MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
             # MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
 
             MainApp.get_running_app().root.carousel.slides[0].ids["label_speed2"].text = str(self.gps_speed2)
-            #MainApp.get_running_app().root.carousel.slides[0].ids["label_max_speed2"].text = str(self.highest_speed)
+            # MainApp.get_running_app().root.carousel.slides[0].ids["label_max_speed2"].text = str(self.highest_speed)
             MainApp.get_running_app().root.carousel.slides[0].ids["label_distance"].text = str(self.distance2)
             MainApp.get_running_app().root.carousel.slides[0].ids["label_calories"].text = str(self.calories2)
-            if self.wystarczy==1:
-                self.avg_speed2=round(self.avg_speed,1)
-                #MainApp.get_running_app().root.carousel.slides[0].ids["label_avg_speed"].text = str(self.avg_speed2)
+            if self.wystarczy == 1:
+                self.avg_speed2 = round(self.avg_speed, 1)
+                # MainApp.get_running_app().root.carousel.slides[0].ids["label_avg_speed"].text = str(self.avg_speed2)
 
             mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
             if MainApp.znacznik == 0:
@@ -2380,6 +2424,24 @@ class MainApp(App):
                     Weather().print_ostrzezenia(ostrzezenia)
                     # MusicPlayer().getSongs()
                     self.flagaWygladu = False
+                    print "daty daty daty"
+                    # print datetime.date.today()
+                    # abc = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                    # print(str(abc))
+                    # abcc = str(datetime.datetime.now())
+                    # print(str(abcc))
+                    # Czyszczenie cache, prototyp
+                    try:
+                        for root, dirs, files in os.walk('/sdcard/Bicom/Mapy'):
+                            for f in files:
+                                print "czysci cache"
+                                filename = os.path.join(root, f)
+                                spr = float(path.getmtime('/sdcard/Bicom/cacheclear.dat')) - float(path.getctime(filename))
+                                if float(spr) > 86400:
+                                    remove(filename)
+                    except:
+                        pass
+
                 except:
                     pass
                 #self.flagaWygladu = False
@@ -2430,8 +2492,11 @@ class MainApp(App):
                         print instruction_points.getLatitude(0)
                         print instruction_points.getLongitude(0)
 
+
                         if group_screen.actual_point == (punkty.getSize() - 1):
                             group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
+                            group_screen.saveToGpx()
+
 
 
                     #pomocnicze markery zawierajace 2 najblizsze punkty
@@ -2449,8 +2514,11 @@ class MainApp(App):
                     print "instrukcje"
                     print instruction_points.getLatitude(0)
                     print instruction_points.getLongitude(0)
+
                     if group_screen.actual_point == (punkty.getSize() - 1):
                         group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
+                        group_screen.saveToGpx()
+
 
                 if self.lastInstruction != group_screen.ids.label_instruction.text:
                     activity.speaker.speak(group_screen.ids.label_instruction.text)
@@ -2458,6 +2526,7 @@ class MainApp(App):
 
                 if group_screen.actual_point >= group_screen.route_size[group_screen.travelled_points]:
                     group_screen.travelled_points += 1
+
 
 
             # if flaga_gps == 1:
@@ -2474,6 +2543,11 @@ class MainApp(App):
                 self.flagCenter = False
             MainApp.cos = 0
             MainApp.prev_time = datetime.datetime.now().time()
+
+            group_screen = MainApp.get_running_app().root.carousel.slides[0]
+            if group_screen.recordPosition == True:
+                actualDate2 = strftime("%Y-%m-%dT%H:%M:%SZ", localtime())
+                GraphHopperAndroid.addActualPosition(float(MainApp.lat), float(MainApp.lon), str(actualDate2))
 
     @mainthread
     def on_status(self, stype, status):

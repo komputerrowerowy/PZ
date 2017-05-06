@@ -16,6 +16,11 @@ __all__ = ["Coordinate", "Bbox", "MapView", "MapSource", "MapMarker",
            "MapLayer", "MarkerMapLayer", "MapMarkerPopup"]
 __version__ = "0.2"
 
+if not exists('/sdcard/Bicom'):
+    makedirs('/sdcard/Bicom')
+fff = open("/sdcard/Bicom/cacheclear.dat", "w")
+fff.write('/sdcard/Bicom/Mapy')
+fff.close()
 
 if not exists('/sdcard/Bicom/path/sav.dat'):
     makedirs('/sdcard/Bicom/path')

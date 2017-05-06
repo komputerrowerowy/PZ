@@ -6,7 +6,7 @@ grammar menus;
           WSTECZ  |
           POPRZEDNI |
           POPRZEDNIA |
-          NASTĘPNY   |
+          NASTĘPNY  |
           NASTĘPNA  |
           STOP      |
           START     |

@@ -147,13 +147,13 @@
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, .7
                 text: ''
-                on_release: root.fileSelect()
-                Image:
-                    id: img_folder
-                    center_x: self.parent.center_x
-                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
-                    source: 'resources/folder.png'
-                    height: self.parent.height * 0.8
+#                on_release: root.fileSelect()
+#                Image:
+#                    id: img_folder
+#                    center_x: self.parent.center_x
+#                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
+#                    source: 'resources/folder.png'
+#                    height: self.parent.height * 0.8
         BoxLayout:
             orientation: 'vertical'
             size_hint: 1, 0.555
@@ -382,6 +382,7 @@
 
 
 
+
 <ChooseFile>:
     canvas.before:
         Color:
@@ -431,3 +432,61 @@
                     center_y: (self.parent.center_y)
                     source: 'resources/ok.png'
                     height: self.parent.height
+
+<PopupGPX>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        BoxLayout:
+            size_hint_y: .6
+            Label:
+            Label:
+                text: 'Czy zapisać trase do pliku GPX?'
+                color: 1, 1, 1, 1
+                background_normal: ''
+                background_down: ''
+                background_color: 1, 1, 1, 1
+                font_size: self.height / 6
+            Label:
+
+        BoxLayout:
+            size_hint_y: .4
+            canvas.before:
+                Color:
+                    rgb: 0.235, 0.529, 0.572
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Zamknij"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.cancelGpx()
+                Image:
+                    id: anulujbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/anuluj.png'
+                    height: self.parent.height
+
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Wybierz folder"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.selectGpx()
+                Image:
+                    id: okbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/ok.png'
+                    height: self.parent.height
+
