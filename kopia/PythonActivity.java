@@ -149,7 +149,7 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
             
     //Sphinx
             
-    private static final String KWS_SEARCH = "JEDEN";
+    private static final String KWS_SEARCH = "BIKOM";
     private static final String FORECAST_SEARCH = "DWA";
     private static final String DIGITS_SEARCH = "ODBIERZ";
     private static final String PHONE_SEARCH = "DWA";
@@ -161,6 +161,7 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
 
     /* Used to handle permission request */
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+    private static final int REQUEST_WRITE_STORAGE = 112;
 
     private SpeechRecognizer recognizer;
     private HashMap<String, Integer> captions;
@@ -169,7 +170,6 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
     public boolean HeadsetIsPlugged = false;
     public boolean AlwaysReadSms = false;
     public boolean AlwaysReadStromAlert = false;
-    private static final int REQUEST_WRITE_STORAGE = 112;
             
             
             
@@ -216,41 +216,6 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
         }
     }
 }
-    
-    
-    public void readStormAlerts(String alert){
-        if(HeadsetIsPlugged == true || AlwaysReadStromAlert == true){
-                            speaker.speak(alert);
-                        }
-    }
-    
-    private void sdPermission() {
-        sdPermissionRead();
-        sdPermissionWrite();
-    }
-    
-    private void sdPermissionRead() {
-        
-        String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
-        int grant = checkSelfPermission((Context)this, permission);
-        if ( grant != PackageManager.PERMISSION_GRANTED) {
-                String[] permission_list = new String[1];
-                permission_list[0] = permission;
-    }
-    }
-        
-    private void sdPermissionWrite() {
-        
-        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-        int grant = checkSelfPermission((Context)this, permission);
-        if ( grant != PackageManager.PERMISSION_GRANTED) {
-                String[] permission_list = new String[1];
-                permission_list[0] = permission;
-    }
-    }
-    
-    
-    
 
 
 
@@ -276,7 +241,7 @@ private final int CHECK_CODE = 0x1;
         startActivityForResult(check, CHECK_CODE);
     }
 
-    
+
 
     private void initializeSMSReceiver(){
         smsReceiver = new BroadcastReceiver(){
@@ -468,14 +433,45 @@ private final int CHECK_CODE = 0x1;
 
 
     private void requestSmsPermission() {
-    String permission = Manifest.permission.SEND_SMS;
-    int grant = checkSelfPermission((Context)this, permission);
-    if ( grant != PackageManager.PERMISSION_GRANTED) {
-        String[] permission_list = new String[1];
-        permission_list[0] = permission;
-        requestPermissions((Activity)this, permission_list, 1);
+        String permission = Manifest.permission.SEND_SMS;
+        int grant = checkSelfPermission((Context)this, permission);
+        if ( grant != PackageManager.PERMISSION_GRANTED) {
+                String[] permission_list = new String[1];
+                permission_list[0] = permission;
+                requestPermissions((Activity)this, permission_list, 1);
+        }
     }
-}
+        
+    public void readStormAlerts(String alert){
+        if(HeadsetIsPlugged == true || AlwaysReadStromAlert == true){
+                            speaker.speak(alert);
+                        }
+    }
+    
+    private void sdPermission() {
+        sdPermissionRead();
+        sdPermissionWrite();
+    }
+        
+    private void sdPermissionRead() {
+        
+        String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        int grant = checkSelfPermission((Context)this, permission);
+        if ( grant != PackageManager.PERMISSION_GRANTED) {
+                String[] permission_list = new String[1];
+                permission_list[0] = permission;
+        }
+    }
+        
+    private void sdPermissionWrite() {
+        
+        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        int grant = checkSelfPermission((Context)this, permission);
+        if ( grant != PackageManager.PERMISSION_GRANTED) {
+                String[] permission_list = new String[1];
+                permission_list[0] = permission;
+        }
+    }
 
 
             
@@ -529,10 +525,10 @@ private final int CHECK_CODE = 0x1;
             return;
 
         String text = hypothesis.getHypstr();
-        /*if (text.equals(KEYPHRASE)){
+        if (text.equals(KEYPHRASE)){
 			lastState = KEYPHRASE;
-            switchSearch(DIGITS_SEARCH);
-		}*/
+            switchSearch("menu");
+		}
         /*if (text.equals(INCOMING_CALL_SEARCH)){
 			lastState = text;
             switchSearch(INCOMING_CALL_SEARCH);
@@ -572,8 +568,8 @@ private final int CHECK_CODE = 0x1;
     public void onEndOfSpeech() {
         //if (!recognizer.getSearchName().equals(KWS_SEARCH))
         System.out.println("nojuzniewiem");    
-		//switchSearch(KWS_SEARCH);
-		switchSearch(INCOMING_CALL_SEARCH);
+		switchSearch(KWS_SEARCH);
+		//switchSearch(INCOMING_CALL_SEARCH);
         //makeText(getApplicationContext(), "endSpeach", Toast.LENGTH_SHORT).show();
 		//recognizer.stop();
         ;
@@ -596,6 +592,8 @@ private final int CHECK_CODE = 0x1;
             recognizer.startListening(searchName, 10000);
 			System.out.println("test11");
 		}
+		
+		lastState = searchName;
 
         //String caption = getResources().getString(captions.get(searchName));
         //((TextView) findViewById(R.id.caption_text)).setText(caption);
@@ -638,10 +636,14 @@ private final int CHECK_CODE = 0x1;
 		
 		File incomingCallGrammar = new File(mPath, "sphinx/incomingcall.gram");
 		recognizer.addGrammarSearch(INCOMING_CALL_SEARCH, incomingCallGrammar);
+		
+		File menuGrammar = new File(mPath, "sphinx/menu.gram");
+		recognizer.addGrammarSearch("menu", menuGrammar);
         
         /*// Create language model search
         File languageModel = new File(assetsDir, "weather.dmp");
         recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
+
         // Phonetic search
         File phoneticModel = new File(assetsDir, "en-phone.dmp");
         recognizer.addAllphoneSearch(PHONE_SEARCH, phoneticModel);*/
@@ -655,7 +657,7 @@ private final int CHECK_CODE = 0x1;
 
     @Override
     public void onTimeout() {
-        ;
+        switchSearch(KWS_SEARCH);
     }
             
             
@@ -729,7 +731,6 @@ private final int CHECK_CODE = 0x1;
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         requestSmsPermission();
-        sdPermission();
 
         getWindowManager().getDefaultDisplay().getMetrics(Hardware.metrics);
 
