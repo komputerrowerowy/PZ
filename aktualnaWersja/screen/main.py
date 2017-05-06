@@ -2460,8 +2460,12 @@ class MainApp(App):
             if group_screen.route_calculated == True and group_screen.Nawiguj == True:
                 x1 = punkty.getLat(group_screen.actual_point)
                 y1 = punkty.getLon(group_screen.actual_point)
-                x2 = punkty.getLat(group_screen.actual_point + 1)
-                y2 = punkty.getLon(group_screen.actual_point + 1)
+                if group_screen.actual_point == punkty.getSize() - 1:
+                    x2 = x1
+                    y2 = y1
+                else:
+                    x2 = punkty.getLat(group_screen.actual_point + 1)
+                    y2 = punkty.getLon(group_screen.actual_point + 1)
                 x = MainApp.lat
                 y = MainApp.lon
 
@@ -2469,7 +2473,10 @@ class MainApp(App):
                     group_screen.recalculate_route()
 
                 distance1 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point)))
-                distance2 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point + 1)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point + 1)))
+                if x1 == x2 and y1 == y2:
+                    distance2 = distance1
+                else:
+                    distance2 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point + 1)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point + 1)))
 
                 print "dystans"
                 print distance1
@@ -2496,6 +2503,7 @@ class MainApp(App):
                         if group_screen.actual_point == (punkty.getSize() - 1):
                             group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
                             group_screen.saveToGpx()
+                            group_screen.Nawiguj = False
 
 
 
@@ -2518,6 +2526,7 @@ class MainApp(App):
                     if group_screen.actual_point == (punkty.getSize() - 1):
                         group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
                         group_screen.saveToGpx()
+                        group_screen.Nawiguj = False
 
 
                 if self.lastInstruction != group_screen.ids.label_instruction.text:
