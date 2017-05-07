@@ -64,6 +64,7 @@ from kivy.uix.label import Label
 from SOAPpy import WSDL
 from os import *
 from time import gmtime, strftime, localtime
+import unicodedata
 
 #import pyowm
 
@@ -833,6 +834,9 @@ class GroupScreen(Screen):
     TypeBike = 'bike'
     directory = ''
     recordPosition = False
+    cityPoint = ''
+    streetPoint = ''
+    geoFlaga = True
 
 
 
@@ -984,6 +988,8 @@ class GroupScreen(Screen):
             self.latGPS = str(latGPS2)
             self.flagaGPS = 1
 
+
+
     def returnLon(self):
         self.Search()
         return self.lonGPS
@@ -1133,10 +1139,35 @@ class GroupScreen(Screen):
 
         self.ids.scrollPoints.clear_widgets(children=None)
 
+        def SearchAdres(latAdd, lonAdd):
+            g = geocoder.google([latAdd, lonAdd], method='reverse')
+            city = g.city
+            print "citycitycity"
+            street = g.street
+            print "streetstreet"
+            # print str(city)
+            # print str(street)
+            MomentCity = g.city
+            MomentStreet = g.street
+            self.cityPoint = MomentCity.encode('utf-8')
+            try:
+                self.streetPoint = MomentStreet .encode('utf-8')
+                self.geoFlaga = True
+            except:
+                self.streetPoint = ''
+                self.geoFlaga = False
+            # print self.cityPoint
+
+
         def addPointList(bt):
             self.ids.scrollPoints.clear_widgets(children=None)
             for indeks in xrange(0, len(self.PunktyKontrolneLon)):
-                tekst = '' + str(self.PunktyKontrolneLat[indeks]) + ', ' + str(self.PunktyKontrolneLon[indeks])
+                SearchAdres(float(self.PunktyKontrolneLat[indeks]), float(self.PunktyKontrolneLon[indeks]))
+                if self.geoFlaga == True:
+                    tekst = '' + self.streetPoint + ', ' + str(self.cityPoint)
+                else:
+                    tekst = '' + str(self.cityPoint)
+                # tekst = '' + str(self.PunktyKontrolneLat[indeks]) + ', ' + str(self.PunktyKontrolneLon[indeks])
                 btn3 = Button(text='x', on_release=removePoint)
                 btn2 = Button(text='V', on_release=downPoint)
                 btn1 = Button(text='^', on_release=upPoint)
@@ -1175,6 +1206,7 @@ class GroupScreen(Screen):
                     btn.background_down = ''
                     btn.background_color = (0, 0, 0, .3)
                     btn.size_hint_x = 0.7
+                    btn.font_size = self.height / 50
                 else:
                     btn3.id = 'BtnXX' + str(indeks)
                     btn3.color = (1, 1, 1, 0)
@@ -1209,6 +1241,7 @@ class GroupScreen(Screen):
                     btn.background_down = ''
                     btn.background_color = (0, 0, 0, .3)
                     btn.size_hint_x = 0.7
+                    btn.font_size = self.height / 50
 
                 self.ids.scrollPoints.add_widget(btn3)
                 self.ids.scrollPoints.add_widget(btn1)
@@ -2290,6 +2323,8 @@ class MainApp(App):
     wystarczy = 0
     avg_speed = 0.00
     suma = 0
+    licz2 = 0
+
 
     def build(self):
         show_time = ShowTime()
@@ -2331,6 +2366,17 @@ class MainApp(App):
             datetime.datetime.combine(datetime.date.today(),
                                       datetime.datetime.now().time()) - datetime.datetime.combine(
                 datetime.date.today(), MainApp.prev_time)).total_seconds()
+
+
+        # Symulator jazdy, tylko punkty z graphhoppera
+        # groupScreen = MainApp.get_running_app().root.carousel.slides[0]
+        # punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
+        #
+        # if groupScreen.route_calculated == True and groupScreen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
+        #     MainApp.lat = punkty2.getLat(self.licz2)
+        #     MainApp.lon = punkty2.getLon(self.licz2)
+        #     self.licz2 = self.licz2 + 1
+
         if duration >= 1:
             self.gps_location = '\n'.join([
                                               '{}={}'.format(k, v) for k, v in kwargs.items()])
