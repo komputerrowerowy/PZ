@@ -2362,6 +2362,7 @@ class MainApp(App):
 
     @mainthread
     def on_location(self, speed, **kwargs):
+        group_screen = MainApp.get_running_app().root.carousel.slides[0]
         duration = (
             datetime.datetime.combine(datetime.date.today(),
                                       datetime.datetime.now().time()) - datetime.datetime.combine(
@@ -2369,10 +2370,10 @@ class MainApp(App):
 
 
         # Symulator jazdy, tylko punkty z graphhoppera
-        # groupScreen = MainApp.get_running_app().root.carousel.slides[0]
+
         # punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
-        #
-        # if groupScreen.route_calculated == True and groupScreen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
+
+        # if group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
         #     MainApp.lat = punkty2.getLat(self.licz2)
         #     MainApp.lon = punkty2.getLon(self.licz2)
         #     self.licz2 = self.licz2 + 1
@@ -2505,7 +2506,7 @@ class MainApp(App):
             punkty = MainApp.get_running_app().root.carousel.slides[0].punkty
             #punkty.setNode(0, float(MainApp.lat), float(MainApp.lon))
 
-            group_screen = MainApp.get_running_app().root.carousel.slides[0]
+            #group_screen = MainApp.get_running_app().root.carousel.slides[0]
 
             #obliczenie odleglosci miedzy aktualnym punktem a najblizszym punktem w nawigacji do ktorego zmierzamy
             if group_screen.route_calculated == True and group_screen.Nawiguj == True:
@@ -2555,6 +2556,7 @@ class MainApp(App):
                             group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
                             group_screen.saveToGpx()
                             group_screen.Nawiguj = False
+                            self.licz2 = 0
 
 
 
@@ -2578,6 +2580,7 @@ class MainApp(App):
                         group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
                         group_screen.saveToGpx()
                         group_screen.Nawiguj = False
+                        self.licz2 = 0
 
 
                 if self.lastInstruction != group_screen.ids.label_instruction.text:

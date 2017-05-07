@@ -18,6 +18,8 @@ __version__ = "0.2"
 
 if not exists('/sdcard/Bicom'):
     makedirs('/sdcard/Bicom')
+if not exists('/sdcard/Bicom/Moje_trasy'):
+    makedirs('/sdcard/Bicom/Moje_trasy')
 fff = open("/sdcard/Bicom/cacheclear.dat", "w")
 fff.write('/sdcard/Bicom/Mapy')
 fff.close()
