@@ -837,6 +837,7 @@ class GroupScreen(Screen):
     cityPoint = ''
     streetPoint = ''
     geoFlaga = True
+    NawigationMode = False
 
 
 
@@ -1009,12 +1010,14 @@ class GroupScreen(Screen):
                                 anchor=scatter.to_local(scatter.parent.center_x, scatter.parent.center_y))
 
     def navi(self):
-        if self.Nawiguj == False and len(self.PunktyKontrolneLon)>=2:
+        if self.NawigationMode == False and len(self.PunktyKontrolneLon)>=2:
+            self.NawigationMode = True
             group_screen = MainApp.get_running_app().root.carousel.slides[0]
             self.center()
             self.ids.img_navi.source = "resources/map.png"
             group_screen.recordPosition = True
         else:
+            self.NawigationMode = False
             group_screen = MainApp.get_running_app().root.carousel.slides[0]
             self.ZerujTrase()
             self.ids.img_navi.source = "resources/route.png"
@@ -1355,6 +1358,7 @@ class GroupScreen(Screen):
         self.licznikTemp = False
         self.auto_center = False
         self.Nawiguj = False
+        self.actual_point = 0
 
         self.ids.scrollPoints.clear_widgets(children=None)
         self.ids.img_center.source = "resources/center_white.png"
@@ -2369,18 +2373,19 @@ class MainApp(App):
                 datetime.date.today(), MainApp.prev_time)).total_seconds()
 
 
-        # Symulator jazdy, tylko punkty z graphhoppera
-
-        # punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
-
-        # if group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
-        #     MainApp.lat = punkty2.getLat(self.licz2)
-        #     MainApp.lon = punkty2.getLon(self.licz2)
-        #     self.licz2 = self.licz2 + 1
 
         if duration >= 1:
             self.gps_location = '\n'.join([
                                               '{}={}'.format(k, v) for k, v in kwargs.items()])
+            # Symulator jazdy, tylko punkty z graphhoppera
+
+            # punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
+            #
+            # if group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
+            #     MainApp.lat = punkty2.getLat(self.licz2)
+            #     MainApp.lon = punkty2.getLon(self.licz2)
+            #     self.licz2 = self.licz2 + 1
+
             for k, v in kwargs.items():
                 if k == "lat":
                     MainApp.lat = float(v)
