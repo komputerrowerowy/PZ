@@ -1715,7 +1715,7 @@ class Speedometer(Screen):
 
 class Weather(Screen):
     czy_burza = 0.5
-    miejscowosc=StringProperty()
+    miejscowosc=''
     def ustal_pogode(self):
         print 'makarena'
         #obs = owm.weather_at_coords(52, 18)
@@ -1812,6 +1812,10 @@ class Weather(Screen):
         print data_forecast['list'][1]
         print data_forecast['city']['name']
         self.miejscowosc=data_forecast['city']['name']
+
+        print self.miejscowosc
+        print Weather.miejscowosc
+        print Weather().miejscowosc
         temp = data_forecast['list'][0]['main']['temp'] - 273.15
         temp_forecast=data_forecast['list'][1]['main']['temp']-273.15
         temp=round(temp,2)
@@ -1892,6 +1896,7 @@ class Weather(Screen):
             '%')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text = str(wind_forecast) + str(
             'm/s ') + str(kierunek_forecast)
+        return data_forecast['city']['name']
 
     def burze_api(self,key, wsdl_file, city, range_detect):
         server = WSDL.Proxy(wsdl_file)
@@ -2463,14 +2468,16 @@ class MainApp(App):
             if self.flagaWygladu == True:
                 try:
                     self.flagaWygladu = False
-                    Weather().ustal_pogode()
+                    print "przesledzam pogode"
+                    miej=Weather().ustal_pogode()
+                    print "przesledzilem pogode"
                     wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
                     key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
                     print "MIejscowoscc sprawdzana"
-                    print Weather().miejscowosc
-                    print Weather.miejscowosc
-                    #city = Weather().miejscowosc
-                    city='torun'
+                    print str(miej)
+
+                    city = Weather().miejscowosc
+                    #city="Mediolan"
                     range_detect = 70
                     print "Wykonuje burze_api"
                     ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
