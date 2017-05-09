@@ -162,7 +162,8 @@
                 background_color: 0.235, 0.529, 0.572, .7
                 size_hint_x: 0.15
                 text: ''
-                on_release: root.loadFromBicomNonDynamic()
+                #on_release: root.loadFromBicomNonDynamic()
+                on_release: root.fileSelectTras()
                 Image:
                     id: img_tempasdsd
                     center_x: self.parent.center_x
@@ -461,6 +462,58 @@
                     center_y: (self.parent.center_y)
                     source: 'resources/ok.png'
                     height: self.parent.height
+
+<ChooseBicomTras>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            size_hint_y: .85
+            id: filechooser
+            rootpath: "/sdcard/Bicom"
+        #color: 0.521, 0.521, 0.513, 1
+
+        BoxLayout:
+            size_hint_y: .15
+            canvas.before:
+                Color:
+                    rgb: 0.235, 0.529, 0.572
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Zamknij"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.cancelTras()
+                Image:
+                    id: anulujbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/anuluj.png'
+                    height: self.parent.height
+
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Wybierz folder"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.selectTras(filechooser.path, filechooser.selection)
+                Image:
+                    id: okbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/ok.png'
+                    height: self.parent.height
+
 
 <PopupGPX>:
     canvas.before:

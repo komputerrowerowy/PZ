@@ -505,6 +505,10 @@ class ChooseFile(FloatLayout):
     select = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
+class ChooseBicomTras(FloatLayout):
+    selectTras = ObjectProperty(None)
+    cancelTras = ObjectProperty(None)
+
 
 class PopupGPX(FloatLayout):
     selectGpx = ObjectProperty(None)
@@ -880,6 +884,84 @@ class GroupScreen(Screen):
 
         self.dismiss_popup()
 
+    def dismiss_popupTras(self):
+        self._popupTras.dismiss()
+
+    def fileSelectTras(self):
+        content = ChooseBicomTras(selectTras=self.selectTras,
+                             cancelTras=self.dismiss_popupTras)
+
+        self._popupTras = Popup(title="Wybierz trase do zaimportowania", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popupTras.open()
+
+    def selectTras(self, path, filename):
+        print "wyswietl_error"
+        localPtah = os.path.join(path, filename[0])
+
+        print "wyswietl_error2"
+        #localPtah = path
+        self.removeFlag = False
+
+        scren = MainApp.get_running_app().root.carousel.slides[0]
+
+        count = len(open(localPtah, 'rU').readlines())
+
+        localSize = len(self.PunktyKontrolneLon)
+
+        self.ZerujTrase()
+
+        print "test_odczytu"
+        print (count)
+        linecache.clearcache()
+        wiersz = linecache.getline(localPtah, 1)
+        if float(wiersz[:7]) == float(123.123):
+            self.TypeBike = 'bike'
+        elif float(wiersz[:7]) == float(456.456):
+            self.TypeBike = 'mtb'
+        # self.TypeBike = str(wiersz)
+        print(str(wiersz[:7]))
+        for nr in xrange(2, count):
+            linecache.clearcache()
+            wiersz = linecache.getline(localPtah, nr)
+
+            try:
+                print(str(wiersz[13:]))
+                print(str(wiersz[:13]))
+                self.lonGPS = float(wiersz[13:])
+                self.latGPS = float(wiersz[:13])
+                print('test_przejscia_13')
+                print(str(self.lonGPS))
+                print(str(self.latGPS))
+                map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+                mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
+                map.add_marker(mark)
+                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
+                self.calculate_route_nodes_run_add()
+
+            except:
+                print(str(wiersz[11:]))
+                print(str(wiersz[:11]))
+                print(' ')
+                print(' ')
+                print(' ')
+                try:
+                    self.lonGPS = float(wiersz[11:])
+                    self.latGPS = float(wiersz[:11])
+                    print('test_przejscia_11')
+                    print(str(self.lonGPS))
+                    print(str(self.latGPS))
+                except:
+                    print"wyjatekkkkkkkkk"
+
+                map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+                mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
+                map.add_marker(mark)
+                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
+                self.calculate_route_nodes_run_add()
+
+        self.dismiss_popupTras()
+
     def dismiss_popupGpx(self):
         self._popupGpx.dismiss()
 
@@ -951,27 +1033,7 @@ class GroupScreen(Screen):
         for nr in xrange(2, count):
             linecache.clearcache()
             wiersz = linecache.getline(localPtah, nr)
-            # if (nr == 2):
-                # self.PunktyKontrolneLat.append(float(wiersz[11:]))
-                # self.PunktyKontrolneLon.append(float(wiersz[:11]))
 
-            #     if float(wiersz[11:]) != MainApp.lon and float(wiersz[:11]) != MainApp.lat:
-            #         print "tttggggggggggggggg"
-            #         print(float(wiersz[11:]))
-            #         print(float(wiersz[:11]))
-            #         self.lonGPS = float(wiersz[11:])
-            #         self.latGPS = float(wiersz[:11])
-            #         self.calculate_route_nodes_run_add()
-            #         map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
-            #         mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
-            #         map.add_marker(mark)
-            #         MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
-            #         print "ttt"
-            #         print(float(wiersz[11:]))
-            #         print(float(wiersz[:11]))
-            # else:
-            #     # self.PunktyKontrolneLat.append(float(wiersz[13:]))
-            #     # self.PunktyKontrolneLon.append(float(wiersz[:13]))
             try:
                 print(str(wiersz[13:]))
                 print(str(wiersz[:13]))
