@@ -62,16 +62,17 @@ from loadOsm import LoadOsm
 import json
 from kivy.uix.label import Label
 from SOAPpy import WSDL
-from os import *
+#from os import *
 from time import gmtime, strftime, localtime
 import unicodedata
+import linecache
 
 #import pyowm
 
 #owm = pyowm.OWM('b26433c9a2c69c16c1d138cc5710fd57', language='pl')  #moj kod!!!
 
 # 3c8792 niebieski kolor xD
-print "wersja_aaa"
+print "wersja_aaafghjkl"
 
 Hardware = autoclass('org.renpy.android.Hardware')
 
@@ -815,6 +816,7 @@ class GroupScreen(Screen):
     route_calculated = False
     licznikTemp = False
     punkty = []
+    punkty22 = []
     instructions = []
     actual_point = 0
     actual_instruction = 0
@@ -838,6 +840,21 @@ class GroupScreen(Screen):
     streetPoint = ''
     geoFlaga = True
     NawigationMode = False
+    PathBicomTras = "/sdcard/Bicom/BicomTrasa.txt"
+    FkagaPunktowSymulatora = False
+
+
+
+
+    def saveToBicom(self, lat, lon):
+        f = open("/sdcard/Bicom/BicomTrasa.txt", "a")
+        f.write(str(lat) + " " + str(lon))
+        f.close()
+
+    def loadFromBicom(self, path, nr):
+        wiersz = linecache.getline(path, nr)
+
+
 
 
 
@@ -887,6 +904,108 @@ class GroupScreen(Screen):
         GraphHopperAndroid.saveActualPositionListToGPX(str(GpxPath), str(actualDate))
 
         self.dismiss_popupGpx()
+
+    def saveGraphhopperTras(self):
+        if len(self.PunktyKontrolneLon) >= 2:
+            ff = open("/sdcard/Bicom/BicomTrasa.txt", "w")
+            if str(self.TypeBike) == 'bike':
+                ff.write(str('123.123') + "\n")
+            elif str(self.TypeBike) == 'mtb':
+                ff.write(str('456.456') + "\n")
+            ff.close()
+            f = open("/sdcard/Bicom/BicomTrasa.txt", "a")
+            # if str(self.TypeBike) == 'bike':
+            #     f.write(str('123.123') + "\n")
+            # elif str(self.TypeBike) == 'mtb':
+            #     f.write(str('456.456') + "\n")
+            print("test_zapisu")
+            print(str(self.TypeBike))
+            for j in xrange(0, len(self.PunktyKontrolneLon)):
+                f.write(str(self.PunktyKontrolneLat[j]) + " " + str(self.PunktyKontrolneLon[j]) + "\n")
+            f.write("Koniec\n")
+            f.close()
+
+    localPtah = "/sdcard/Bicom/BicomTrasa.txt"
+
+    def loadFromBicomNonDynamic(self):
+        self.removeFlag = False
+
+        scren = MainApp.get_running_app().root.carousel.slides[0]
+        localPtah = "/sdcard/Bicom/BicomTrasa.txt"
+        count = len(open(localPtah, 'rU').readlines())
+
+        localSize = len(self.PunktyKontrolneLon)
+
+        self.ZerujTrase()
+
+        print "test_odczytu"
+        print (count)
+        linecache.clearcache()
+        wiersz = linecache.getline(localPtah, 1)
+        if float(wiersz[:7]) == float(123.123):
+            self.TypeBike = 'bike'
+        elif float(wiersz[:7]) == float(456.456):
+            self.TypeBike = 'mtb'
+        # self.TypeBike = str(wiersz)
+        print(str(wiersz[:7]))
+        for nr in xrange(2, count):
+            linecache.clearcache()
+            wiersz = linecache.getline(localPtah, nr)
+            # if (nr == 2):
+                # self.PunktyKontrolneLat.append(float(wiersz[11:]))
+                # self.PunktyKontrolneLon.append(float(wiersz[:11]))
+
+            #     if float(wiersz[11:]) != MainApp.lon and float(wiersz[:11]) != MainApp.lat:
+            #         print "tttggggggggggggggg"
+            #         print(float(wiersz[11:]))
+            #         print(float(wiersz[:11]))
+            #         self.lonGPS = float(wiersz[11:])
+            #         self.latGPS = float(wiersz[:11])
+            #         self.calculate_route_nodes_run_add()
+            #         map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+            #         mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
+            #         map.add_marker(mark)
+            #         MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
+            #         print "ttt"
+            #         print(float(wiersz[11:]))
+            #         print(float(wiersz[:11]))
+            # else:
+            #     # self.PunktyKontrolneLat.append(float(wiersz[13:]))
+            #     # self.PunktyKontrolneLon.append(float(wiersz[:13]))
+            try:
+                print(str(wiersz[13:]))
+                print(str(wiersz[:13]))
+                self.lonGPS = float(wiersz[13:])
+                self.latGPS = float(wiersz[:13])
+                print('test_przejscia_13')
+                print(str(self.lonGPS))
+                print(str(self.latGPS))
+                map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+                mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
+                map.add_marker(mark)
+                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
+                self.calculate_route_nodes_run_add()
+
+            except:
+                print(str(wiersz[11:]))
+                print(str(wiersz[:11]))
+                print(' ')
+                print(' ')
+                print(' ')
+                try:
+                    self.lonGPS = float(wiersz[11:])
+                    self.latGPS = float(wiersz[:11])
+                    print('test_przejscia_11')
+                    print(str(self.lonGPS))
+                    print(str(self.latGPS))
+                except:
+                    print"wyjatekkkkkkkkk"
+
+                map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+                mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
+                map.add_marker(mark)
+                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
+                self.calculate_route_nodes_run_add()
 
     def test2(self):
         GraphHopperAndroid.loadGraphStorage()
@@ -1093,6 +1212,8 @@ class GroupScreen(Screen):
             GraphHopperAndroid.calcPath(True, self.TypeBike, float(MainApp.lat), float(MainApp.lon), float(self.latGPS),
                                         float(self.lonGPS))
             self.punkty = GraphHopperAndroid.resp.getPoints()
+            if self.FkagaPunktowSymulatora == False:
+                self.punkty22 = GraphHopperAndroid.resp.getPoints()
             self.instructions = GraphHopperAndroid.instructionList
             self.PunktyKontrolneLat.append(float(MainApp.lat))
             self.PunktyKontrolneLon.append(float(MainApp.lon))
@@ -1113,6 +1234,9 @@ class GroupScreen(Screen):
                 ele = float(self.punkty_aktualne.getEle(j))
 
                 self.punkty.add(lat, lon, ele)
+                if self.FkagaPunktowSymulatora == False:
+                    self.punkty22.add(lat, lon, ele)
+
 
             GraphHopperAndroid.connectInstructions()
             self.instructions = GraphHopperAndroid.instructionList
@@ -1161,6 +1285,78 @@ class GroupScreen(Screen):
                 self.geoFlaga = False
             # print self.cityPoint
 
+        # def saveGraphhopperTras(bt):
+        #     if len(self.PunktyKontrolneLon) >= 2:
+        #         ff = open("/sdcard/Bicom/BicomTrasa.txt", "w")
+        #         ff.write("")
+        #         ff.close()
+        #         f = open("/sdcard/Bicom/BicomTrasa.txt", "a")
+        #         if str(self.TypeBike) == 'bike':
+        #             f.write(str('123.123') + "\n")
+        #         elif str(self.TypeBike) == 'mtb':
+        #             f.write(str('456.456') + "\n")
+        #         print("test_zapisu")
+        #         print(str(self.TypeBike))
+        #         for j in xrange(0, len(self.PunktyKontrolneLon) - 1):
+        #             f.write(str(self.PunktyKontrolneLat[j]) + " " + str(self.PunktyKontrolneLon[j]) + "\n")
+        #         f.close()
+        #
+        # localPtah = "/sdcard/Bicom/BicomTrasa.txt"
+        #
+        # def loadFromBicomNonDynamic(bt):
+        #
+        #     scren = MainApp.get_running_app().root.carousel.slides[0]
+        #     localPtah = "/sdcard/Bicom/BicomTrasa.txt"
+        #     count = len(open(localPtah, 'rU').readlines())
+        #     localSize = len(self.PunktyKontrolneLon)
+        #
+        #     self.ZerujTrase()
+        #
+        #     print "test_odczytu"
+        #     print (count)
+        #     wiersz = linecache.getline(localPtah, 1)
+        #     if float(wiersz[:7]) == float(123.123):
+        #         self.TypeBike = 'bike'
+        #     elif float(wiersz[:7]) == float(456.456):
+        #         self.TypeBike = 'mtb'
+        #     #self.TypeBike = str(wiersz)
+        #     print(str(wiersz[:3]))
+        #     for nr in xrange(2, count + 1):
+        #         wiersz = linecache.getline(localPtah, nr)
+        #         if(nr == 2):
+        #             # self.PunktyKontrolneLat.append(float(wiersz[11:]))
+        #             # self.PunktyKontrolneLon.append(float(wiersz[:11]))
+        #             self.lonGPS = float(wiersz[11:])
+        #             self.latGPS = float(wiersz[:11])
+        #             if float(wiersz[11:]) != MainApp.lon and float(wiersz[:11]) != MainApp.lat:
+        #                 print "tttggggggggggggggg"
+        #                 print(float(wiersz[11:]))
+        #                 print(float(wiersz[:11]))
+        #                 self.calculate_route_nodes_run_add()
+        #                 map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+        #                 mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
+        #                 map.add_marker(mark)
+        #                 MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
+        #                 print "ttt"
+        #                 print(float(wiersz[11:]))
+        #                 print(float(wiersz[:11]))
+        #         else:
+        #             # self.PunktyKontrolneLat.append(float(wiersz[13:]))
+        #             # self.PunktyKontrolneLon.append(float(wiersz[:13]))
+        #             try:
+        #                 self.lonGPS = float(wiersz[13:])
+        #                 self.latGPS = float(wiersz[:13])
+        #             except:
+        #                 self.lonGPS = float(wiersz[11:])
+        #                 self.latGPS = float(wiersz[:11])
+        #             mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
+        #             map.add_marker(mark)
+        #             MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
+        #             # print "ttt"
+        #             # print(float(wiersz[13:]))
+        #             # print(float(wiersz[:13]))
+        #             self.calculate_route_nodes_run_add()
+
 
         def addPointList(bt):
             self.ids.scrollPoints.clear_widgets(children=None)
@@ -1171,6 +1367,7 @@ class GroupScreen(Screen):
                 else:
                     tekst = '' + str(self.cityPoint)
                 # tekst = '' + str(self.PunktyKontrolneLat[indeks]) + ', ' + str(self.PunktyKontrolneLon[indeks])
+
                 btn3 = Button(text='x', on_release=removePoint)
                 btn2 = Button(text='V', on_release=downPoint)
                 btn1 = Button(text='^', on_release=upPoint)
@@ -1211,6 +1408,7 @@ class GroupScreen(Screen):
                     btn.size_hint_x = 0.7
                     btn.font_size = self.height / 50
                 else:
+
                     btn3.id = 'BtnXX' + str(indeks)
                     btn3.color = (1, 1, 1, 0)
                     btn3.background_normal = ''
@@ -1250,6 +1448,52 @@ class GroupScreen(Screen):
                 self.ids.scrollPoints.add_widget(btn1)
                 self.ids.scrollPoints.add_widget(btn2)
                 self.ids.scrollPoints.add_widget(btn)
+
+            # btn4 = Button(text='z', on_release=saveGraphhopperTras)
+            # btn6 = Button(text='w', on_release=loadFromBicomNonDynamic)
+            # btn5 = Button(text='')
+            # btn7 = Button(text='')
+            #
+            # btn4.id = 'BtnXX' + str(indeks)
+            # btn4.color = (1, 1, 1, 1)
+            # # btn3.background_normal = ''
+            # #btn4.text = str(indeks)
+            # btn4.background_down = ""
+            # btn4.background_normal = ""
+            # btn4.background_color = (0, 0, 0, .3)
+            # btn4.size_hint_x = 0.1
+            #
+            # btn5.id = 'BtnG' + str(indeks)
+            # btn5.color = (1, 1, 1, 0)
+            # # b5n1.background_normal = ''
+            # btn5.text = str(indeks)
+            # btn5.background_down = ""
+            # btn5.background_normal = ""
+            # btn5.background_color = (0, 0, 0, .3)
+            # btn5.size_hint_x = 0.1
+            #
+            # btn6.id = 'BtnD' + str(indeks)
+            # btn6.color = (1, 1, 1, 1)
+            # # b6n2.background_normal = ''
+            # #btn6.text = str(indeks)
+            # btn6.background_down = ""
+            # btn6.background_normal = ""
+            # btn6.background_color = (0, 0, 0, .3)
+            # btn6.size_hint_x = 0.1
+            #
+            # btn7.id = 'BtnT' + str(indeks)
+            # btn7.color = (1, 1, 1, 1)
+            # btn7.background_normal = ''
+            # btn7.background_down = ''
+            # btn7.background_color = (0, 0, 0, .3)
+            # btn7.size_hint_x = 0.7
+            # btn7.font_size = self.height / 50
+            #
+            # self.ids.scrollPoints.add_widget(btn4)
+            # self.ids.scrollPoints.add_widget(btn5)
+            # self.ids.scrollPoints.add_widget(btn6)
+            # self.ids.scrollPoints.add_widget(btn7)
+
 
         def upPoint(bt):
             indeks = int(bt.text)
@@ -1359,6 +1603,7 @@ class GroupScreen(Screen):
         self.auto_center = False
         self.Nawiguj = False
         self.actual_point = 0
+        self.FkagaPunktowSymulatora = True
 
         self.ids.scrollPoints.clear_widgets(children=None)
         self.ids.img_center.source = "resources/center_white.png"
@@ -1715,7 +1960,7 @@ class Speedometer(Screen):
 
 class Weather(Screen):
     czy_burza = 0.5
-    miejscowosc=''
+    miejscowosc = ''
     def ustal_pogode(self):
         print 'makarena'
         #obs = owm.weather_at_coords(52, 18)
@@ -2383,20 +2628,25 @@ class MainApp(App):
             self.gps_location = '\n'.join([
                                               '{}={}'.format(k, v) for k, v in kwargs.items()])
             # Symulator jazdy, tylko punkty z graphhoppera
-
             # punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
+            # #punkty21 = MainApp.get_running_app().root.carousel.slides[0].punkty22
             #
             # if group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
             #     MainApp.lat = punkty2.getLat(self.licz2)
             #     MainApp.lon = punkty2.getLon(self.licz2)
             #     self.licz2 = self.licz2 + 1
 
+            # koniec symulatora
+
+            # Prawidłowy kod
             for k, v in kwargs.items():
                 if k == "lat":
                     MainApp.lat = float(v)
                 else:
                     if k == "lon":
                         MainApp.lon = float(v)
+
+            #konic komenatrza prawidłowego kodu
 
             speed = Speed(float(speed))
             # if speed<4.0:
@@ -2468,8 +2718,9 @@ class MainApp(App):
             if self.flagaWygladu == True:
                 try:
                     self.flagaWygladu = False
+                    #Weather().ustal_pogode()
                     print "przesledzam pogode"
-                    miej=Weather().ustal_pogode()
+                    miej = Weather().ustal_pogode()
                     print "przesledzilem pogode"
                     wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
                     key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
@@ -2477,7 +2728,7 @@ class MainApp(App):
                     print str(miej)
 
                     city = Weather().miejscowosc
-                    #city="Mediolan"
+                    # city="Mediolan"
                     range_detect = 70
                     print "Wykonuje burze_api"
                     ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
@@ -2495,16 +2746,16 @@ class MainApp(App):
                     # abcc = str(datetime.datetime.now())
                     # print(str(abcc))
                     # Czyszczenie cache, prototyp
-                    try:
-                        for root, dirs, files in os.walk('/sdcard/Bicom/Mapy'):
-                            for f in files:
-                                print "czysci cache"
-                                filename = os.path.join(root, f)
-                                spr = float(path.getmtime('/sdcard/Bicom/cacheclear.dat')) - float(path.getctime(filename))
-                                if float(spr) > 86400:
-                                    remove(filename)
-                    except:
-                        pass
+                    # try:
+                    #     for root, dirs, files in os.walk('/sdcard/Bicom/Mapy'):
+                    #         for f in files:
+                    #             print "czysci cache"
+                    #             filename = os.path.join(root, f)
+                    #             spr = float(path.getmtime('/sdcard/Bicom/cacheclear.dat')) - float(path.getctime(filename))
+                    #             if float(spr) > 86400:
+                    #                 os.remove(filename)
+                    # except:
+                    #     pass
 
                 except:
                     pass

@@ -6,8 +6,8 @@ grammar menus;
           WSTECZ  |
           POPRZEDNI |
           POPRZEDNIA |
-          NASTĘPNY  |
-          NASTĘPNA  |
+          NASTEPNY  |
+          NASTEPNA  |
           STOP      |
           START     |
           MUZYKA  ;

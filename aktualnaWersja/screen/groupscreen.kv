@@ -92,7 +92,7 @@
         BoxLayout:
             id: SearchInputShow
             orientation: 'horizontal'
-            size_hint: 1, 0.045
+            size_hint: 1, 0.065
 #            Button:
 #                id: BtnX
 #                background_normal: ''
@@ -127,18 +127,47 @@
                     center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
                     source: 'resources/mtbicon.png'
                     height: self.parent.height * 0.8
+
+
             Button:
                 id: BtnV
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, .7
-                size_hint_x: 0.55
+                size_hint_x: 0.25
                 text: ''
                 on_release: root.show_list_points()
                 Image:
                     id: img_tempasdsd
-                    center_x: (self.parent.center_x - (self.parent.width/6))
-                    center_y: (self.parent.center_y - (self.parent.height/2))
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
                     source: 'resources/down.png'
+                    height: self.parent.height
+
+            Button:
+                id: BtnV
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .7
+                size_hint_x: 0.15
+                text: ''
+                on_release: root.saveGraphhopperTras()
+                Image:
+                    id: img_tempasdsd
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
+                    source: 'resources/upload.png'
+                    height: self.parent.height
+            Button:
+                id: BtnV
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .7
+                size_hint_x: 0.15
+                text: ''
+                on_release: root.loadFromBicomNonDynamic()
+                Image:
+                    id: img_tempasdsd
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
+                    source: 'resources/download.png'
                     height: self.parent.height
 
             Button:
@@ -147,16 +176,16 @@
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, .7
                 text: ''
-#                on_release: root.fileSelect()
-#                Image:
-#                    id: img_folder
-#                    center_x: self.parent.center_x
-#                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
-#                    source: 'resources/folder.png'
-#                    height: self.parent.height * 0.8
+                on_release: root.fileSelect()
+                Image:
+                    id: img_folder
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
+                    source: 'resources/folder.png'
+                    height: self.parent.height * 0.8
         BoxLayout:
             orientation: 'vertical'
-            size_hint: 1, 0.555
+            size_hint: 1, 0.535
 #            ScrollView:
 #                id: scrollPoints2
 #                size_hint: 1, 1

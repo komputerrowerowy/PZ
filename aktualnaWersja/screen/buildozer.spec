@@ -2,9 +2,11 @@
 
 # (str) Title of your application
 title = BICOMww
+#title = BICOMwwSymulator
 
 # (str) Package name
 package.name = BICOMProjectww
+#package.name = BICOMProjectwwSymulator
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test
