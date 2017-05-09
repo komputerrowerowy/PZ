@@ -2789,7 +2789,7 @@ class MainApp(App):
                     print "MIejscowoscc sprawdzana"
                     print str(miej)
 
-                    city = Weather().miejscowosc
+                    city = str(miej)
                     # city="Mediolan"
                     range_detect = 70
                     print "Wykonuje burze_api"
