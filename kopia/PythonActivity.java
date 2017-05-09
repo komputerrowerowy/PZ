@@ -170,6 +170,8 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
     public boolean HeadsetIsPlugged = false;
     public boolean AlwaysReadSms = false;
     public boolean AlwaysReadStromAlert = false;
+    public boolean AlwaysReadInstruction = true;
+    
             
             
             
@@ -258,9 +260,11 @@ private final int CHECK_CODE = 0x1;
                         String sender = getContactName(message.getOriginatingAddress());
                         if(HeadsetIsPlugged == true || AlwaysReadSms == true){
                             speaker.pause(LONG_DURATION);
+                            AlwaysReadInstruction = false;
                             speaker.speak("Masz nową wiadomość od: " + sender + "!");
                             speaker.pause(SHORT_DURATION);
                             speaker.speak(text);
+                            AlwaysReadInstruction = true;
                         }
                         
                         System.out.println("NARESZCIEDZIALA");
@@ -444,6 +448,12 @@ private final int CHECK_CODE = 0x1;
         
     public void readStormAlerts(String alert){
         if(HeadsetIsPlugged == true || AlwaysReadStromAlert == true){
+                            speaker.speak(alert);
+                        }
+    }
+    
+    public void readGpsInstructions(String alert){
+        if(AlwaysReadInstruction == true){
                             speaker.speak(alert);
                         }
     }
