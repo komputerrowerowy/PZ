@@ -8,17 +8,43 @@
             Rectangle:
                 pos: self.pos
                 size: self.size
-        ScrollView:
-            size_hint: 1, 0.9
-            size_x: root.width
-            GridLayout:
-                id: scroll
-                cols: 2
-                #spacing: 10
-                size_hint_y: None
-                row_force_default: True
-                row_default_height: root.height/10
-                #padding: 30
+        BoxLayout:
+            id: asdasd
+            orientation: 'horizontal'
+            size_hint: 1, 0.88
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: 0.01, 1
+                Button:
+                    size_hint_x: 0.5
+                    #opacity: 0.5
+                    background_normal: ''
+                    background_color: 0, 0, 0, 0
+                    text: ''
+                    on_release: root.CallScreenPreviousCarousel()
+            BoxLayout:
+                size_hint: 0.98, 1
+                ScrollView:
+                    #size_hint: 0.98, 1
+                    size_x: root.width
+                    GridLayout:
+                        id: scroll
+                        cols: 2
+                        #spacing: 10
+                        size_hint_y: None
+                        row_force_default: True
+                        row_default_height: root.height/10
+                        #padding: 30
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: 0.01, 1
+                Button:
+                    size_hint_x: 0.5
+                    #opacity: 0.5
+                    background_normal: ''
+                    background_color: 0, 0, 0, 0
+                    text: ''
+                    on_release: root.CallScreenNextCarousel()
         Label:
             canvas.before:
                 Color:

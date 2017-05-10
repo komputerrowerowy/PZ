@@ -586,6 +586,12 @@ class MusicPlayer(Screen):
         super(MusicPlayer, self).__init__()
         self.songsLoaded = False
 
+    def MusicPlayerNextCarousel(self):
+        MainApp.get_running_app().root.carousel.load_next(mode='next')
+
+    def MusicPlayerPreviousCarousel(self):
+        MainApp.get_running_app().root.carousel.load_previous()
+
     #funkcja wywoływana na przycisku stop/play
     def stopSong(self):
         if self.songsLoaded:
@@ -846,9 +852,19 @@ class GroupScreen(Screen):
     NawigationMode = False
     PathBicomTras = "/sdcard/Bicom/BicomTrasa.txt"
     FkagaPunktowSymulatora = False
+    punktyTrasyLat = []
+    punktyTrasyLon = []
+    punktySymulacjiLat = []
+    punktySymulacjiLon = []
 
 
 
+
+    def GroupScreenNextCarousel(self):
+        MainApp.get_running_app().root.carousel.load_next(mode='next')
+
+    def GroupScreenPreviousCarousel(self):
+        MainApp.get_running_app().root.carousel.load_previous()
 
     def saveToBicom(self, lat, lon):
         f = open("/sdcard/Bicom/BicomTrasa.txt", "a")
@@ -898,14 +914,19 @@ class GroupScreen(Screen):
     def selectTras(self, path, filename):
         print "wyswietl_error"
         localPtah = os.path.join(path, filename[0])
+        file = str(filename[0])
+        localPtahSymuluj = str('/sdcard/Bicom/Zapisane_trasy/Symulacja/' + str(file[-23:]))
 
         print "wyswietl_error2"
+        print (str(localPtahSymuluj))
+        print (str(filename[0]))
         #localPtah = path
         self.removeFlag = False
 
         scren = MainApp.get_running_app().root.carousel.slides[0]
 
         count = len(open(localPtah, 'rU').readlines())
+        countSymuluj = len(open(localPtahSymuluj, 'rU').readlines())
 
         localSize = len(self.PunktyKontrolneLon)
 
@@ -926,13 +947,13 @@ class GroupScreen(Screen):
             wiersz = linecache.getline(localPtah, nr)
 
             try:
-                print(str(wiersz[13:]))
-                print(str(wiersz[:13]))
-                self.lonGPS = float(wiersz[13:])
+
+                self.lonGPS = float(wiersz[-14:])
                 self.latGPS = float(wiersz[:13])
                 print('test_przejscia_13')
-                print(str(self.lonGPS))
-                print(str(self.latGPS))
+                print(str(wiersz[-14:]))
+                print(str(wiersz[:13]))
+                print"======================="
                 map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
                 mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
                 map.add_marker(mark)
@@ -940,25 +961,44 @@ class GroupScreen(Screen):
                 self.calculate_route_nodes_run_add()
 
             except:
-                print(str(wiersz[11:]))
-                print(str(wiersz[:11]))
-                print(' ')
-                print(' ')
-                print(' ')
+
                 try:
-                    self.lonGPS = float(wiersz[11:])
+                    self.lonGPS = float(wiersz[-12:])
                     self.latGPS = float(wiersz[:11])
                     print('test_przejscia_11')
-                    print(str(self.lonGPS))
-                    print(str(self.latGPS))
+                    print(str(wiersz[-12:]))
+                    print(str(wiersz[:11]))
+                    print"======================="
                 except:
                     print"wyjatekkkkkkkkk"
+        for nr in xrange(2, countSymuluj + 1):
+            linecache.clearcache()
+            wierszSymuluj = linecache.getline(localPtahSymuluj, nr)
 
-                map = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
-                mark = MapMarker(lon=float(self.lonGPS), lat=float(self.latGPS))
-                map.add_marker(mark)
-                MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.append(mark)
-                self.calculate_route_nodes_run_add()
+            try:
+
+                self.punktySymulacjiLon.append(float(wierszSymuluj[-14:]))
+                self.punktySymulacjiLat.append(float(wierszSymuluj[:13]))
+                print('test_przejscia_133')
+                print(str(wierszSymuluj[-14:]))
+                print(str(wierszSymuluj[:13]))
+                print"======================="
+
+
+            except:
+
+                try:
+                    self.punktySymulacjiLon.append(float(wierszSymuluj[-12:]))
+                    self.punktySymulacjiLat.append(float(wierszSymuluj[:11]))
+                    print('test_przejscia_12')
+                    print(str(wierszSymuluj[-12:]))
+                    print(str(wierszSymuluj[:11]))
+                    print"======================="
+
+                except:
+                    print"wyjatekkkkkkkkkrrrrrrrrrr"
+
+
 
         self.dismiss_popupTras()
 
@@ -985,17 +1025,20 @@ class GroupScreen(Screen):
         #GraphHopperAndroid.saveActualPositionListToGPX("/sdcard/Bicom/trasa1.gpx", str(actualDate))
         GraphHopperAndroid.saveActualPositionListToGPX(str(GpxPath), str(actualDate))
 
+
+
         self.dismiss_popupGpx()
 
     def saveGraphhopperTras(self):
         if len(self.PunktyKontrolneLon) >= 2:
-            ff = open("/sdcard/Bicom/BicomTrasa.txt", "w")
+            actualDate = strftime("%Y-%m-%d %H:%M:%S", localtime())
+            ff = open("/sdcard/Bicom/Zapisane_trasy/" + actualDate + ".txt", "w")
             if str(self.TypeBike) == 'bike':
                 ff.write(str('123.123') + "\n")
             elif str(self.TypeBike) == 'mtb':
                 ff.write(str('456.456') + "\n")
             ff.close()
-            f = open("/sdcard/Bicom/BicomTrasa.txt", "a")
+            f = open("/sdcard/Bicom/Zapisane_trasy/" + actualDate + ".txt", "a")
             # if str(self.TypeBike) == 'bike':
             #     f.write(str('123.123') + "\n")
             # elif str(self.TypeBike) == 'mtb':
@@ -1005,6 +1048,23 @@ class GroupScreen(Screen):
             for j in xrange(0, len(self.PunktyKontrolneLon)):
                 f.write(str(self.PunktyKontrolneLat[j]) + " " + str(self.PunktyKontrolneLon[j]) + "\n")
             f.write("Koniec\n")
+            f.close()
+
+            # tylko do zpisuu punktów na symulacje
+            self.zapiszPunktyTrasy(actualDate)
+
+    def zapiszPunktyTrasy(self, actualDate):
+        if len(self.punktyTrasyLon) >= 2:
+            ff = open("/sdcard/Bicom/Zapisane_trasy/ZapisanaTrasa" + actualDate + ".txt", "w")
+            if str(self.TypeBike) == 'bike':
+                ff.write(str('123.123') + "\n")
+            elif str(self.TypeBike) == 'mtb':
+                ff.write(str('456.456') + "\n")
+            ff.close()
+            f = open("/sdcard/Bicom/Zapisane_trasy/ZapisanaTrasa" + actualDate + ".txt", "a")
+            print("test_zapisu")
+            for j in xrange(0, len(self.punktyTrasyLon)):
+                f.write(str(self.punktyTrasyLat[j]) + " " + str(self.punktyTrasyLon[j]) + "\n")
             f.close()
 
     localPtah = "/sdcard/Bicom/BicomTrasa.txt"
@@ -1035,9 +1095,9 @@ class GroupScreen(Screen):
             wiersz = linecache.getline(localPtah, nr)
 
             try:
-                print(str(wiersz[13:]))
+                print(str(wiersz[-13:]))
                 print(str(wiersz[:13]))
-                self.lonGPS = float(wiersz[13:])
+                self.lonGPS = float(wiersz[-13:])
                 self.latGPS = float(wiersz[:13])
                 print('test_przejscia_13')
                 print(str(self.lonGPS))
@@ -1674,6 +1734,11 @@ class GroupScreen(Screen):
         MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = 112
 
         localSize = len(self.PunktyKontrolneLon)
+        localSizeSymulacja= len(self.punktySymulacjiLon)
+
+        for i in xrange(1, localSizeSymulacja):
+            self.punktySymulacjiLon.pop()
+            self.punktySymulacjiLat.pop()
 
         for i in xrange(1, localSize):
             Marker = MainApp.get_running_app().root.carousel.slides[0].ids.mapView.marker_list.pop()
@@ -1837,6 +1902,12 @@ class CallScreen(Screen):
     telefony2 = []
     lista = {}
 
+
+    def CallScreenNextCarousel(self):
+        MainApp.get_running_app().root.carousel.load_next(mode='next')
+
+    def CallScreenPreviousCarousel(self):
+        MainApp.get_running_app().root.carousel.load_previous()
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -2023,6 +2094,13 @@ class Speedometer(Screen):
 class Weather(Screen):
     czy_burza = 0.5
     miejscowosc = ''
+
+    def WeatherNextCarousel(self):
+        MainApp.get_running_app().root.carousel.load_next(mode='next')
+
+    def WeatherPreviousCarousel(self):
+        MainApp.get_running_app().root.carousel.load_previous()
+
     def ustal_pogode(self):
         print 'makarena'
         #obs = owm.weather_at_coords(52, 18)
@@ -2458,6 +2536,7 @@ class ZoneList():
     conn.close()
 
 
+
 class ZoneElements(GridLayout):
     if len(ZoneList.ListaNazw) < 5:
         linia = .01
@@ -2608,6 +2687,8 @@ class ZoneLayout(BoxLayout):
             self.add_widget(ZoneElements())
 
 
+
+
 class MainApp(App):
     gps_speed = 0.00
     highest_speed = 0.00
@@ -2640,6 +2721,7 @@ class MainApp(App):
     avg_speed = 0.00
     suma = 0
     licz2 = 0
+    all = True
 
 
     def build(self):
@@ -2690,23 +2772,31 @@ class MainApp(App):
             self.gps_location = '\n'.join([
                                               '{}={}'.format(k, v) for k, v in kwargs.items()])
             # Symulator jazdy, tylko punkty z graphhoppera
-            # punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
-            # #punkty21 = MainApp.get_running_app().root.carousel.slides[0].punkty22
-            #
-            # if group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
-            #     MainApp.lat = punkty2.getLat(self.licz2)
-            #     MainApp.lon = punkty2.getLon(self.licz2)
-            #     self.licz2 = self.licz2 + 1
+            punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
+            punktySymulacjiLon2 = MainApp.get_running_app().root.carousel.slides[0].punktySymulacjiLon
+            punktySymulacjiLat2 = MainApp.get_running_app().root.carousel.slides[0].punktySymulacjiLat
+
+            if group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < len(punktySymulacjiLat2) - 1:
+                # MainApp.lat = punkty2.getLat(self.licz2)
+                # MainApp.lon = punkty2.getLon(self.licz2)
+                MainApp.lat = punktySymulacjiLat2[self.licz2]
+                MainApp.lon = punktySymulacjiLon2[self.licz2]
+                self.licz2 = self.licz2 + 1
+
+            elif group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
+                MainApp.lat = punkty2.getLat(self.licz2)
+                MainApp.lon = punkty2.getLon(self.licz2)
+                self.licz2 = self.licz2 + 1
 
             # koniec symulatora
 
             # Prawidłowy kod
-            for k, v in kwargs.items():
-                if k == "lat":
-                    MainApp.lat = float(v)
-                else:
-                    if k == "lon":
-                        MainApp.lon = float(v)
+            # for k, v in kwargs.items():
+            #     if k == "lat":
+            #         MainApp.lat = float(v)
+            #     else:
+            #         if k == "lon":
+            #             MainApp.lon = float(v)
 
             #konic komenatrza prawidłowego kodu
 
@@ -2936,6 +3026,8 @@ class MainApp(App):
             if group_screen.recordPosition == True:
                 actualDate2 = strftime("%Y-%m-%dT%H:%M:%SZ", localtime())
                 GraphHopperAndroid.addActualPosition(float(MainApp.lat), float(MainApp.lon), str(actualDate2))
+                group_screen.punktyTrasyLat.append(float(MainApp.lat))
+                group_screen.punktyTrasyLon.append(float(MainApp.lon))
 
     @mainthread
     def on_status(self, stype, status):

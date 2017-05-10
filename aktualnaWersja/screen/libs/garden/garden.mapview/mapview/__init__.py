@@ -20,6 +20,8 @@ if not exists('/sdcard/Bicom'):
     makedirs('/sdcard/Bicom')
 if not exists('/sdcard/Bicom/Moje_trasy'):
     makedirs('/sdcard/Bicom/Moje_trasy')
+if not exists('/sdcard/Bicom/Zapisane_trasy'):
+    makedirs('/sdcard/Bicom/Zapisane_trasy')
 fff = open("/sdcard/Bicom/cacheclear.dat", "w")
 fff.write('/sdcard/Bicom/Mapy')
 fff.close()

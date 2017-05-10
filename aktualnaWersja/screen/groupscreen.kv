@@ -185,29 +185,53 @@
                     source: 'resources/folder.png'
                     height: self.parent.height * 0.8
         BoxLayout:
-            orientation: 'vertical'
+            id: asdasd
+            orientation: 'horizontal'
             size_hint: 1, 0.535
-#            ScrollView:
-#                id: scrollPoints2
-#                size_hint: 1, 1
-#                size_x: root.width
-            GridLayout:
-                id: scrollPoints
-                size_hint: 1, 1
-                canvas:
-                    Color:
-                        rgba: 0, 0, 0, 0
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
-                padding: .2
-                cols: 4
-                size_hint_y: None
-                row_force_default: True
-                row_default_height: root.height/20
             BoxLayout:
                 orientation: 'vertical'
-                size_hint: 1, 0.95
+                size_hint: 0.01, 1
+                Button:
+                    size_hint_x: 0.5
+                    #opacity: 0.5
+                    background_normal: ''
+                    background_color: 0, 0, 0, 0
+                    text: ''
+                    on_release: root.GroupScreenPreviousCarousel()
+            BoxLayout:
+                orientation: 'vertical'
+                #size_hint: 1, 0.535
+    #            ScrollView:
+    #                id: scrollPoints2
+    #                size_hint: 1, 1
+    #                size_x: root.width
+                GridLayout:
+                    id: scrollPoints
+                    size_hint: 1, 1
+                    canvas:
+                        Color:
+                            rgba: 0, 0, 0, 0
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                    padding: .2
+                    cols: 4
+                    size_hint_y: None
+                    row_force_default: True
+                    row_default_height: root.height/20
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint: 1, 0.95
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint: 0.01, 1
+                Button:
+                    size_hint_x: 0.5
+                    #opacity: 0.5
+                    background_normal: ''
+                    background_color: 0, 0, 0, 0
+                    text: ''
+                    on_release: root.GroupScreenNextCarousel()
 
         BoxLayout:
             orientation: 'horizontal'
@@ -477,7 +501,6 @@
         FileChooserIconView:
             size_hint_y: .85
             id: filechooser
-            rootpath: "/sdcard/Bicom"
         #color: 0.521, 0.521, 0.513, 1
 
         BoxLayout:

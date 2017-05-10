@@ -618,7 +618,7 @@ private final int CHECK_CODE = 0x1;
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(mPath, "sphinx/en-us-adapt"))
                 .setDictionary(new File(mPath, "sphinx/7823.dic"))
-				.setKeywordThreshold(1e-20f)
+				//.setKeywordThreshold(1e-20f)
 
                 //.setRawLogDir(assetsDir) // To disable logging of raw audio comment out this call (takes a lot of space on the device)
 
