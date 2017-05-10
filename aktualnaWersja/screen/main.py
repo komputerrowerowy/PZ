@@ -505,6 +505,31 @@ class ChooseFile(FloatLayout):
     select = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
+class PopupGroupConect(FloatLayout):
+    createGroupConect = ObjectProperty(None)
+    joinGroupConect = ObjectProperty(None)
+    cancelGroupConect = ObjectProperty(None)
+
+class PopupAlert(FloatLayout):
+    cancelAlert = ObjectProperty(None)
+
+
+class PopupAlertCarDown(FloatLayout):
+    cancelAlertCarDown = ObjectProperty(None)
+
+class PopupAlertCarUp(FloatLayout):
+    cancelAlertCarUp = ObjectProperty(None)
+
+class PopupAlertStop(FloatLayout):
+    cancelAlertStop = ObjectProperty(None)
+
+class PopupAlertStart(FloatLayout):
+    cancelAlertStart = ObjectProperty(None)
+
+class PopupShowQrCode(FloatLayout):
+    cancelShowQrCode = ObjectProperty(None)
+
+
 class ChooseBicomTras(FloatLayout):
     selectTras = ObjectProperty(None)
     cancelTras = ObjectProperty(None)
@@ -883,6 +908,69 @@ class GroupScreen(Screen):
         f.write(path)
         f.close()
 
+    def dismiss_popupAlert(self):
+        self._popupAlert.dismiss()
+
+    def sendAlert(self):
+        content = PopupAlert(cancelAlert=self.dismiss_popupAlert)
+
+        self._popupAlert = Popup(title="Wyślij komunikat", content=content,
+                            size_hint=(0.8, 0.7))
+        self._popupAlert.open()
+
+    def dismiss_popupAlertCarDown(self):
+        self._popupAlertCarDown.dismiss()
+
+    def sendAlertCarDown(self):
+        content = PopupAlertCarDown(cancelAlertCarDown=self.dismiss_popupAlertCarDown)
+
+        self._popupAlertCarDown = Popup(title="Komunikat", content=content,
+                            size_hint=(0.8, 0.5))
+        self._popupAlertCarDown.open()
+
+    def dismiss_popupAlertCarUp(self):
+        self._popupAlertCarUp.dismiss()
+
+    def sendAlertCarUp(self):
+        content = PopupAlertCarUp(cancelAlertCarUp=self.dismiss_popupAlertCarUp)
+
+        self._popupAlertCarUp = Popup(title="Komunikat", content=content,
+                                        size_hint=(0.8, 0.5))
+        self._popupAlertCarUp.open()
+
+    def dismiss_popupAlertStop(self):
+        self._popupAlertStop.dismiss()
+
+    def sendAlertStop(self):
+        content = PopupAlertStop(cancelAlertStop=self.dismiss_popupAlertStop)
+
+        self._popupAlertStop = Popup(title="Komunikat", content=content,
+                                        size_hint=(0.8, 0.5))
+        self._popupAlertStop.open()
+
+
+    def dismiss_popupAlertStart(self):
+        self._popupAlertStart.dismiss()
+
+    def sendAlertStart(self):
+        content = PopupAlertStart(cancelAlertStart=self.dismiss_popupAlertStart)
+
+        self._popupAlertStart = Popup(title="Komunikat", content=content,
+                                        size_hint=(0.8, 0.5))
+        self._popupAlertStart.open()
+
+    def dismiss_popupShowQrCode(self):
+        self._popupShowQrCode.dismiss()
+
+    def ShowQrCode(self):
+        content = PopupShowQrCode(cancelShowQrCode=self.dismiss_popupShowQrCode)
+
+        self._popupShowQrCode = Popup(title="Komunikat", content=content,
+                                        size_hint=(0.8, 0.5))
+        self._popupShowQrCode.open()
+
+
+
     def dismiss_popup(self):
         self._popup.dismiss()
 
@@ -899,6 +987,24 @@ class GroupScreen(Screen):
         self.savepath(self.directory)
 
         self.dismiss_popup()
+
+    def dismiss_popupGroupConect(self):
+        self._popupGroupConect.dismiss()
+
+    def ShowGroupConect(self):
+        content = PopupGroupConect(createGroupConect=self.createGroupConectAlert,
+                                   joinGroupConect = self.joinGroupConectAlert,
+                             cancelGroupConect=self.dismiss_popupGroupConect)
+
+        self._popupGroupConect = Popup(title="Wybierz trase do zaimportowania", content=content,
+                            size_hint=(0.9, 0.6))
+        self._popupGroupConect.open()
+
+    def joinGroupConectAlert(self):
+        pass
+
+    def createGroupConectAlert(self):
+        self.ShowQrCode()
 
     def dismiss_popupTras(self):
         self._popupTras.dismiss()
@@ -2771,7 +2877,7 @@ class MainApp(App):
         if duration >= 1:
             self.gps_location = '\n'.join([
                                               '{}={}'.format(k, v) for k, v in kwargs.items()])
-            # Symulator jazdy, tylko punkty z graphhoppera
+            # Symulator jazdy, tylko do pozorowania trasy
             punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
             punktySymulacjiLon2 = MainApp.get_running_app().root.carousel.slides[0].punktySymulacjiLon
             punktySymulacjiLat2 = MainApp.get_running_app().root.carousel.slides[0].punktySymulacjiLat

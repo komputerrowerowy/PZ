@@ -382,6 +382,26 @@
 #                    source: 'resources/rotation.png'
 #                    height: self.parent.height
 
+
+
+            Button:
+                size_hint_x: 0.5
+                #opacity: 0.5
+                background_normal: ''
+                background_color: 0.235, 0.529, 0.572, .7
+                halign: 'right'
+                text: ''
+                on_release: root.ShowGroupConect()
+#                on_release: root.sendAlertStart()
+                #root.test111()
+                #on_release: root.parent.parent.parent.check("881689020", "Testowy SMS")
+                Image:
+                    id: img_groupConect
+                    center_x: self.parent.center_x
+                    name: 'alert'
+                    source: 'resources/groupConect.png'
+                    height: self.parent.height
+
             Button:
                 size_hint_x: 0.5
                 #opacity: 0.5
@@ -594,4 +614,332 @@
                     center_y: (self.parent.center_y)
                     source: 'resources/ok.png'
                     height: self.parent.height
+<PopupGroupConect>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        spacing: 10
+
+        BoxLayout:
+            size_hint_y: .8
+            orientation: 'vertical'
+            spacing: 10
+            Button:
+                color: 1, 1, 1, 1
+                text: "Utwórz grupe"
+                background_normal: ''
+                font_size: self.height / 5
+                background_color: 0.235, 0.529, 0.572, 1
+                on_release: root.createGroupConect()
+            Button:
+                color: 1, 1, 1, 1
+                text: "Dołącz do grupy"
+                background_normal: ''
+                font_size: self.height / 5
+                background_color: 0.235, 0.529, 0.572, 1
+                #on_release: root.cancelGpx()
+        BoxLayout:
+            size_hint_y: .2
+            orientation: 'vertical'
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Zamknij"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.cancelGroupConect()
+                Image:
+                    id: anulujbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/anuluj.png'
+                    height: self.parent.height
+
+<PopupShowQrCode>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        spacing: 10
+
+        Image:
+            id: anulujbtn
+            center_x: self.parent.center_x
+            center_y: (self.parent.center_y)
+            source: 'resources/qr.png'
+            height: self.parent.height
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 1,1,1,1
+            size_hint_y: .3
+            on_release: root.cancelShowQrCode()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/anuluj.png'
+                height: self.parent.height
+<PopupAlert>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        BoxLayout:
+            size_hint_y: .8
+            orientation: 'vertical'
+            BoxLayout:
+                orientation: 'horizontal'
+                Button:
+                    color: 0.235, 0.529, 0.572, 1
+                    #text: "Zamknij"
+                    background_normal: ''
+                    background_color: 0.235, 0.529, 0.572, 1
+                    #on_release: root.cancelGpx()
+                    Image:
+                        id: anulujbtn
+                        center_x: self.parent.center_x
+                        center_y: (self.parent.center_y)
+                        source: 'resources/carup.png'
+                        height: self.parent.height
+                Button:
+                    color: 0.235, 0.529, 0.572, 1
+                    #text: "Zamknij"
+                    background_normal: ''
+                    background_color: 0.235, 0.529, 0.572, 1
+                    #on_release: root.cancelGpx()
+                    Image:
+                        id: anulujbtn
+                        center_x: self.parent.center_x
+                        center_y: (self.parent.center_y)
+                        source: 'resources/cardown.png'
+                        height: self.parent.height
+            BoxLayout:
+                orientation: 'horizontal'
+                Button:
+                    color: 0.235, 0.529, 0.572, 1
+                    #text: "Zamknij"
+                    background_normal: ''
+                    background_color: 0.235, 0.529, 0.572, 1
+                    #on_release: root.cancelGpx()
+                    Image:
+                        id: anulujbtn
+                        center_x: self.parent.center_x
+                        center_y: (self.parent.center_y)
+                        source: 'resources/ready.png'
+                        height: self.parent.height
+                Button:
+                    color: 0.235, 0.529, 0.572, 1
+                    #text: "Zamknij"
+                    background_normal: ''
+                    background_color: 0.235, 0.529, 0.572, 1
+                    #on_release: root.cancelGpx()
+                    Image:
+                        id: anulujbtn
+                        center_x: self.parent.center_x
+                        center_y: (self.parent.center_y)
+                        source: 'resources/stop.png'
+                        height: self.parent.height
+
+        BoxLayout:
+            size_hint_y: .2
+            canvas.before:
+                Color:
+                    rgb: 0.235, 0.529, 0.572
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Zamknij"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.cancelAlert()
+                Image:
+                    id: anulujbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/anuluj.png'
+                    height: self.parent.height
+
+#            Button:
+#                color: 0.235, 0.529, 0.572, 1
+#                #text: "Wybierz folder"
+#                background_normal: ''
+#                background_color: 1,1,1,1
+#                on_release: root.selectGpx()
+#                Image:
+#                    id: okbtn
+#                    center_x: self.parent.center_x
+#                    center_y: (self.parent.center_y)
+#                    source: 'resources/ok.png'
+#                    height: self.parent.height
+
+<PopupAlertCarDown>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            size_hint_y: .7
+            #on_release: root.cancelGpx()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/cardown.png'
+                height: self.parent.height
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 1,1,1,1
+            size_hint_y: .3
+            on_release: root.cancelAlertCarDown()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/anuluj.png'
+                height: self.parent.height
+
+<PopupAlertCarUp>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            #on_release: root.cancelGpx()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/carup.png'
+                height: self.parent.height
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 1,1,1,1
+            size_hint_y: .3
+            on_release: root.cancelAlertCarUp()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/anuluj.png'
+                height: self.parent.height
+
+<PopupAlertStop>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            #on_release: root.cancelGpx()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/stop.png'
+                height: self.parent.height
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 1,1,1,1
+            size_hint_y: .3
+            on_release: root.cancelAlertStop()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/anuluj.png'
+                height: self.parent.height
+
+<PopupAlertStart>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            #on_release: root.cancelGpx()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/ready.png'
+                height: self.parent.height
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 1,1,1,1
+            size_hint_y: .3
+            on_release: root.cancelAlertStart()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/anuluj.png'
+                height: self.parent.height
 
