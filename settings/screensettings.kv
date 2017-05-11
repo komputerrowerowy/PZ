@@ -1,0 +1,38 @@
+<Ustawienia>:
+
+    id: Ustawienia
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'resources/Ustawienia.png'
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: 1, .3
+        Label:
+            size_hint: 0.15, 1
+            background_color: 0.235, 0.529, 0.572, 0
+
+        GridLayout:
+            cols:1
+            orientation: 'horizontal'
+
+            Button:
+                #id: label
+                text: "Ustawienia"
+                font_size: '25 sp'
+                size_hint: 1, 0.3
+                color: 1, 1, 1, 1
+                background_normal: ''
+                background_color:0.235, 0.529, 0.622, 0.6 
+                on_release: app.open_settings()
+
+            Label:
+                size_hint: 1, 0.5
+
+        Label:
+            size_hint: 0.15, 1
+            background_color: 0.235, 0.529, 0.572, 0
