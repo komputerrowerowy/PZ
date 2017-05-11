@@ -1018,7 +1018,7 @@ class GroupScreen(Screen):
                                    joinGroupConect = self.joinGroupConectAlert,
                              cancelGroupConect=self.dismiss_popupGroupConect)
 
-        self._popupGroupConect = Popup(title="Wybierz trase do zaimportowania", content=content,
+        self._popupGroupConect = Popup(title="Ekran tworzenia grup", content=content,
                             size_hint=(0.9, 0.6))
         self._popupGroupConect.open()
 
@@ -1070,7 +1070,31 @@ class GroupScreen(Screen):
             self.TypeBike = 'mtb'
         # self.TypeBike = str(wiersz)
         print(str(wiersz[:7]))
-        for nr in xrange(2, count):
+        linecache.clearcache()
+        wiersz = linecache.getline(localPtah, 2)
+        try:
+            MainApp.lon = float(wiersz[-14:])
+            MainApp.lat = float(wiersz[:13])
+        except:
+            try:
+                MainApp.lon = float(wiersz[-12:])
+                MainApp.lat = float(wiersz[:11])
+            except:
+                print "nie wczytalo"
+
+        try:
+            MainApp.get_running_app().root.carousel.slides[0].ids["mapView"].center_on(MainApp.lat, MainApp.lon)
+            MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
+            MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
+
+        except:
+            pass
+        try:
+            self.redraw_route()
+        except:
+            pass
+
+        for nr in xrange(3, count + 1):
             linecache.clearcache()
             wiersz = linecache.getline(localPtah, nr)
 
@@ -1099,6 +1123,8 @@ class GroupScreen(Screen):
                     print"======================="
                 except:
                     print"wyjatekkkkkkkkk"
+
+
         for nr in xrange(2, countSymuluj + 1):
             linecache.clearcache()
             wierszSymuluj = linecache.getline(localPtahSymuluj, nr)
@@ -2893,8 +2919,8 @@ class MainApp(App):
     distance = 0.00
     calories = 0.00
     gps_status = StringProperty('Click Start to get GPS location updates')
-    lat = 53.0102
-    lon = 18.5946
+    lat = 52.9828
+    lon = 18.5729
     flagCenter = True
     # screensettings.kv tymczasowo zakomentowany w pliku main.kv
     Builder.load_file("screensettings.kv")
@@ -3109,6 +3135,9 @@ class MainApp(App):
                 self.FlagaLicznik = True
             else:
                 self.FlagaLicznik = False
+                self.licz2 = 0
+                self.distance = 0.00
+                self.calories = 0.00
 
             # koniec symulatora
 
@@ -3212,11 +3241,11 @@ class MainApp(App):
                 mapview.add_layer(LineMapLayer(), mode="scatter")
                 MainApp.znacznik = 1
 
-            group = GroupScreen()
-            try:
-                group.get_readings(1)
-            except:
-                pass
+            # group = GroupScreen()
+            # try:
+            #     group.get_readings(1)
+            # except:
+            #     pass
 
 
             # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów
@@ -3294,8 +3323,8 @@ class MainApp(App):
                 x = MainApp.lat
                 y = MainApp.lon
 
-                if group_screen.of_the_track(x1, y1, x2, y2, x, y):
-                    group_screen.recalculate_route()
+                # if group_screen.of_the_track(x1, y1, x2, y2, x, y):
+                #     group_screen.recalculate_route()
 
                 distance1 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point)))
                 if x1 == x2 and y1 == y2:
