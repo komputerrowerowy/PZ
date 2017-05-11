@@ -82,6 +82,12 @@ class ScreensettingsApp(App, GridLayout):
         return Ustawienia()
 
     def build_config(self, config):
+        config.setdefaults('ogolne', {
+            'optionsplec': 'mężczyzna'})
+        
+        config.setdefaults('ogolne', {
+            'intwaga': 70})
+        
         config.setdefaults('ekran', {
             'optionsekran': 'zawsze włączony'})
 

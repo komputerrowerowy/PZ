@@ -1,103 +1,38 @@
-<ScreenSettings>:
-	name: 'screenSettings'
-	carousel: carousel
-	height: root.height
-    width: root.width
-	Carousel:
-		name: 'carousel'
-        id: carousel
-        loop: False
-		direction: 'top'
-		ZoneLayout:
-		BoxLayout:
-		    orientation: 'vertical'
-			Button:
-				text: 'Wyświetlacz'
-				on_release: root.parent.parent.parent.showScreenSettingsDisplay()
-			Button:
-				text: 'Alerty'
-				on_release: root.parent.parent.parent.showScreenSettingsAlerts()
-			Button:
-				text: 'Społeczność'
-				on_release: root.parent.parent.parent.showScreenSettingsSocial()
-			Button:
-				text: 'SMS'
-				on_release: root.parent.parent.parent.showScreenSettingsSMS()
-		#ScreenMusic:
+<Ustawienia>:
 
+    id: Ustawienia
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'resources/Ustawienia.png'
 
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: 1, .3
+        Label:
+            size_hint: 0.15, 1
+            background_color: 0.235, 0.529, 0.572, 0
 
+        GridLayout:
+            cols:1
+            orientation: 'horizontal'
 
-<ScreenSettingsDisplay>:
-	name: 'screenSettingsDisplay'
-	BoxLayout:
-		orientation: 'vertical'
-		Button:
-			text: 'Ekran zawsze włączony'
-		Button:
-			text: 'Przygaś ekran gdy nieaktywny'
-		Button:
-			text: 'Powiadomienia na ekranie'
-		Button:
-			text: 'Powrót'
-			on_release: root.parent.showScreenSettings()
+            Button:
+                #id: label
+                text: "Ustawienia"
+                font_size: '25 sp'
+                size_hint: 1, 0.3
+                color: 1, 1, 1, 1
+                background_normal: ''
+                background_color:0.235, 0.529, 0.622, 0.6 
+                on_release: app.open_settings()
 
-<ScreenSettingsAlerts>:
-	name: 'screenSettingsAlerts'
-	BoxLayout:
-		orientation: 'vertical'
-		Button:
-			text: 'Alerty pogodowe'
-		Button:
-			text: 'Alerty do wszystkich z grupy'
-		Button:
-			text: 'Alerty społecznościowe'
-		Button:
-			text: 'Powrót'
-			on_release: root.parent.showScreenSettings()
+            Label:
+                size_hint: 1, 0.5
 
-<ScreenSettingsSocial>:
-	name: 'screenSettingsAlerts'
-	BoxLayout:
-		orientation: 'vertical'
-		Button:
-			text: 'Automatycznie publikuj na facebooku'
-		Button:
-			text: 'Pokaż lokalizację innych'
-		Button:
-			text: 'Pokaż moją lokalizację'
-		Button:
-			text: 'Publikuj moją lokalizację'
-		Button:
-			text: 'Powrót'
-			on_release: root.parent.showScreenSettings()
-
-<ScreenSettingsSMS>:
-	name: 'screenSettingsSMS'
-	BoxLayout:
-		orientation: 'vertical'
-		Button:
-			text: 'Automatyczne odpowiedzi sms'
-		Button:
-			text: 'Ustaw automatyczną odpowiedź sms'
-		Button:
-			text: 'Dodaj odpowiedzi sms'
-		Button:
-			text: 'Powrót'
-			on_release: root.parent.showScreenSettings()
-
-<ScreenMusic>:
-	name: 'screenMusic'
-	BoxLayout:
-		padding: 100
-		spacing: 100
-		Button:
-			text: 'MUSIC'
-
-<ScreenContacts>:
-	name: 'screenContacts'
-	BoxLayout:
-		padding: 100
-		spacing: 100
-		Button:
-			text: 'CONTACTS'
+        Label:
+            size_hint: 0.15, 1
+            background_color: 0.235, 0.529, 0.572, 0

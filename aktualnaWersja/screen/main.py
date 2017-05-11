@@ -66,6 +66,21 @@ from SOAPpy import WSDL
 from time import gmtime, strftime, localtime
 import unicodedata
 import linecache
+from kivy.uix.stacklayout import StackLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.textinput import TextInput
+from kivy.uix.popup import Popup
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.slider import Slider
+from functools import partial
+from kivy.uix.gridlayout import GridLayout
+from settingsjson import settings_json, settings_json1
+from kivy.uix.settings import SettingsWithSpinner
+from kivy.uix.settings import SettingsWithNoMenu
+from kivy.uix.settings import SettingsWithSidebar
+from kivy.uix.settings import Settings
+from kivy.properties import ListProperty, BooleanProperty
+from kivy.logger import Logger
 
 #import pyowm
 
@@ -87,6 +102,8 @@ GraphHopperAndroid = autoclass("com.graphhopper.android.GraphHopperAndroid")(act
 GraphHopperAndroid.loadGraphStorage()
 
 AcceptIncomingCall2 = activity
+
+navi_path = '/sdcard'
 
 contacts = []
 contacts2 = []
@@ -291,6 +308,7 @@ class ShowTime(Screen):
             self.popup.open()
 
             activity.lastWord = ""
+            activity.actual_search = "ODBIERZ";
             activity.switchSearch("ODBIERZ")
             self.incoming_call_clock = Clock.schedule_interval(self.accept_call_voice, 1)
             # time.sleep(1)
@@ -310,21 +328,23 @@ class ShowTime(Screen):
         #print "dupa" + " " + activity.lastWord
         if activity.callState == 1:
             #print "dupa" + " " + activity.lastWord
-            if activity.lastWord == "ODBIERZ" or activity.lastWord == "ODBIERZ(2)":
+            if activity.lastWord == "ODBIERZ" or activity.lastWord == "ODBIERZ2":
                 print "odbierz"
                 activity.lastWord = ""
                 self.flagaCall = 1
                 AcceptIncomingCall2.acceptCall()
-                activity.switchSearch("JEDEN")
+                activity.actual_search = "";
+                activity.switchSearch("BIKOM")
 
                 self.incoming_call_clock.cancel()
             else:
-                if activity.lastWord == "ODRZUC" or activity.lastWord == "ODRZUC(2)" or activity.lastWord == "ROZLACZ" or activity.lastWord == "ROZLACZ(2)":
+                if activity.lastWord == "ODRZUC" or activity.lastWord == "ODRZUC2" or activity.lastWord == "ROZLACZ" or activity.lastWord == "ROZLACZ(2)":
                     print "odrzuc"
                     activity.lastWord = ""
                     self.flagaCall = 1
                     self.rejectIncomingCall()
-                    activity.switchSearch("JEDEN")
+                    activity.actual_search = "";
+                    activity.switchSearch("BIKOM")
 
                     self.incoming_call_clock.cancel()
 
@@ -904,9 +924,11 @@ class GroupScreen(Screen):
 
 
     def savepath(self, path):
-        f = open("/sdcard/Bicom/path/sav.dat", "w")
-        f.write(path)
-        f.close()
+        #f = open("/sdcard/Bicom/path/sav.dat", "w")
+        #f.write(path)
+        #f.close()
+        print"zapisSciezki"
+        print MainApp.navi_path
 
     def dismiss_popupAlert(self):
         self._popupAlert.dismiss()
@@ -2520,9 +2542,23 @@ class Weather(Screen):
 
 
 class ScreenSettings(Screen):
-    def build(self):
-        pass
 
+
+
+
+
+    #motyw = self.config.get('wyglad', 'boolwyglad')
+
+    # if motyw == int(1):
+    #     pass
+    #     # Ustawienia.kolor = (0.235, 0.529, 0.622, 0.6)
+    #
+    # if motyw == int(0):
+    #     pass
+
+    #return Ustawienia()
+
+    pass
 
 
 
@@ -2713,67 +2749,122 @@ class ZoneButton(Button):
 
     def pop(self, tytul):
 
-        # activity = autoclass("org.renpy.android.PythonActivity").mActivity
-        # GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
-        # Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
-        # Data = autoclass("android.provider.ContactsContract$Data")
-        # RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
-        # content_resolver = activity.getApplicationContext()
-        # resolver = content_resolver.getContentResolver()
-        #
-        # for i in range(0, len(ZoneList.ListaNazw)):
-        #     if tytul == ZoneList.ListaNazw[i]:
-        #         groupID = ZoneList.ListaId[i]
-        #         break
-        #
-        # projection = [RawContactsColumns.CONTACT_ID, GroupMembership.CONTACT_ID]
-        #
-        # grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None, None)
-        # group = grupa
-        #
-        # while (grupa.moveToNext()):
-        #     id = group.getString(group.getColumnIndex("CONTACT_ID"))
-        #
-        #     grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
-        #     group2 = grupa2
-        #
-        #     while (grupa2.moveToNext()):
-        #         nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
-        #         if nazwa not in ZoneButton.Kontakty:
-        #             ZoneButton.Kontakty.append(nazwa)
-        #
-        #     grupa2.close()
-        # grupa.close()
-        #
-        # content = GridLayout(cols=1)
-        # zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
-        #
-        # if groupID == '999':
-        #     ZoneButton.Kontakty = []
-        #     ZoneButton.Kontakty.append(
-        #         "Ta grupa przeznaczona jest\ndla nieznanych numerów i nie\nzawiera żadnego kontaktu.")
-        #
-        # elif len(ZoneButton.Kontakty) < 1:
-        #     ZoneButton.Kontakty = []
-        #     ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
-        #
-        # for i in range(0, len(ZoneButton.Kontakty)):
-        #     content.add_widget(Label(text=ZoneButton.Kontakty[i], color=(.235, .529, .572, 1)))
-        #
-        # content.add_widget(zamknij)
-        #
-        # popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
-        #               separator_color=(.235, .529, .572, 1),
-        #               content=content, auto_dismiss=False,
-        #               size_hint=(None, None),
-        #               size=(400, 400))
-        # popup.normal_color = (1, 1, 1, 0)
-        #
-        # zamknij.bind(on_release=popup.dismiss)
-        # popup.open()
-        #
-        # ZoneButton.Kontakty = []
-        pass
+        if platform() == 'android':
+            activity = autoclass("org.renpy.android.PythonActivity").mActivity
+            GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
+            Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
+            Data = autoclass("android.provider.ContactsContract$Data")
+            RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
+            content_resolver = activity.getApplicationContext()
+            resolver = content_resolver.getContentResolver()
+
+            for i in range(0, len(ZoneList.ListaNazw)):
+                if tytul == ZoneList.ListaNazw[i]:
+                    groupID = ZoneList.ListaId[i]
+                    break
+
+            projection = [RawContactsColumns.CONTACT_ID, GroupMembership.CONTACT_ID]
+
+            grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None,
+                                   None)
+            group = grupa
+
+            while (grupa.moveToNext()):
+                id = group.getString(group.getColumnIndex("CONTACT_ID"))
+
+                grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
+                group2 = grupa2
+
+                while (grupa2.moveToNext()):
+                    nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
+                    if nazwa not in ZoneButton.Kontakty:
+                        ZoneButton.Kontakty.append(nazwa)
+
+                grupa2.close()
+            grupa.close()
+
+        popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
+                      separator_color=(.235, .529, .572, 1),
+                      # background= 'atlas://data/images/defaulttheme/filechooser_selected',
+                      auto_dismiss=False,
+                      size_hint=(None, None),
+                      size=(400, 400))
+
+        layout1 = StackLayout(orientation='lr-bt')
+
+        zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
+        zamknij.bind(on_release=popup.dismiss)
+
+        scrlv = ScrollView(size_hint=(1, 0.86))
+
+        layout2 = GridLayout(cols=1, size_hint_y=None)
+        layout2.bind(minimum_height=layout2.setter('height'))
+
+        # groupID = '1'
+
+        if len(ZoneButton.Kontakty) < 1:
+            ZoneButton.Kontakty = []
+            ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
+
+            for i in range(0, len(ZoneButton.Kontakty)):
+                btn = Button(text=ZoneButton.Kontakty[i],
+                             color=(.235, .529, .572, 1),
+                             size_hint_y=None,
+                             height=200,
+                             width=200,
+                             valign='middle',
+                             halign='center',
+                             font_size=20)
+
+                btn.text_size = (btn.size)
+                btn.background_color = (.941, .941, .937, 0)
+                layout2.add_widget(btn)
+
+        elif int(groupID) == int(999):
+            ZoneButton.Kontakty = []
+            ZoneButton.Kontakty.append(
+                "Ta grupa przeznaczona jest dla nieznanych numerów i nie zawiera żadnego kontaktu.")
+
+            for i in range(0, len(ZoneButton.Kontakty)):
+                btn = Button(text=ZoneButton.Kontakty[i],
+                             color=(.235, .529, .572, 1),
+                             size_hint_y=None,
+                             height=200,
+                             width=200,
+                             valign='middle',
+                             halign='center',
+                             font_size=20)
+
+                btn.text_size = (btn.size)
+                btn.background_color = (.941, .941, .937, 0)
+                layout2.add_widget(btn)
+        else:
+            for i in range(0, len(ZoneButton.Kontakty)):
+                btn = Button(text=ZoneButton.Kontakty[i],
+                             color=(.235, .529, .572, 1),
+                             size_hint_y=None,
+                             height=40,
+                             width=200,
+                             valign='middle',
+                             halign='center',
+                             font_size=20)
+
+                btn.text_size = (btn.size)
+                btn.background_color = (.941, .941, .937, 0)
+                layout2.add_widget(btn)
+
+        scrlv.add_widget(layout2)
+        layout1.add_widget(zamknij)
+        layout1.add_widget(scrlv)
+        popup.content = layout1
+        popup.open()
+
+        ZoneButton.Kontakty = []
+
+    def scroll_change(self, scrlv, instance, value):
+        scrlv.scroll_y = value
+
+
 
 
 class ZoneLayout(BoxLayout):
@@ -2828,6 +2919,17 @@ class MainApp(App):
     suma = 0
     licz2 = 0
     all = True
+    timeNow = 0.0
+    timeLast = 0.0
+    LastLat = 0
+    LastLon = 0
+    distanceSpeed = 0
+    TimeSpeed = 0
+    licznikSpeed = 0
+    FlagaLicznik = False
+    navi_path = '/sdcard/Bicom/Mapy'
+    readSmsState = 2
+    readStormState = 2
 
 
     def build(self):
@@ -2856,7 +2958,117 @@ class MainApp(App):
 
         activity.runRecognizerSetup();
 
+        self.settings_cls = SettingsWithSpinner
+        self.use_kivy_settings = False
+
+        print 'znacznik'
+
+        MainApp.navi_path = self.config.get('nawigacja', 'pathnawigacja1')
+
+        MainApp.readSmsState = self.config.get('glos', 'optionsglos1').encode('ascii', 'ignore')
+        MainApp.readStormState = self.config.get('glos', 'optionsglos2').encode('ascii', 'ignore')
+        zawsze = 'zawsze wczone'
+        sluchawki = 'tylko w suchawkach'
+        nigdy = 'nigdy'
+
+
+        print zawsze
+        print type(MainApp.readSmsState)
+        print MainApp.readSmsState
+
+        if MainApp.readSmsState == zawsze:
+            activity.readSmsState = 1
+        elif MainApp.readSmsState == sluchawki:
+            activity.readSmsState = 2
+        elif MainApp.readSmsState == nigdy:
+            activity.readSmsState = 3
+
+        if MainApp.readStormState == zawsze:
+            activity.readStormState = 1
+        elif MainApp.readStormState == sluchawki:
+            activity.readStormState = 2
+        elif MainApp.readStormState == nigdy:
+            activity.readStormState = 3
+        print 'znacznik2'
         return show_time
+
+    def build_config(self, config):
+        config.setdefaults('ogolne', {
+            'optionsplec': 'mężczyzna'})
+
+        config.setdefaults('ogolne', {
+            'intwaga': 70})
+
+        config.setdefaults('ekran', {
+            'optionsekran': 'zawsze włączony'})
+
+        config.setdefaults('wyglad', {'boolwyglad': False})
+
+        config.setdefaults('nawigacja', {
+            'pathnawigacja': '/some/path/'})
+
+        config.setdefaults('nawigacja', {
+            'pathnawigacja1': '/sdcard/Bicom/Mapy'})
+
+        config.setdefaults('glos', {
+            'optionsglos1': 'tylko w słuchawkach'})
+
+        config.setdefaults('glos', {
+            'optionsglos2': 'tylko w słuchawkach'})
+
+        config.setdefaults('glos', {
+            'optionsglos3': 'tylko w słuchawkach'})
+
+
+    def build_settings(self, settings):
+        self.textcolor = 0, 0, 0, 0
+        settings.add_json_panel('Ogólne', self.config, data=settings_json)
+        settings.add_json_panel('Komunikaty Głosowe', self.config, data=settings_json1)
+
+    def on_config_change(self, config, section, key, value):
+
+        print "zmieniloSie"
+        print key
+        if section == 'ekran' and key == 'optionsekran' and value == 'zawsze włączony':
+            '''print self'''
+
+        if section == 'wyglad' and key == 'boolwyglad' and value == '1':
+            print ('Tryb ciemny')
+            # Ustawienia.kolor = (0.235, 0.529, 0.622, 0.6)
+
+        if section == 'wyglad' and key == 'boolwyglad' and value == '0':
+            print ('Tryb jasny')
+            # Ustawienia.kolor = (0,0,0,1)
+
+        if section == 'nawigacja':
+            if key == 'pathnawigacja':
+                print('pathnawigacja')
+            if key == 'pathnawigacja1':
+                print 'pathnawigacja1'
+                MainApp.navi_path = value
+
+        if section == 'glos':
+            if key == 'optionsglos1':
+                if value.encode('ascii', 'ignore') == 'zawsze wczone':
+                    activity.readSmsState = 1
+                if value.encode('ascii', 'ignore') == 'tylko w suchawkach':
+                    activity.readSmsState = 2
+                if value.encode('ascii', 'ignore') == 'nigdy':
+                    activity.readSmsState = 3
+
+            if key == 'optionsglos2':
+                if value.encode('ascii', 'ignore') == 'zawsze wczone':
+                    activity.readStormState = 1
+                if value.encode('ascii', 'ignore') == 'tylko w suchawkach':
+                    activity.readStormState = 2
+                if value.encode('ascii', 'ignore') == 'nigdy':
+                    activity.readStormState = 3
+            if key == 'optionsglos3' and value.encode('ascii', 'ignore') == 'zawsze wczone':
+                print (self)
+
+            print 'znacznik3'
+            print value.encode('ascii', 'ignore')
+            print activity.readSmsState
 
     def start(self, minTime, minDistance):
         gps.start(minTime, minDistance)
@@ -2888,11 +3100,15 @@ class MainApp(App):
                 MainApp.lat = punktySymulacjiLat2[self.licz2]
                 MainApp.lon = punktySymulacjiLon2[self.licz2]
                 self.licz2 = self.licz2 + 1
+                self.FlagaLicznik = True
 
             elif group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
                 MainApp.lat = punkty2.getLat(self.licz2)
                 MainApp.lon = punkty2.getLon(self.licz2)
                 self.licz2 = self.licz2 + 1
+                self.FlagaLicznik = True
+            else:
+                self.FlagaLicznik = False
 
             # koniec symulatora
 
@@ -2906,14 +3122,50 @@ class MainApp(App):
 
             #konic komenatrza prawidłowego kodu
 
-            speed = Speed(float(speed))
-            # if speed<4.0:
-            #   speed=0
-            if speed > self.highest_speed_float:
-                self.highest_speed_float = speed
-            # self.distance=self.distance+speed
-            # self.distance=round(self.distance,2)
-            self.gps_speed = speed
+            print "licznik_predkosci"
+            if self.licz2 > 0:
+                self.distanceSpeed = group_screen.calculate_distance(float(MainApp.lat),
+                                                            float(MainApp.LastLat),
+                                                            float(MainApp.lon),
+                                                            float(MainApp.LastLon))
+                self.distanceSpeed = self.distanceSpeed / 10000
+                self.timeNow = time.time()
+                self.TimeSpeed = self.timeNow - self.timeLast
+                self.TimeSpeed = self.TimeSpeed / 60
+
+                print"++++++++++"
+                print (str(self.distanceSpeed))
+                print (str(self.TimeSpeed))
+                self.timeLast = self.timeNow
+                self.LastLat = MainApp.lat
+                self.LastLon = MainApp.lon
+            else:
+                self.LastLat = MainApp.lat
+                self.LastLon = MainApp.lon
+                self.distanceSpeed = 0
+                self.TimeSpeed = 0
+
+
+            self.licznikSpeed += 1
+
+            # speed = Speed(float(speed))
+            # # if speed<4.0:
+            # #   speed=0
+            # if speed > self.highest_speed_float:
+            #     self.highest_speed_float = speed
+            # # self.distance=self.distance+speed
+            # # self.distance=round(self.distance,2)
+            # self.gps_speed = speed
+            if self.FlagaLicznik == False:
+                self.gps_speed = 0
+            else:
+                try:
+                    self.gps_speed = float(self.distanceSpeed) / float(self.TimeSpeed)
+                    print "000000000000000000000000000000000"
+                    print (self.gps_speed)
+                    print "00000000000000000000000000000"
+                except:
+                    pass
             self.tabela_speed[self.licz] = speed
             if self.wystarczy == 1:
                 for i in self.tabela_speed:
@@ -2923,13 +3175,13 @@ class MainApp(App):
                 self.licz = 0
                 self.wystarczy = 1
             self.licz = self.licz + 1
-            self.highest_speed = self.highest_speed_float
-            print "blblbl"
-            print self.gps_speed
-            self.gps_speed = self.gps_speed * 18 / 5
-            self.gps_speed = round(self.gps_speed, 2)
-            self.highest_speed = self.highest_speed * 18 / 5
-            self.highest_speed = round(self.highest_speed, 2)
+            # self.highest_speed = self.highest_speed_float
+            # print "blblbl"
+            # print self.gps_speed
+            # self.gps_speed = self.gps_speed * 18 / 5
+            # self.gps_speed = round(self.gps_speed, 2)
+            # self.highest_speed = self.highest_speed * 18 / 5
+            # self.highest_speed = round(self.highest_speed, 2)
             self.distance = self.distance + (self.gps_speed / 1000.00)
             if self.gps_speed <= 9 and self.gps_speed > 6:
                 self.calories = self.calories + 70 * 0.06 / 60.00

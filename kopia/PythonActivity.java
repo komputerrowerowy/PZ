@@ -168,9 +168,11 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
 	public String lastWord = "";
 	public String lastState = "";
     public boolean HeadsetIsPlugged = false;
-    public boolean AlwaysReadSms = false;
-    public boolean AlwaysReadStromAlert = false;
+    public int readSmsState = 2;
+    public int readStormState = 2;
     public boolean AlwaysReadInstruction = true;
+    
+    public String actual_gram = "";
     
             
             
@@ -258,7 +260,9 @@ private final int CHECK_CODE = 0x1;
                         SmsMessage message = SmsMessage.createFromPdu(pdu);
                         String text = message.getDisplayMessageBody();
                         String sender = getContactName(message.getOriginatingAddress());
-                        if(HeadsetIsPlugged == true || AlwaysReadSms == true){
+                        System.out.println("sluchawkiStan");
+                        System.out.println(readSmsState);
+                        if((HeadsetIsPlugged == true && readSmsState == 2) || readSmsState == 1){
                             speaker.pause(LONG_DURATION);
                             AlwaysReadInstruction = false;
                             speaker.speak("Masz nową wiadomość od: " + sender + "!");
@@ -447,7 +451,7 @@ private final int CHECK_CODE = 0x1;
     }
         
     public void readStormAlerts(String alert){
-        if(HeadsetIsPlugged == true || AlwaysReadStromAlert == true){
+        if((HeadsetIsPlugged == true && readStormState == 2) || readStormState == 1){
                             speaker.speak(alert);
                         }
     }
@@ -590,18 +594,22 @@ private final int CHECK_CODE = 0x1;
 		recognizer.stop();
 		System.out.println(searchName);
 		System.out.println("test7");
-
+        if (actual_gram != "") {
+            recognizer.startListening(actual_gram);
+        }
+        else {
         // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
-        if (searchName.equals(KWS_SEARCH)){
-			System.out.println("test8");
-            recognizer.startListening(searchName);
-			System.out.println("test9");
-		}
-        else{
-			System.out.println("test10");
-            recognizer.startListening(searchName, 10000);
-			System.out.println("test11");
-		}
+            if (searchName.equals(KWS_SEARCH)){
+                System.out.println("test8");
+                recognizer.startListening(searchName);
+                System.out.println("test9");
+            }
+            else{
+                System.out.println("test10");
+                recognizer.startListening(searchName, 10000);
+                System.out.println("test11");
+            }
+        }
 		
 		lastState = searchName;
 
