@@ -395,6 +395,19 @@ class ShowTime(Screen):
         # pass
         mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
 
+        print "plusik"
+        print activity.keyPressed
+        if activity.keyPressed=="prawo":
+            print activity.keyPressed
+            MainApp.get_running_app().root.carousel.load_next(mode='next')
+            activity.keyPressed = ""
+            print "po plusiku"
+        elif activity.keyPressed=="lewo":
+            MainApp.get_running_app().root.carousel.load_previous()
+            activity.keyPressed=""
+            print activity.keyPressed
+
+            print "po plusiku"
 
         print('LonZmapview', mapview.globalLon)
         print('LatZmapview', mapview.globalLat)

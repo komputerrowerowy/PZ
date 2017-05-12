@@ -171,7 +171,7 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
     public int readSmsState = 2;
     public int readStormState = 2;
     public boolean AlwaysReadInstruction = true;
-    
+    public String keyPressed="";
     public String actual_gram = "";
     
             
@@ -994,10 +994,31 @@ private final int CHECK_CODE = 0x1;
         //Log.i("python", "key2 " + mView + " " + mView.mStarted);
 
         //Wylaczenie obslugi przycisku ze sluchawek, np. pause/play muzyki
+	System.out.println("plusowanie");
+	System.out.println(keyCode);
         if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK)
             {
                 return true;
             }
+	else if (keyCode == KeyEvent.KEYCODE_NUMPAD_ADD) {
+		keyPressed = "+";
+	}
+	else if (keyCode == 87) {
+		keyPressed = "prawo";
+	return true;
+	}
+	else if (keyCode == 89) {
+		keyPressed = "dol";
+	return true;
+	}
+	else if (keyCode == 88) {
+		keyPressed = "lewo";
+	return true;
+	}
+	else if (keyCode == 90) {
+		keyPressed = "gora";
+	return true;
+	}
         if (mView != null && mView.mStarted && SDLSurfaceView.nativeKey(keyCode, 1, event.getUnicodeChar())) {
             return true;
         } else {
@@ -1008,10 +1029,41 @@ private final int CHECK_CODE = 0x1;
     @Override
     public boolean onKeyUp(int keyCode, final KeyEvent event) {
         //Log.i("python", "key up " + mView + " " + mView.mStarted);
-        if (mView != null && mView.mStarted && SDLSurfaceView.nativeKey(keyCode, 0, event.getUnicodeChar())) {
+        //if (mView != null && mView.mStarted && SDLSurfaceView.nativeKey(keyCode, 0, event.getUnicodeChar())) {
+         //   return true;
+       // } else {
+         //   return super.onKeyUp(keyCode, event);
+        //}
+	System.out.println("plusowanie2");
+	System.out.println(keyCode);
+	if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK)
+            {
+                return true;
+            }
+	else if (keyCode == KeyEvent.KEYCODE_NUMPAD_ADD) {
+		keyPressed = "+";
+		return true;
+	}
+	else if (keyCode == 87) {
+		keyPressed = "prawo";
+	return true;
+	}
+	else if (keyCode == 89) {
+		keyPressed = "dol";
+	return true;
+	}
+	else if (keyCode == 88) {
+		keyPressed = "lewo";
+	return true;
+	}
+	else if (keyCode == 90) {
+		keyPressed = "gora";
+	return true;
+	}
+        if (mView != null && mView.mStarted && SDLSurfaceView.nativeKey(keyCode, 1, event.getUnicodeChar())) {
             return true;
         } else {
-            return super.onKeyUp(keyCode, event);
+            return super.onKeyDown(keyCode, event);
         }
     }
 
