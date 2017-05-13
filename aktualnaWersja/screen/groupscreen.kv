@@ -1,4 +1,5 @@
 <GroupScreen>:
+
     id: groupScreen
     name: 'groupScreen'
     orientation: 'vertical'
@@ -39,6 +40,18 @@
         orientation: 'vertical'
         size_hint: 1, 1
         Label:
+            id: label_instruction_distance
+            size_hint: 1, 0.05
+            canvas.before:
+                Color:
+                    rgba: 0.235, 0.529, 0.572, 0.8
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            color: 1, 1, 1, 1
+            font_size: self.height / 2
+            text: ''
+        Label:
             id: label_instruction
             size_hint: 1, 0.075
             canvas.before:
@@ -50,6 +63,7 @@
             color: 1, 1, 1, 1
             font_size: self.height / 3
             text: ''
+
         BoxLayout:
             id: SearchLayout
             orientation: 'horizontal'
@@ -203,7 +217,7 @@
         BoxLayout:
             id: asdasd
             orientation: 'horizontal'
-            size_hint: 1, 0.535
+            size_hint: 1, 0.485
             BoxLayout:
                 orientation: 'vertical'
                 size_hint: 0.01, 1
@@ -632,6 +646,57 @@
                     center_y: (self.parent.center_y)
                     source: 'resources/ok.png'
                     height: self.parent.height
+
+
+<PopupSmsAnswer>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        spacing: 10
+        Button:
+            color: 1, 1, 1, 1
+            text: "Jadę rowerem. Odezwę się później."
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            size_hint_y: .25
+            on_release: root.SmsOdp1()
+        Button:
+            color: 1, 1, 1, 1
+            text: "Jadę rowerem. Nie mogę teraz rozmawiać."
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            size_hint_y: .25
+            on_release: root.SmsOdp2()
+        Button:
+            color: 1, 1, 1, 1
+            text: "Jadę rowerem. Zadzwoń później."
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 1
+            size_hint_y: .25
+            on_release: root.SmsOdp3()
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 1,1,1,1
+            size_hint_y: .25
+            on_release: root.cancelSmsAnswer()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/anuluj.png'
+                height: self.parent.height
+
+
+
 <PopupGroupConect>:
     canvas.before:
         Color:

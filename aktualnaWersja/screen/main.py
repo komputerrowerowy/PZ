@@ -254,6 +254,7 @@ class ShowTime(Screen):
     flagaCall = 1
     prev = 0
     powtorka=0
+    nrTel = 000000000
 
     def __init__(self, **kwargs):
         super(ShowTime, self).__init__()
@@ -331,11 +332,13 @@ class ShowTime(Screen):
 
     def send_sms(self, sms_recipient, sms_message):
         print "SMS"
+        print(self.nrTel)
         sms.send(recipient=sms_recipient, message=sms_message)
 
     def callListener(self):
 
         print activity.number
+        self.nrTel = activity.number
         if activity.callState == 1 and self.popup_shown == False:
             self.popup_shown = True
             contact = activity.getContactName(activity.number)
@@ -408,6 +411,7 @@ class ShowTime(Screen):
                 self.popup.dismiss()
         self.popup.dismiss()
         self.popup_shown = False
+        self.ShowSmsAnswer()
 
     def _on_answer2(self, instance, answer):
         print "USER ANSWER2: ", repr(answer)
@@ -433,11 +437,15 @@ class ShowTime(Screen):
         telephonyService = activity.createITelephonyInstance(telephonyManager)
 
         telephonyService.endCall()
+        #self.ShowSmsAnswer()
         # self.popup.dismiss()
 
     def check(self, fla):
         # pass
         mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+
+
+
 
         print "plusik"
         print activity.keyPressed
@@ -578,10 +586,42 @@ class ShowTime(Screen):
             self.powtorka=1
             self.stormListener()
 
+    def dismiss_popupSmsAnswer(self):
+        self._popupSmsAnswer.dismiss()
+
+    def ShowSmsAnswer(self):
+        content = PopupSmsAnswer(SmsOdp1=self.SmsOdp1,
+                                 SmsOdp2=self.SmsOdp2,
+                                 SmsOdp3=self.SmsOdp3,
+                             cancelSmsAnswer=self.dismiss_popupSmsAnswer)
+
+        self._popupSmsAnswer = Popup(title="Odpowiedzi sms", content=content,
+                            size_hint=(0.9, 0.8))
+        self._popupSmsAnswer.open()
+
+    def SmsOdp1(self):
+        self.send_sms(self.nrTel, "Jadę rowerem. Odezwę się później.")
+        self.dismiss_popupSmsAnswer()
+
+    def SmsOdp2(self):
+        self.send_sms(self.nrTel, "Jadę rowerem. Nie mogę teraz rozmawiać.")
+        self.dismiss_popupSmsAnswer()
+
+    def SmsOdp3(self):
+        self.send_sms(self.nrTel, "Jadę rowerem. Zadzwoń później.")
+        self.dismiss_popupSmsAnswer()
+
 
 class ChooseFile(FloatLayout):
     select = ObjectProperty(None)
     cancel = ObjectProperty(None)
+
+class PopupSmsAnswer(FloatLayout):
+    SmsOdp1 = ObjectProperty(None)
+    SmsOdp2 = ObjectProperty(None)
+    SmsOdp3 = ObjectProperty(None)
+    cancelSmsAnswer = ObjectProperty(None)
+
 
 class PopupGroupConect(FloatLayout):
     createGroupConect = ObjectProperty(None)
@@ -1084,6 +1124,8 @@ class GroupScreen(Screen):
         self.savepath(self.directory)
 
         self.dismiss_popup()
+
+
 
     def dismiss_popupGroupConect(self):
         self._popupGroupConect.dismiss()
@@ -3060,6 +3102,7 @@ class MainApp(App):
     navi_path = '/sdcard/Bicom/Mapy'
     readSmsState = 2
     readStormState = 2
+    distLabel = 0
 
 
     def build(self):
@@ -3476,11 +3519,17 @@ class MainApp(App):
 
                     group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(
                         group_screen.actual_instruction2)
+                    if group_screen.actual_instruction2 == 0:
+                        group_screen.ids.label_instruction_distance.text = 'przez: ' + str(self.distLabel) + 'metrów'
+                    else:
+                        group_screen.ids.label_instruction_distance.text = 'za: ' + str(self.distLabel) + 'metrów'
 
                     distanceIns = group_screen.calculate_distance(float(instruction_points2.getLatitude(0)),
                                                                   float(MainApp.lat),
                                                                   float(instruction_points2.getLongitude(0)),
                                                                   float(MainApp.lon))
+                    distanceMeters = distanceIns * 850
+                    self.distLabel = int(distanceMeters)
                     if distance2 > distance1:
                         if distance1 < 0.01:
                             # sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
@@ -3492,7 +3541,7 @@ class MainApp(App):
                                 group_screen.actual_instruction += 1
                             print 'dystans instrukcji'
                             print str(distanceIns)
-                            if float(distanceIns) < 0.8:
+                            if float(distanceIns) < 0.4:
 
                                 group_screen.actual_instruction2 = group_screen.actual_instruction
                             else:
@@ -3773,11 +3822,17 @@ class MainApp(App):
 
                     group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(
                         group_screen.actual_instruction2)
+                    if group_screen.actual_instruction2 == 0:
+                        group_screen.ids.label_instruction_distance.text = 'przez: ' + str(self.distLabel) + 'metrów'
+                    else:
+                        group_screen.ids.label_instruction_distance.text = 'za: ' + str(self.distLabel) + 'metrów'
 
                     distanceIns = group_screen.calculate_distance(float(instruction_points2.getLatitude(0)),
                                                                   float(MainApp.lat),
                                                                   float(instruction_points2.getLongitude(0)),
                                                                   float(MainApp.lon))
+                    distanceMeters = distanceIns * 850
+                    self.distLabel = int(distanceMeters)
                     if distance2 > distance1:
                         if distance1 < 0.01:
                             # sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
