@@ -10,7 +10,7 @@ from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
-from math import radians, sin, cos, acos, degrees, pi
+from math import radians, sin, cos, acos, degrees, pi, asin
 
 import requests
 from kivy.garden.mapview import MapLayer
@@ -282,6 +282,12 @@ class ShowTime(Screen):
     prev = 0
     powtorka=0
     nrTel = 000000000
+    aktualny_miesiac=5
+    aktualny_dzien = 15
+    aktualna_godzina = 17
+    aktualna_minuta = 30
+    minutnik=0
+    if_night=False
 
     def __init__(self, **kwargs):
         super(ShowTime, self).__init__()
@@ -467,11 +473,74 @@ class ShowTime(Screen):
         #self.ShowSmsAnswer()
         # self.popup.dismiss()
 
+    def day_or_night(self,year,month,day,hour,minute,lat,lon):
+        R=year
+        M=month
+        D=day
+        Lat=52
+        Long=18
+        Req=-0.833
+        J=367*R-int(7*(R+int((M+9)/12))/4)+int(275*M/9)+D-730531.5
+        Cent=J/36525
+        L=(4.8949504201433+628.331969753199*Cent)%6.28318530718
+        G=(6.2400408+628.331969753199*Cent)%6.28318530718
+        O=0.409093-0.0002269*Cent
+        F=0.033423*sin(G)+0.00034907*sin(2*G)
+        E=0.0430398*sin(2*(L+F))-0.00092502*sin(4*(L+F))-F
+        A=asin(sin(O)*sin(L+F))
+        C=(sin(0.017453293*Req)-sin(0.017453293*Lat)*sin(A))/(cos(0.017453293*Lat)*cos(A))
+        Wsch=(pi-(E+0.017453293*Long+1*acos(C)))*57.29577951/15
+        Zach = (pi - (E + 0.017453293 * Long - 1 * acos(C))) * 57.29577951 / 15
+        godzina_wschodu=int(Wsch)
+        print "godzina wschodu"
+        print godzina_wschodu
+        minuta_wschodu=int((Wsch-int(Wsch))*60)
+        print "minuta wschodu"
+        print minuta_wschodu
+        godzina_zachodu=int(Zach)
+        print "godzina zachodu"
+        print godzina_zachodu
+        minuta_zachodu=int((Zach-int(Zach))*60)
+        print "minuta zachodu"
+        print minuta_zachodu
+        #poprawka na czas polski
+        godzina_wschodu=godzina_wschodu+2
+        godzina_zachodu=godzina_zachodu+2
+        if hour<godzina_zachodu and hour>godzina_wschodu:
+            return False
+        if hour==godzina_wschodu and minute>minuta_wschodu:
+            return False
+        if hour==godzina_zachodu and minute<minuta_zachodu:
+            return False
+        return True
+
+
+
     def check(self, fla):
         # pass
         mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
 
+        if self.minutnik%60==0:
+            print datetime.datetime.today()
+            dt = datetime.datetime.now()
+            tt = dt.timetuple()
+            self.aktualny_rok=tt[0]
+            self.aktualny_miesiac=tt[1]
+            self.aktualny_dzien = tt[2]
+            self.aktualna_godzina = tt[3]
+            self.aktualna_minuta = tt[4]
+            print self.aktualny_miesiac
+            print self.aktualny_dzien
+            print self.aktualna_godzina
+            print self.aktualna_minuta
 
+            self.if_night=self.day_or_night(self.aktualny_rok,self.aktualny_miesiac,self.aktualny_dzien,self.aktualna_godzina,self.aktualna_minuta,MainApp.lat,MainApp.lon)
+        self.minutnik=self.minutnik+1
+
+        print "czy mamy noc?"
+        print str(self.if_night)
+        Weather.czy_noc=self.if_night
+        print str(Weather.czy_noc)
 
 
         print "plusik"
@@ -2440,6 +2509,10 @@ class Speedometer(Screen):
 class Weather(Screen):
     czy_burza = 0.5
     miejscowosc = ''
+    czy_noc=BooleanProperty()
+    niebieski=(0.235, 0.529, 0.572, 1)
+    czerwony=(0.86, 0.08, 0.23, 1)
+    kolor1=(0,0,0,0)
 
     def WeatherNextCarousel(self):
         MainApp.get_running_app().root.carousel.load_next(mode='next')
@@ -2552,16 +2625,68 @@ class Weather(Screen):
         temp=round(temp,2)
         temp_forecast=round(temp_forecast,2)
 
+        print "czy mamy noc?2"
+        print str(self.czy_noc)
+        print "sprawdzam obrazek 1"
+        if data_forecast['list'][0]['clouds']['all'] >= 0 and data_forecast['list'][0]['clouds'][
+            'all'] < 15 and self.czy_noc == False:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody"].source = 'resources/sunny.png'
+        elif data_forecast['list'][0]['clouds']['all'] >= 0 and data_forecast['list'][0]['clouds'][
+            'all'] < 15 and self.czy_noc == True:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody"].source = 'resources/night.png'
+        elif data_forecast['list'][0]['clouds']['all'] >= 15 and data_forecast['list'][0]['clouds'][
+            'all'] < 30 and self.czy_noc == False:
+            MainApp.get_running_app().root.carousel.slides[4].ids[
+                "obrazek_pogody"].source = 'resources/partialy-cloudy.png'
+        elif data_forecast['list'][0]['clouds']['all'] >= 15 and data_forecast['list'][0]['clouds'][
+            'all'] < 30 and self.czy_noc == True:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody"].source = 'resources/dark-night.png'
+        elif data_forecast['list'][0]['clouds']['all'] >= 30 and data_forecast['list'][0]['clouds'][
+            'all'] < 70 and self.czy_noc == False:
+            MainApp.get_running_app().root.carousel.slides[4].ids[
+                "obrazek_pogody"].source = 'resources/cloud-with-sun.png'
+        elif data_forecast['list'][0]['clouds']['all'] >= 30 and data_forecast['list'][0]['clouds'][
+            'all'] < 70 and self.czy_noc == True:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody"].source = 'resources/dark-night.png'
+        elif data_forecast['list'][0]['clouds']['all'] >= 70 and data_forecast['list'][0]['clouds']['all'] <= 100:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody"].source = 'resources/cloudly.png'
+        print "sprawdzam obrazek 2"
+        if data_forecast['list'][1]['clouds']['all'] >= 0 and data_forecast['list'][1]['clouds'][
+            'all'] < 15 and self.czy_noc == False:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody2"].source = 'resources/sunny.png'
+        elif data_forecast['list'][1]['clouds']['all'] >= 0 and data_forecast['list'][1]['clouds'][
+            'all'] < 15 and self.czy_noc == True:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody2"].source = 'resources/night.png'
+        elif data_forecast['list'][1]['clouds']['all'] >= 15 and data_forecast['list'][1]['clouds'][
+            'all'] < 30 and self.czy_noc == False:
+            MainApp.get_running_app().root.carousel.slides[4].ids[
+                "obrazek_pogody2"].source = 'resources/partialy-cloudy.png'
+        elif data_forecast['list'][1]['clouds']['all'] >= 15 and data_forecast['list'][1]['clouds'][
+            'all'] < 30 and self.czy_noc == True:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody2"].source = 'resources/dark-night.png'
+        elif data_forecast['list'][1]['clouds']['all'] >= 30 and data_forecast['list'][1]['clouds'][
+            'all'] < 70 and self.czy_noc == False:
+            MainApp.get_running_app().root.carousel.slides[4].ids[
+                "obrazek_pogody2"].source = 'resources/cloud-with-sun.png'
+        elif data_forecast['list'][1]['clouds']['all'] >= 30 and data_forecast['list'][1]['clouds'][
+            'all'] < 70 and self.czy_noc == True:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody2"].source = 'resources/dark-night.png'
+        elif data_forecast['list'][1]['clouds']['all'] >= 70 and data_forecast['list'][1]['clouds']['all'] <= 100:
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody2"].source = 'resources/cloudly.png'
+        print "sprawdzam obrazek 3"
         try:
-            rain=data_forecast['list'][0]['rain']['3h']
-            rain=round(rain,2)
+            rain = data_forecast['list'][0]['rain']['3h']
+            rain = round(rain, 2)
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody"].source = 'resources/opady.png'
         except:
-            rain=0
+            rain = 0
+        print "sprawdzam obrazek 4"
         try:
             rain_forecast = data_forecast['list'][1]['rain']['3h']
             rain_forecast = round(rain_forecast, 2)
+            MainApp.get_running_app().root.carousel.slides[4].ids["obrazek_pogody2"].source = 'resources/opady.png'
         except:
-            rain_forecast=0
+            rain_forecast = 0
 
         humidity = data_forecast['list'][0]['main']['humidity']
         humidity_forecast = data_forecast['list'][1]['main']['humidity']

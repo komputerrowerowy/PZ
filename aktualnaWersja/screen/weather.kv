@@ -71,9 +71,10 @@
                         orientation: 'vertical'
                         size_hint_x: .3
                         Image:
+                            id:obrazek_pogody
                             size_hint_y: .8
                             center_x: self.parent.center_x
-                            source: 'resources/opady.png'
+                            #source: root.obrazek_pogody
                             height: self.parent.height
                         Label:
                             size_hint_y: .2
@@ -185,9 +186,11 @@
                         orientation: 'vertical'
                         size_hint_x: .3
                         Image:
+                            id: obrazek_pogody2
                             size_hint_y: .8
                             center_x: self.parent.center_x
-                            source: 'resources/opady.png'
+                            #source: 'resources/opady.png'
+                            #source: root.obrazek_pogody2
                             height: self.parent.height
                         Label:
                             size_hint_y: .2
