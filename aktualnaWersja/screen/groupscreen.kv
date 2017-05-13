@@ -727,7 +727,7 @@
                 background_normal: ''
                 font_size: self.height / 5
                 background_color: 0.235, 0.529, 0.572, 1
-                #on_release: root.cancelGpx()
+                on_release: root.joinGroupConect()
         BoxLayout:
             size_hint_y: .2
             orientation: 'vertical'
@@ -776,6 +776,49 @@
                 center_y: (self.parent.center_y)
                 source: 'resources/anuluj.png'
                 height: self.parent.height
+
+#<PopupShowQrCode>:
+#    canvas.before:
+#        Color:
+#            rgba: 0.235, 0.529, 0.572, 1
+#        Rectangle:
+#            pos: self.pos
+#            size: self.size
+#    BoxLayout:
+#        orientation: 'vertical'
+#
+#        ZbarQrcodeDetector:
+#            id: detector
+
+
+<PopupReadQrCode>:
+    canvas.before:
+        Color:
+            rgba: 0.235, 0.529, 0.572, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+
+
+        ZbarQrcodeDetector:
+            id: detector
+
+#        Label:
+#            text: '\\n'.join(map(repr, detector.symbols))
+#            size_hint_y: .3
+#
+#        BoxLayout:
+#            size_hint_y: .3
+#
+#            Button:
+#                text: 'Scan a qrcode'
+#                on_release: detector.start()
+#            Button:
+#                text: 'Stop detection'
+#                on_release: detector.stop()
+
 <PopupAlert>:
     canvas.before:
         Color:
