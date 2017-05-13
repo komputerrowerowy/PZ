@@ -181,24 +181,18 @@ Builder.load_string('''
     BoxLayout:
         orientation: 'vertical'
         size_hint_y: 1
-        Label:
-            id: storm_label_achtung
-            background_normal: ''
+        Image:
+            size_hint_y: .4
             canvas.before:
                 Color:
-                    #rgba: 1, 0, 0, .3
                     rgba: root.color
                 Rectangle:
                     pos: self.pos
                     size: self.size
-            size_hint_y: 0.4
-            halign:'center'
-            valign:'middle'
-            text: root.text
-            font_size: self.height/16
-            color: 1, 1, 1, 1
             center_x: self.parent.center_x
-            center_y: self.parent.center_y
+            source: root.grzmot
+            height: self.parent.height*4
+            width: self.parent.width*4
         Image:
             size_hint_y: .4
             canvas.before:
@@ -209,8 +203,8 @@ Builder.load_string('''
                     size: self.size
             center_x: self.parent.center_x
             source: root.ktory_radar
-            height: self.parent.height*2
-            width: self.parent.width*2
+            height: self.parent.height*4
+            width: self.parent.width*4
 <StartScreen>:
     canvas.before:
         Rectangle:
@@ -262,6 +256,7 @@ class ConfirmPopup(GridLayout):
 class StormPopup(GridLayout):
     text = StringProperty()
     ktory_radar=''
+    grzmot='resources/cloud-and-thunder.png'
     color=(1,0,0,.3)
 
     def __init__(self, **kwargs):
@@ -4163,8 +4158,8 @@ class MainApp(App):
                         print "MIejscowoscc sprawdzana"
                         print str(miej)
 
-                        city = str(miej)
-                        # city="Mediolan"
+                        #city = str(miej)
+                        city="Innsbruck"
                         range_detect = 70
                         print "Wykonuje burze_api"
                         ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
