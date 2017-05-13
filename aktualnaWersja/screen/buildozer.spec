@@ -39,7 +39,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlite3,pp,SOAPpy
+requirements = kivy,futures,openssl,requests,plyer,osmapi,pyjnius,geocoder,sqlite3,pp,SOAPpy,qrcode
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes

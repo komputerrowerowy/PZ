@@ -81,6 +81,7 @@ from kivy.uix.settings import SettingsWithSidebar
 from kivy.uix.settings import Settings
 from kivy.properties import ListProperty, BooleanProperty
 from kivy.logger import Logger
+from kivy.garden.qrcode import QRCodeWidget
 
 #import pyowm
 
@@ -108,8 +109,11 @@ navi_path = '/sdcard'
 contacts = []
 contacts2 = []
 contacts3 = []
+contactsFavorite = []
+
 contactsGroups = {}
 contactsGroups2 = {}
+contactsGroupsFavorite = {}
 groups = []
 sensorEnabled = False
 wsp2 = 0
@@ -257,6 +261,46 @@ class ShowTime(Screen):
 
     def build(self):
         pass
+    def MapNormal(self):
+        MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.height = ((self.height * self.height) + (
+        self.width * self.width)) ** 0.5
+        MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.width = ((self.height * self.height) + (
+        self.width * self.width)) ** 0.5
+        MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.pos = (-(
+        (((self.height * self.height) + (self.width * self.width)) ** 0.5) - self.width)) / 2, (-(
+        (((self.height * self.height) + (self.width * self.width)) ** 0.5) - self.height)) / 2
+
+
+
+    def MapCut(self, touch):
+        print 'ciecie mapy'
+
+        indeks = MainApp.get_running_app().root.carousel.index
+        if indeks == 0:
+            MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.height = self.height
+            MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.width = self.width
+            MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.pos = self.pos
+        else:
+            MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.height = ((self.height * self.height) + (self.width * self.width))**0.5
+            MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.width = ((self.height * self.height) + (self.width * self.width))**0.5
+            MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.pos = (-((((self.height * self.height) + (self.width * self.width))**0.5) - self.width))/2, (-((((self.height * self.height) + (self.width * self.width))**0.5) - self.height))/2
+
+        # self1 = MainApp.get_running_app().root.carousel
+        #
+        # if not self1.touch_mode_change:
+        #     if self1.ignore_perpendicular_swipes and \
+        #                     self1.direction in ('top', 'bottom'):
+        #         if abs(touch.oy - touch.y) < self1.scroll_distance:
+        #             if abs(touch.ox - touch.x) > self1.scroll_distance:
+        #                 self1._change_touch_mode()
+        #                 self1.touchModeChange = True
+        #     elif self1.ignore_perpendicular_swipes and \
+        #                     self1.direction in ('right', 'left'):
+        #         if abs(touch.ox - touch.x) < self1.scroll_distance:
+        #             if abs(touch.oy - touch.y) > self1.scroll_distance:
+        #                 self._change_touch_mode()
+        #                 self1.touchModeChange = True
+
 
 
 
@@ -397,17 +441,18 @@ class ShowTime(Screen):
 
         print "plusik"
         print activity.keyPressed
-        if activity.keyPressed=="prawo":
+        if activity.keyPressed == "prawo":
             print activity.keyPressed
             MainApp.get_running_app().root.carousel.load_next(mode='next')
             activity.keyPressed = ""
             print "po plusiku"
-        elif activity.keyPressed=="lewo":
+        elif activity.keyPressed == "lewo":
             MainApp.get_running_app().root.carousel.load_previous()
-            activity.keyPressed=""
+            activity.keyPressed = ""
             print activity.keyPressed
 
             print "po plusiku"
+
 
         print('LonZmapview', mapview.globalLon)
         print('LatZmapview', mapview.globalLat)
@@ -888,6 +933,7 @@ class GroupScreen(Screen):
     instructions = []
     actual_point = 0
     actual_instruction = 0
+    actual_instruction2 = 0
     punkty_aktualne2 = []
     punkty_aktualne = []
     instructions_aktualne = []
@@ -914,8 +960,16 @@ class GroupScreen(Screen):
     punktyTrasyLon = []
     punktySymulacjiLat = []
     punktySymulacjiLon = []
+    GpxPath = "/sdcard/Bicom/Moje_trasy/"
+    simulationFlag = False
 
-
+    def simulationRoute(self):
+        if self.simulationFlag == False:
+            self.simulationFlag = True
+            self.ids.img_sim.source = "resources/recred.png"
+        else:
+            self.simulationFlag = False
+            self.ids.img_sim.source = "resources/recwhite.png"
 
 
     def GroupScreenNextCarousel(self):
@@ -937,9 +991,9 @@ class GroupScreen(Screen):
 
 
     def savepath(self, path):
-        #f = open("/sdcard/Bicom/path/sav.dat", "w")
-        #f.write(path)
-        #f.close()
+        f = open("/sdcard/Bicom/path/sav.dat", "w")
+        f.write(path)
+        f.close()
         print"zapisSciezki"
         print MainApp.navi_path
 
@@ -1000,9 +1054,17 @@ class GroupScreen(Screen):
     def ShowQrCode(self):
         content = PopupShowQrCode(cancelShowQrCode=self.dismiss_popupShowQrCode)
 
+        actualDate = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        # self._popupShowQrCode.ids.qr.data = actualDate
+        content.ids.qr.data = actualDate
+
         self._popupShowQrCode = Popup(title="Komunikat", content=content,
                                         size_hint=(0.8, 0.5))
+
+
         self._popupShowQrCode.open()
+
+
 
 
 
@@ -1169,6 +1231,9 @@ class GroupScreen(Screen):
 
         self.dismiss_popupTras()
 
+    def changeGpxPath(self, path):
+        self.GpxPath = path
+
     def dismiss_popupGpx(self):
         self._popupGpx.dismiss()
 
@@ -1187,10 +1252,10 @@ class GroupScreen(Screen):
 
         print "abbbbbbbbbb"
 
-        GpxPath = "/sdcard/Bicom/Moje_trasy/" + actualDate + ".gpx"
+        self.GpxPath + actualDate + ".gpx"
 
         #GraphHopperAndroid.saveActualPositionListToGPX("/sdcard/Bicom/trasa1.gpx", str(actualDate))
-        GraphHopperAndroid.saveActualPositionListToGPX(str(GpxPath), str(actualDate))
+        GraphHopperAndroid.saveActualPositionListToGPX(str(self.GpxPath), str(actualDate))
 
 
 
@@ -1547,6 +1612,7 @@ class GroupScreen(Screen):
         MainApp.route_nodes = True
         self.actual_point = 0
         self.actual_instruction = 0
+        self.actual_instruction2 = 0
         if self.auto_center == True:
             self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
         self.flagaPunktow += 1
@@ -1565,7 +1631,10 @@ class GroupScreen(Screen):
             # print str(street)
             MomentCity = g.city
             MomentStreet = g.street
-            self.cityPoint = MomentCity.encode('utf-8')
+            try:
+                self.cityPoint = MomentCity.encode('utf-8')
+            except:
+                self.cityPoint = str(latAdd) + ', ' + str(lonAdd)
             try:
                 self.streetPoint = MomentStreet .encode('utf-8')
                 self.geoFlaga = True
@@ -1950,6 +2019,7 @@ class GroupScreen(Screen):
 
             self.actual_point = 0
             self.actual_instruction = 0
+            self.actual_instruction2 = 0
             if self.auto_center == True:
                 self.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(self.actual_instruction)
 
@@ -2050,7 +2120,7 @@ class GroupScreen(Screen):
         z = nominator / dominator
         print z
         print "z"
-        if z >= .6e-05:
+        if z >= .4e-05:
             return True
         else:
             return False
@@ -2118,7 +2188,7 @@ class CallScreen(Screen):
                 Intent = autoclass('android.content.Intent')
                 PythonActivity = autoclass('org.renpy.android.PythonActivity')
                 tel = ''
-                for contact in contacts:
+                for contact in contactsFavorite:
                     if bt.text == contact.display_name:
                         tel = contact.number
                 num = "tel:"
@@ -2133,11 +2203,11 @@ class CallScreen(Screen):
             RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
             self.ids.scroll.bind(minimum_height=self.ids.scroll.setter('height'))
 
-            contacts.sort(key=lambda contact: contact.display_name)
-            for contact in contacts:
+            contactsFavorite.sort(key=lambda contact: contact.display_name)
+            for contact in contactsFavorite:
                 btn1 = Button(text=contact.display_name, on_release=callPhone)
                 btn = Button(text=contact.display_name)
-                if contacts.index(contact) % 2 == 0:
+                if contactsFavorite.index(contact) % 2 == 0:
                     btn1.color = (0.235, 0.529, 0.572, 0)
                     #btn1.background_normal = ''
                     btn1.background_down = "resources/ringg.png"
@@ -2180,8 +2250,11 @@ class CallScreen(Screen):
             Data = autoclass("android.provider.ContactsContract$Data")
             phones = resolver.query(Phone.CONTENT_URI, None, None, None, None)
             phones2 = resolver.query(Data.CONTENT_URI, None, None, None, None)
+            phonesFav = resolver.query(Phone.CONTENT_URI, None, "starred=1", None, None)
+            # phones2 = resolver.query(Data.CONTENT_URI, None, "starred=1", None, None)
             pho = phones
             pho2 = phones2
+            phoFav = phonesFav
 
             self.read_groups()
 
@@ -2228,8 +2301,26 @@ class CallScreen(Screen):
                 current_contact = Contact(str(name), str(num), str(contact_group_id), str(contact_group_name))
                 contacts.append(current_contact)
 
+            while(phonesFav.moveToNext()):
+                name = phoFav.getString(phoFav.getColumnIndex("display_name"))
+                phoneNumber = phoFav.getString(phoFav.getColumnIndex(Phone.NUMBER))
+                contact_group_id = phoFav.getString(phoFav.getColumnIndex(GroupMembership.GROUP_ROW_ID))
+                contact_group_name = -1
+                for group in groups:
+                    if contact_group_id == group.id:
+                        contact_group_name = group.name
+
+                num = str(phoneNumber)
+                num = num.replace(" ", "")
+                num = num.replace("-", "")
+                if num[0] == "+":
+                    num = num[-9:]
+                current_contact = Contact(str(name), str(num), str(contact_group_id), str(contact_group_name))
+                contactsFavorite.append(current_contact)
+
             contacts.sort(key=lambda contact: contact.display_name)
             contacts2.sort(key=lambda contact: contact.display_name)
+            contactsFavorite.sort(key=lambda contact: contact.display_name)
 
             for contact in contacts:
                 contactsGroups[contact.number] = contact.display_name
@@ -2988,6 +3079,7 @@ class MainApp(App):
 
         Clock.schedule_interval(show_time.check, 1)
         Clock.schedule_interval(UstawFlage, 3600)
+        Clock.schedule_interval(self.on_location_symuluj, 1)
         try:
             gps.configure(on_location=self.on_location, on_status=self.on_status)
             self.start(1000, 0)
@@ -3036,7 +3128,7 @@ class MainApp(App):
             'optionsplec': 'mężczyzna'})
 
         config.setdefaults('ogolne', {
-            'intwaga': 70})
+            'waga': 70})
 
         config.setdefaults('ekran', {
             'optionsekran': 'zawsze włączony'})
@@ -3044,10 +3136,10 @@ class MainApp(App):
         config.setdefaults('wyglad', {'boolwyglad': False})
 
         config.setdefaults('nawigacja', {
-            'pathnawigacja': '/some/path/'})
+            'pathnawigacja': '/sdcard/Bicom/Moje_trasy/'})
 
         config.setdefaults('nawigacja', {
-            'pathnawigacja1': '/sdcard/Bicom/Mapy'})
+            'pathnawigacja1': '/sdcard/Bicom/Mapy/'})
 
         config.setdefaults('glos', {
             'optionsglos1': 'tylko w słuchawkach'})
@@ -3066,6 +3158,7 @@ class MainApp(App):
 
     def on_config_change(self, config, section, key, value):
 
+        gr = GroupScreen()
         print "zmieniloSie"
         print key
         if section == 'ekran' and key == 'optionsekran' and value == 'zawsze włączony':
@@ -3080,11 +3173,16 @@ class MainApp(App):
             # Ustawienia.kolor = (0,0,0,1)
 
         if section == 'nawigacja':
+            print('nawigacja')
             if key == 'pathnawigacja':
                 print('pathnawigacja')
+                MainApp.navi_path = value
+                gr.changeGpxPath(value)
+
             if key == 'pathnawigacja1':
                 print 'pathnawigacja1'
                 MainApp.navi_path = value
+                gr.savepath(value)
 
         if section == 'glos':
             if key == 'optionsglos1':
@@ -3115,257 +3213,324 @@ class MainApp(App):
     def stop(self):
         gps.stop()
 
+    def loadScreen(self):
+        MainApp.get_running_app().root.carousel.load_previous()
+
     @mainthread
-    def on_location(self, speed, **kwargs):
+    def on_location_symuluj(self, clock):
+
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
-        duration = (
-            datetime.datetime.combine(datetime.date.today(),
-                                      datetime.datetime.now().time()) - datetime.datetime.combine(
-                datetime.date.today(), MainApp.prev_time)).total_seconds()
+        if group_screen.simulationFlag == True:
+            duration = (
+                datetime.datetime.combine(datetime.date.today(),
+                                          datetime.datetime.now().time()) - datetime.datetime.combine(
+                    datetime.date.today(), MainApp.prev_time)).total_seconds()
 
+            if duration >= 1:
+                # self.gps_location = '\n'.join([
+                #                                   '{}={}'.format(k, v) for k, v in kwargs.items()])
+                # Symulator jazdy, tylko do pozorowania trasy
+                punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
+                punktySymulacjiLon2 = MainApp.get_running_app().root.carousel.slides[0].punktySymulacjiLon
+                punktySymulacjiLat2 = MainApp.get_running_app().root.carousel.slides[0].punktySymulacjiLat
 
+                if group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < len(
+                        punktySymulacjiLat2) - 1:
+                    # MainApp.lat = punkty2.getLat(self.licz2)
+                    # MainApp.lon = punkty2.getLon(self.licz2)
+                    MainApp.lat = punktySymulacjiLat2[self.licz2]
+                    MainApp.lon = punktySymulacjiLon2[self.licz2]
+                    self.licz2 = self.licz2 + 1
+                    self.FlagaLicznik = True
 
-        if duration >= 1:
-            self.gps_location = '\n'.join([
-                                              '{}={}'.format(k, v) for k, v in kwargs.items()])
-            # Symulator jazdy, tylko do pozorowania trasy
-            punkty2 = MainApp.get_running_app().root.carousel.slides[0].punkty
-            punktySymulacjiLon2 = MainApp.get_running_app().root.carousel.slides[0].punktySymulacjiLon
-            punktySymulacjiLat2 = MainApp.get_running_app().root.carousel.slides[0].punktySymulacjiLat
-
-            if group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < len(punktySymulacjiLat2) - 1:
-                # MainApp.lat = punkty2.getLat(self.licz2)
-                # MainApp.lon = punkty2.getLon(self.licz2)
-                MainApp.lat = punktySymulacjiLat2[self.licz2]
-                MainApp.lon = punktySymulacjiLon2[self.licz2]
-                self.licz2 = self.licz2 + 1
-                self.FlagaLicznik = True
-
-            elif group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
-                MainApp.lat = punkty2.getLat(self.licz2)
-                MainApp.lon = punkty2.getLon(self.licz2)
-                self.licz2 = self.licz2 + 1
-                self.FlagaLicznik = True
-            else:
-                self.FlagaLicznik = False
-                self.licz2 = 0
-                self.distance = 0.00
-                self.calories = 0.00
-
-            # koniec symulatora
-
-            # Prawidłowy kod
-            # for k, v in kwargs.items():
-            #     if k == "lat":
-            #         MainApp.lat = float(v)
-            #     else:
-            #         if k == "lon":
-            #             MainApp.lon = float(v)
-
-            #konic komenatrza prawidłowego kodu
-
-            print "licznik_predkosci"
-            if self.licz2 > 0:
-                self.distanceSpeed = group_screen.calculate_distance(float(MainApp.lat),
-                                                            float(MainApp.LastLat),
-                                                            float(MainApp.lon),
-                                                            float(MainApp.LastLon))
-                self.distanceSpeed = self.distanceSpeed / 10000
-                self.timeNow = time.time()
-                self.TimeSpeed = self.timeNow - self.timeLast
-                self.TimeSpeed = self.TimeSpeed / 60
-
-                print"++++++++++"
-                print (str(self.distanceSpeed))
-                print (str(self.TimeSpeed))
-                self.timeLast = self.timeNow
-                self.LastLat = MainApp.lat
-                self.LastLon = MainApp.lon
-            else:
-                self.LastLat = MainApp.lat
-                self.LastLon = MainApp.lon
-                self.distanceSpeed = 0
-                self.TimeSpeed = 0
-
-
-            self.licznikSpeed += 1
-
-            # speed = Speed(float(speed))
-            # # if speed<4.0:
-            # #   speed=0
-            # if speed > self.highest_speed_float:
-            #     self.highest_speed_float = speed
-            # # self.distance=self.distance+speed
-            # # self.distance=round(self.distance,2)
-            # self.gps_speed = speed
-            if self.FlagaLicznik == False:
-                self.gps_speed = 0
-            else:
-                try:
-                    self.gps_speed = float(self.distanceSpeed) / float(self.TimeSpeed)
-                    print "000000000000000000000000000000000"
-                    print (self.gps_speed)
-                    print "00000000000000000000000000000"
-                except:
-                    pass
-            self.tabela_speed[self.licz] = speed
-            if self.wystarczy == 1:
-                for i in self.tabela_speed:
-                    self.suma = self.suma + i
-                self.avg_speed = self.suma / 20
-            if self.licz == 19:
-                self.licz = 0
-                self.wystarczy = 1
-            self.licz = self.licz + 1
-            # self.highest_speed = self.highest_speed_float
-            # print "blblbl"
-            # print self.gps_speed
-            # self.gps_speed = self.gps_speed * 18 / 5
-            # self.gps_speed = round(self.gps_speed, 2)
-            # self.highest_speed = self.highest_speed * 18 / 5
-            # self.highest_speed = round(self.highest_speed, 2)
-            self.distance = self.distance + (self.gps_speed / 1000.00)
-            if self.gps_speed <= 9 and self.gps_speed > 6:
-                self.calories = self.calories + 70 * 0.06 / 60.00
-            elif self.gps_speed > 9 and self.gps_speed <= 13:
-                self.calories = self.calories + 70 * 0.114 / 60.00
-            elif self.gps_speed > 13 and self.gps_speed <= 16:
-                self.calories = self.calories + 70 * 0.13 / 60.00
-            elif self.gps_speed > 16 and self.gps_speed <= 19:
-                self.calories = self.calories + 70 * 0.149 / 60.00
-            elif self.gps_speed > 19:
-                self.calories = self.calories + 70 * 0.168 / 60.00
-            self.calories2 = round(self.calories, 1)
-            self.distance2 = round(self.distance, 2)
-            self.gps_speed2 = round(self.gps_speed, 1)
-            # MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
-            # MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
-
-            MainApp.get_running_app().root.carousel.slides[0].ids["label_speed2"].text = str(self.gps_speed2)
-            # MainApp.get_running_app().root.carousel.slides[0].ids["label_max_speed2"].text = str(self.highest_speed)
-            MainApp.get_running_app().root.carousel.slides[0].ids["label_distance"].text = str(self.distance2)
-            MainApp.get_running_app().root.carousel.slides[0].ids["label_calories"].text = str(self.calories2)
-            if self.wystarczy == 1:
-                self.avg_speed2 = round(self.avg_speed, 1)
-                # MainApp.get_running_app().root.carousel.slides[0].ids["label_avg_speed"].text = str(self.avg_speed2)
-
-            mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
-            if MainApp.znacznik == 0:
-                mapview.add_layer(LineMapLayer(), mode="scatter")
-                MainApp.znacznik = 1
-
-            # group = GroupScreen()
-            # try:
-            #     group.get_readings(1)
-            # except:
-            #     pass
-
-
-            # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów
-            if self.flagaWykonania == True:
-                MainApp.get_running_app().root.carousel.slides[1].view_contact()
-                # MainApp.get_running_app().root.carousel.slides[3].getSongs()
-                self.flagaWykonania = False
-            # wykonywane co godzine, pobieranie pogodty itd
-            if self.flagaWygladu == True:
-                try:
-                    self.flagaWygladu = False
-                    #Weather().ustal_pogode()
-                    print "przesledzam pogode"
-                    miej = Weather().ustal_pogode()
-                    print "przesledzilem pogode"
-                    wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
-                    key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
-                    print "MIejscowoscc sprawdzana"
-                    print str(miej)
-
-                    city = str(miej)
-                    # city="Mediolan"
-                    range_detect = 70
-                    print "Wykonuje burze_api"
-                    ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
-                    print "Wykonalem burze_api111"
-                    Weather().print_burza(burza)
-                    print "Wykonalem burze_api2"
-                    Weather().print_ostrzezenia(ostrzezenia)
-                    print "Wykonalem burze_api3"
-                    # MusicPlayer().getSongs()
-                    #self.flagaWygladu = False
-                    print "daty daty daty"
-                    # print datetime.date.today()
-                    # abc = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                    # print(str(abc))
-                    # abcc = str(datetime.datetime.now())
-                    # print(str(abcc))
-                    # Czyszczenie cache, prototyp
-                    # try:
-                    #     for root, dirs, files in os.walk('/sdcard/Bicom/Mapy'):
-                    #         for f in files:
-                    #             print "czysci cache"
-                    #             filename = os.path.join(root, f)
-                    #             spr = float(path.getmtime('/sdcard/Bicom/cacheclear.dat')) - float(path.getctime(filename))
-                    #             if float(spr) > 86400:
-                    #                 os.remove(filename)
-                    # except:
-                    #     pass
-
-                except:
-                    pass
-                #self.flagaWygladu = False
-                #Weather().ustal_pogode()
-                #MusicPlayer().getSongs()
-
-            MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
-            MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
-
-            punkty = MainApp.get_running_app().root.carousel.slides[0].punkty
-            #punkty.setNode(0, float(MainApp.lat), float(MainApp.lon))
-
-            #group_screen = MainApp.get_running_app().root.carousel.slides[0]
-
-            #obliczenie odleglosci miedzy aktualnym punktem a najblizszym punktem w nawigacji do ktorego zmierzamy
-            if group_screen.route_calculated == True and group_screen.Nawiguj == True:
-                x1 = punkty.getLat(group_screen.actual_point)
-                y1 = punkty.getLon(group_screen.actual_point)
-                if group_screen.actual_point == punkty.getSize() - 1:
-                    x2 = x1
-                    y2 = y1
+                elif group_screen.route_calculated == True and group_screen.Nawiguj == True and self.licz2 < punkty2.getSize() - 1:
+                    MainApp.lat = punkty2.getLat(self.licz2)
+                    MainApp.lon = punkty2.getLon(self.licz2)
+                    self.licz2 = self.licz2 + 1
+                    self.FlagaLicznik = True
                 else:
-                    x2 = punkty.getLat(group_screen.actual_point + 1)
-                    y2 = punkty.getLon(group_screen.actual_point + 1)
-                x = MainApp.lat
-                y = MainApp.lon
+                    self.FlagaLicznik = False
+                    self.licz2 = 0
+                    self.distance = 0.00
+                    self.calories = 0.00
 
-                # if group_screen.of_the_track(x1, y1, x2, y2, x, y):
-                #     group_screen.recalculate_route()
+                # koniec symulatora
 
-                distance1 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point)))
-                if x1 == x2 and y1 == y2:
-                    distance2 = distance1
+                # Prawidłowy kod
+                # for k, v in kwargs.items():
+                #     if k == "lat":
+                #         MainApp.lat = float(v)
+                #     else:
+                #         if k == "lon":
+                #             MainApp.lon = float(v)
+
+                # konic komenatrza prawidłowego kodu
+
+                print "licznik_predkosci"
+                if self.licz2 > 0:
+                    self.distanceSpeed = group_screen.calculate_distance(float(MainApp.lat),
+                                                                         float(MainApp.LastLat),
+                                                                         float(MainApp.lon),
+                                                                         float(MainApp.LastLon))
+                    self.distanceSpeed = self.distanceSpeed / 10000
+                    self.timeNow = time.time()
+                    self.TimeSpeed = self.timeNow - self.timeLast
+                    self.TimeSpeed = self.TimeSpeed / 60
+
+                    print"++++++++++"
+                    print (str(self.distanceSpeed))
+                    print (str(self.TimeSpeed))
+                    self.timeLast = self.timeNow
+                    self.LastLat = MainApp.lat
+                    self.LastLon = MainApp.lon
                 else:
-                    distance2 = group_screen.calculate_distance(float(MainApp.lat), float(punkty.getLat(group_screen.actual_point + 1)), float(MainApp.lon), float(punkty.getLon(group_screen.actual_point + 1)))
+                    self.LastLat = MainApp.lat
+                    self.LastLon = MainApp.lon
+                    self.distanceSpeed = 0
+                    self.TimeSpeed = 0
 
-                print "dystans"
-                print distance1
-                print distance2
+                self.licznikSpeed += 1
 
-                #sprawdzenie czy nie ominelismy najblizszego punktu
+                # speed = Speed(float(speed))
+                # # if speed<4.0:
+                # #   speed=0
+                # if speed > self.highest_speed_float:
+                #     self.highest_speed_float = speed
+                # # self.distance=self.distance+speed
+                # # self.distance=round(self.distance,2)
+                # self.gps_speed = speed
+                if self.FlagaLicznik == False:
+                    self.gps_speed = 0
+                else:
+                    try:
+                        self.gps_speed = float(self.distanceSpeed) / float(self.TimeSpeed)
+                        print "000000000000000000000000000000000"
+                        print (self.gps_speed)
+                        print "00000000000000000000000000000"
+                    except:
+                        pass
+                self.tabela_speed[self.licz] = self.gps_speed
+                if self.wystarczy == 1:
+                    for i in self.tabela_speed:
+                        self.suma = self.suma + i
+                    self.avg_speed = self.suma / 20
+                if self.licz == 19:
+                    self.licz = 0
+                    self.wystarczy = 1
+                self.licz = self.licz + 1
+                # self.highest_speed = self.highest_speed_float
+                # print "blblbl"
+                # print self.gps_speed
+                # self.gps_speed = self.gps_speed * 18 / 5
+                # self.gps_speed = round(self.gps_speed, 2)
+                # self.highest_speed = self.highest_speed * 18 / 5
+                # self.highest_speed = round(self.highest_speed, 2)
+                self.distance = self.distance + (self.gps_speed / 1000.00)
+                if self.gps_speed <= 9 and self.gps_speed > 6:
+                    self.calories = self.calories + 70 * 0.06 / 60.00
+                elif self.gps_speed > 9 and self.gps_speed <= 13:
+                    self.calories = self.calories + 70 * 0.114 / 60.00
+                elif self.gps_speed > 13 and self.gps_speed <= 16:
+                    self.calories = self.calories + 70 * 0.13 / 60.00
+                elif self.gps_speed > 16 and self.gps_speed <= 19:
+                    self.calories = self.calories + 70 * 0.149 / 60.00
+                elif self.gps_speed > 19:
+                    self.calories = self.calories + 70 * 0.168 / 60.00
+                self.calories2 = round(self.calories, 1)
+                self.distance2 = round(self.distance, 2)
+                self.gps_speed2 = round(self.gps_speed, 1)
+                # MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
+                # MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
 
-                instruction_points = GraphHopperAndroid.getInstructionPoints(group_screen.actual_instruction)
+                MainApp.get_running_app().root.carousel.slides[0].ids["label_speed2"].text = str(self.gps_speed2)
+                # MainApp.get_running_app().root.carousel.slides[0].ids["label_max_speed2"].text = str(self.highest_speed)
+                MainApp.get_running_app().root.carousel.slides[0].ids["label_distance"].text = str(self.distance2)
+                MainApp.get_running_app().root.carousel.slides[0].ids["label_calories"].text = str(self.calories2)
+                if self.wystarczy == 1:
+                    self.avg_speed2 = round(self.avg_speed, 1)
+                    # MainApp.get_running_app().root.carousel.slides[0].ids["label_avg_speed"].text = str(self.avg_speed2)
 
-                group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(group_screen.actual_instruction)
+                mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+                if MainApp.znacznik == 0:
+                    mapview.add_layer(LineMapLayer(), mode="scatter")
+                    MainApp.znacznik = 1
 
-                if distance2 > distance1:
-                    if distance1 < 0.01:
-                        #sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
-                        if instruction_points.getLatitude(0) == punkty.getLat(group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(group_screen.actual_point):
+                # group = GroupScreen()
+                # try:
+                #     group.get_readings(1)
+                # except:
+                #     pass
+
+
+                # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów
+                if self.flagaWykonania == True:
+                    MainApp.get_running_app().root.carousel.slides[1].view_contact()
+                    # MainApp.get_running_app().root.carousel.slides[3].getSongs()
+                    MainApp.get_running_app().root.carousel.index = 1
+                    MainApp.get_running_app().root.carousel.load_previous()
+                    self.flagaWykonania = False
+                # wykonywane co godzine, pobieranie pogodty itd
+                if self.flagaWygladu == True:
+
+                    try:
+
+
+
+
+                        self.flagaWygladu = False
+                        # Weather().ustal_pogode()
+                        print "przesledzam pogode"
+                        miej = Weather().ustal_pogode()
+                        print "przesledzilem pogode"
+                        wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
+                        key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
+                        print "MIejscowoscc sprawdzana"
+                        print str(miej)
+
+                        city = str(miej)
+                        # city="Mediolan"
+                        range_detect = 70
+                        print "Wykonuje burze_api"
+                        ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
+                        print "Wykonalem burze_api111"
+                        Weather().print_burza(burza)
+                        print "Wykonalem burze_api2"
+                        Weather().print_ostrzezenia(ostrzezenia)
+                        print "Wykonalem burze_api3"
+                        # MusicPlayer().getSongs()
+                        # self.flagaWygladu = False
+                        print "daty daty daty"
+                        # print datetime.date.today()
+                        # abc = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                        # print(str(abc))
+                        # abcc = str(datetime.datetime.now())
+                        # print(str(abcc))
+                        # Czyszczenie cache, prototyp
+                        # try:
+                        #     for root, dirs, files in os.walk('/sdcard/Bicom/Mapy'):
+                        #         for f in files:
+                        #             print "czysci cache"
+                        #             filename = os.path.join(root, f)
+                        #             spr = float(path.getmtime('/sdcard/Bicom/cacheclear.dat')) - float(path.getctime(filename))
+                        #             if float(spr) > 86400:
+                        #                 os.remove(filename)
+                        # except:
+                        #     pass
+
+                    except:
+                        pass
+                        # self.flagaWygladu = False
+                        # Weather().ustal_pogode()
+                        # MusicPlayer().getSongs()
+
+
+                MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
+                MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
+
+                punkty = MainApp.get_running_app().root.carousel.slides[0].punkty
+                # punkty.setNode(0, float(MainApp.lat), float(MainApp.lon))
+
+                # group_screen = MainApp.get_running_app().root.carousel.slides[0]
+
+                # obliczenie odleglosci miedzy aktualnym punktem a najblizszym punktem w nawigacji do ktorego zmierzamy
+                if group_screen.route_calculated == True and group_screen.Nawiguj == True:
+                    x1 = punkty.getLat(group_screen.actual_point)
+                    y1 = punkty.getLon(group_screen.actual_point)
+                    if group_screen.actual_point == punkty.getSize() - 1:
+                        x2 = x1
+                        y2 = y1
+                    else:
+                        x2 = punkty.getLat(group_screen.actual_point + 1)
+                        y2 = punkty.getLon(group_screen.actual_point + 1)
+                    x = MainApp.lat
+                    y = MainApp.lon
+
+                    # if group_screen.of_the_track(x1, y1, x2, y2, x, y):
+                    #     group_screen.recalculate_route()
+
+                    distance1 = group_screen.calculate_distance(float(MainApp.lat),
+                                                                float(punkty.getLat(group_screen.actual_point)),
+                                                                float(MainApp.lon),
+                                                                float(punkty.getLon(group_screen.actual_point)))
+                    if x1 == x2 and y1 == y2:
+                        distance2 = distance1
+                    else:
+                        distance2 = group_screen.calculate_distance(float(MainApp.lat),
+                                                                    float(punkty.getLat(group_screen.actual_point + 1)),
+                                                                    float(MainApp.lon),
+                                                                    float(punkty.getLon(group_screen.actual_point + 1)))
+
+                    print "dystans"
+                    print distance1
+                    print distance2
+
+                    # sprawdzenie czy nie ominelismy najblizszego punktu
+
+                    instruction_points = GraphHopperAndroid.getInstructionPoints(group_screen.actual_instruction)
+                    licznikInstrukcji = group_screen.actual_instruction + 1
+                    try:
+                        instruction_points2 = GraphHopperAndroid.getInstructionPoints(int(licznikInstrukcji))
+                    except:
+                        instruction_points2 = GraphHopperAndroid.getInstructionPoints(group_screen.actual_instruction)
+                        print 'wywalilo instrukcje'
+
+                    group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(
+                        group_screen.actual_instruction2)
+
+                    distanceIns = group_screen.calculate_distance(float(instruction_points2.getLatitude(0)),
+                                                                  float(MainApp.lat),
+                                                                  float(instruction_points2.getLongitude(0)),
+                                                                  float(MainApp.lon))
+                    if distance2 > distance1:
+                        if distance1 < 0.01:
+                            # sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
+
+
+                            if instruction_points.getLatitude(0) == punkty.getLat(
+                                    group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(
+                                    group_screen.actual_point):
+                                group_screen.actual_instruction += 1
+                            print 'dystans instrukcji'
+                            print str(distanceIns)
+                            if float(distanceIns) < 0.8:
+
+                                group_screen.actual_instruction2 = group_screen.actual_instruction
+                            else:
+                                group_screen.actual_instruction2 = 0
+                            group_screen.actual_point += 1
+
+                            print "instrukcje"
+                            print instruction_points.getLatitude(0)
+                            print instruction_points.getLongitude(0)
+
+                            if group_screen.actual_point == (punkty.getSize() - 1):
+                                group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
+                                group_screen.saveToGpx()
+                                group_screen.Nawiguj = False
+                                self.licz2 = 0
+
+                        # pomocnicze markery zawierajace 2 najblizsze punkty
+                        '''MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lat = float(group_screen.punkty.getLat(group_screen.actual_point))
+                        MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lon = float(group_screen.punkty.getLon(group_screen.actual_point))
+                        MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lat = float(group_screen.punkty.getLat(group_screen.actual_point + 1))
+                        MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lon = float(group_screen.punkty.getLon(group_screen.actual_point + 1))'''
+
+
+                    else:
+                        # sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
+                        if instruction_points.getLatitude(0) == punkty.getLat(
+                                group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(
+                                group_screen.actual_point):
                             group_screen.actual_instruction += 1
-                        group_screen.actual_point += 1
+                        if float(distanceIns) < 0.8:
 
+                            group_screen.actual_instruction2 = group_screen.actual_instruction
+                        else:
+                            group_screen.actual_instruction2 = 0
+                        group_screen.actual_point += 1
                         print "instrukcje"
                         print instruction_points.getLatitude(0)
                         print instruction_points.getLongitude(0)
-
 
                         if group_screen.actual_point == (punkty.getSize() - 1):
                             group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
@@ -3373,61 +3538,331 @@ class MainApp(App):
                             group_screen.Nawiguj = False
                             self.licz2 = 0
 
+                    if self.lastInstruction != group_screen.ids.label_instruction.text:
+                        activity.speaker.speak(group_screen.ids.label_instruction.text)
+                        self.lastInstruction = group_screen.ids.label_instruction.text
 
+                    if group_screen.actual_point >= group_screen.route_size[group_screen.travelled_points]:
+                        group_screen.travelled_points += 1
 
-                    #pomocnicze markery zawierajace 2 najblizsze punkty
-                    '''MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lat = float(group_screen.punkty.getLat(group_screen.actual_point))
-                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lon = float(group_screen.punkty.getLon(group_screen.actual_point))
-                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lat = float(group_screen.punkty.getLat(group_screen.actual_point + 1))
-                    MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lon = float(group_screen.punkty.getLon(group_screen.actual_point + 1))'''
+                # if flaga_gps == 1:
+                #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = lat_2
+                #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = lat_2
 
+                if MainApp.get_running_app().root.carousel.slides[0].auto_center:
+                    mapview.center_on(float(MainApp.lat), float(MainApp.lon))
+                    MainApp.get_running_app().root.carousel.slides[0].redraw_route()
 
-                else:
-                    #sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
-                    if instruction_points.getLatitude(0) == punkty.getLat(group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(group_screen.actual_point):
-                        group_screen.actual_instruction += 1
-                    group_screen.actual_point += 1
-                    print "instrukcje"
-                    print instruction_points.getLatitude(0)
-                    print instruction_points.getLongitude(0)
+                if self.flagCenter == True:
+                    mapview.center_on(float(MainApp.lat), float(MainApp.lon))
+                    MainApp.get_running_app().root.carousel.slides[0].redraw_route()
+                    self.flagCenter = False
+                MainApp.cos = 0
+                MainApp.prev_time = datetime.datetime.now().time()
 
-                    if group_screen.actual_point == (punkty.getSize() - 1):
-                        group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
-                        group_screen.saveToGpx()
-                        group_screen.Nawiguj = False
-                        self.licz2 = 0
-
-
-                if self.lastInstruction != group_screen.ids.label_instruction.text:
-                    activity.speaker.speak(group_screen.ids.label_instruction.text)
-                    self.lastInstruction = group_screen.ids.label_instruction.text
-
-                if group_screen.actual_point >= group_screen.route_size[group_screen.travelled_points]:
-                    group_screen.travelled_points += 1
+                group_screen = MainApp.get_running_app().root.carousel.slides[0]
+                if group_screen.recordPosition == True:
+                    actualDate2 = strftime("%Y-%m-%dT%H:%M:%SZ", localtime())
+                    GraphHopperAndroid.addActualPosition(float(MainApp.lat), float(MainApp.lon), str(actualDate2))
+                    group_screen.punktyTrasyLat.append(float(MainApp.lat))
+                    group_screen.punktyTrasyLon.append(float(MainApp.lon))
 
 
 
-            # if flaga_gps == 1:
-            #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = lat_2
-            #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = lat_2
+    @mainthread
+    def on_location(self, speed, **kwargs):
 
-            if MainApp.get_running_app().root.carousel.slides[0].auto_center:
-                mapview.center_on(float(MainApp.lat), float(MainApp.lon))
-                MainApp.get_running_app().root.carousel.slides[0].redraw_route()
+        group_screen = MainApp.get_running_app().root.carousel.slides[0]
+        if group_screen.simulationFlag == False:
+            duration = (
+                datetime.datetime.combine(datetime.date.today(),
+                                          datetime.datetime.now().time()) - datetime.datetime.combine(
+                    datetime.date.today(), MainApp.prev_time)).total_seconds()
 
-            if self.flagCenter == True:
-                mapview.center_on(float(MainApp.lat), float(MainApp.lon))
-                MainApp.get_running_app().root.carousel.slides[0].redraw_route()
-                self.flagCenter = False
-            MainApp.cos = 0
-            MainApp.prev_time = datetime.datetime.now().time()
 
-            group_screen = MainApp.get_running_app().root.carousel.slides[0]
-            if group_screen.recordPosition == True:
-                actualDate2 = strftime("%Y-%m-%dT%H:%M:%SZ", localtime())
-                GraphHopperAndroid.addActualPosition(float(MainApp.lat), float(MainApp.lon), str(actualDate2))
-                group_screen.punktyTrasyLat.append(float(MainApp.lat))
-                group_screen.punktyTrasyLon.append(float(MainApp.lon))
+
+            if duration >= 1:
+                self.gps_location = '\n'.join([
+                                                  '{}={}'.format(k, v) for k, v in kwargs.items()])
+
+
+                # Prawidłowy kod
+                for k, v in kwargs.items():
+                    if k == "lat":
+                        MainApp.lat = float(v)
+                    else:
+                        if k == "lon":
+                            MainApp.lon = float(v)
+
+                # konic komenatrza prawidłowego kodu
+
+
+                speed = Speed(float(speed))
+                # if speed<4.0:
+                #   speed=0
+                if speed > self.highest_speed_float:
+                    self.highest_speed_float = speed
+                # self.distance=self.distance+speed
+                # self.distance=round(self.distance,2)
+                self.gps_speed = speed
+
+                self.tabela_speed[self.licz] = self.gps_speed
+                if self.wystarczy == 1:
+                    for i in self.tabela_speed:
+                        self.suma = self.suma + i
+                    self.avg_speed = self.suma / 20
+                if self.licz == 19:
+                    self.licz = 0
+                    self.wystarczy = 1
+                self.licz = self.licz + 1
+                self.highest_speed = self.highest_speed_float
+                print "blblbl"
+                print self.gps_speed
+                self.gps_speed = self.gps_speed * 18 / 5
+                self.gps_speed = round(self.gps_speed, 2)
+                self.highest_speed = self.highest_speed * 18 / 5
+                self.highest_speed = round(self.highest_speed, 2)
+                self.distance = self.distance + (self.gps_speed / 1000.00)
+                if self.gps_speed <= 9 and self.gps_speed > 6:
+                    self.calories = self.calories + 70 * 0.06 / 60.00
+                elif self.gps_speed > 9 and self.gps_speed <= 13:
+                    self.calories = self.calories + 70 * 0.114 / 60.00
+                elif self.gps_speed > 13 and self.gps_speed <= 16:
+                    self.calories = self.calories + 70 * 0.13 / 60.00
+                elif self.gps_speed > 16 and self.gps_speed <= 19:
+                    self.calories = self.calories + 70 * 0.149 / 60.00
+                elif self.gps_speed > 19:
+                    self.calories = self.calories + 70 * 0.168 / 60.00
+                self.calories2 = round(self.calories, 1)
+                self.distance2 = round(self.distance, 2)
+                self.gps_speed2 = round(self.gps_speed, 1)
+                # MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
+                # MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
+
+                MainApp.get_running_app().root.carousel.slides[0].ids["label_speed2"].text = str(self.gps_speed2)
+                # MainApp.get_running_app().root.carousel.slides[0].ids["label_max_speed2"].text = str(self.highest_speed)
+                MainApp.get_running_app().root.carousel.slides[0].ids["label_distance"].text = str(self.distance2)
+                MainApp.get_running_app().root.carousel.slides[0].ids["label_calories"].text = str(self.calories2)
+                if self.wystarczy == 1:
+                    self.avg_speed2 = round(self.avg_speed, 1)
+                    # MainApp.get_running_app().root.carousel.slides[0].ids["label_avg_speed"].text = str(self.avg_speed2)
+
+                mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+                if MainApp.znacznik == 0:
+                    mapview.add_layer(LineMapLayer(), mode="scatter")
+                    MainApp.znacznik = 1
+
+                group = GroupScreen()
+                try:
+                    group.get_readings(1)
+                except:
+                    pass
+
+
+                # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów
+                if self.flagaWykonania == True:
+                    MainApp.get_running_app().root.carousel.slides[1].view_contact()
+                    # MainApp.get_running_app().root.carousel.slides[3].getSongs()
+                    MainApp.get_running_app().root.carousel.index = 1
+                    MainApp.get_running_app().root.carousel.load_previous()
+                    self.flagaWykonania = False
+                # wykonywane co godzine, pobieranie pogodty itd
+                if self.flagaWygladu == True:
+
+                    try:
+
+
+
+
+                        self.flagaWygladu = False
+                        # Weather().ustal_pogode()
+                        print "przesledzam pogode"
+                        miej = Weather().ustal_pogode()
+                        print "przesledzilem pogode"
+                        wsdl_file = 'https://burze.dzis.net/soap.php?WSDL'
+                        key = '52873aebc20c11a47eacdd6f81f8b905d11a90af'
+                        print "MIejscowoscc sprawdzana"
+                        print str(miej)
+
+                        city = str(miej)
+                        # city="Mediolan"
+                        range_detect = 70
+                        print "Wykonuje burze_api"
+                        ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
+                        print "Wykonalem burze_api111"
+                        Weather().print_burza(burza)
+                        print "Wykonalem burze_api2"
+                        Weather().print_ostrzezenia(ostrzezenia)
+                        print "Wykonalem burze_api3"
+                        # MusicPlayer().getSongs()
+                        # self.flagaWygladu = False
+                        print "daty daty daty"
+                        # print datetime.date.today()
+                        # abc = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+                        # print(str(abc))
+                        # abcc = str(datetime.datetime.now())
+                        # print(str(abcc))
+                        # Czyszczenie cache, prototyp
+                        # try:
+                        #     for root, dirs, files in os.walk('/sdcard/Bicom/Mapy'):
+                        #         for f in files:
+                        #             print "czysci cache"
+                        #             filename = os.path.join(root, f)
+                        #             spr = float(path.getmtime('/sdcard/Bicom/cacheclear.dat')) - float(path.getctime(filename))
+                        #             if float(spr) > 86400:
+                        #                 os.remove(filename)
+                        # except:
+                        #     pass
+
+                    except:
+                        pass
+                        # self.flagaWygladu = False
+                        # Weather().ustal_pogode()
+                        # MusicPlayer().getSongs()
+
+
+                MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
+                MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
+
+                punkty = MainApp.get_running_app().root.carousel.slides[0].punkty
+                # punkty.setNode(0, float(MainApp.lat), float(MainApp.lon))
+
+                # group_screen = MainApp.get_running_app().root.carousel.slides[0]
+
+                # obliczenie odleglosci miedzy aktualnym punktem a najblizszym punktem w nawigacji do ktorego zmierzamy
+                if group_screen.route_calculated == True and group_screen.Nawiguj == True:
+                    x1 = punkty.getLat(group_screen.actual_point)
+                    y1 = punkty.getLon(group_screen.actual_point)
+                    if group_screen.actual_point == punkty.getSize() - 1:
+                        x2 = x1
+                        y2 = y1
+                    else:
+                        x2 = punkty.getLat(group_screen.actual_point + 1)
+                        y2 = punkty.getLon(group_screen.actual_point + 1)
+                    x = MainApp.lat
+                    y = MainApp.lon
+
+                    # if group_screen.of_the_track(x1, y1, x2, y2, x, y):
+                    #     group_screen.recalculate_route()
+
+                    distance1 = group_screen.calculate_distance(float(MainApp.lat),
+                                                                float(punkty.getLat(group_screen.actual_point)),
+                                                                float(MainApp.lon),
+                                                                float(punkty.getLon(group_screen.actual_point)))
+                    if x1 == x2 and y1 == y2:
+                        distance2 = distance1
+                    else:
+                        distance2 = group_screen.calculate_distance(float(MainApp.lat),
+                                                                    float(punkty.getLat(group_screen.actual_point + 1)),
+                                                                    float(MainApp.lon),
+                                                                    float(punkty.getLon(group_screen.actual_point + 1)))
+
+                    print "dystans"
+                    print distance1
+                    print distance2
+
+                    # sprawdzenie czy nie ominelismy najblizszego punktu
+
+                    instruction_points = GraphHopperAndroid.getInstructionPoints(group_screen.actual_instruction)
+                    licznikInstrukcji = group_screen.actual_instruction + 1
+                    try:
+                        instruction_points2 = GraphHopperAndroid.getInstructionPoints(int(licznikInstrukcji))
+                    except:
+                        instruction_points2 = GraphHopperAndroid.getInstructionPoints(group_screen.actual_instruction)
+                        print 'wywalilo instrukcje'
+
+                    group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(
+                        group_screen.actual_instruction2)
+
+                    distanceIns = group_screen.calculate_distance(float(instruction_points2.getLatitude(0)),
+                                                                  float(MainApp.lat),
+                                                                  float(instruction_points2.getLongitude(0)),
+                                                                  float(MainApp.lon))
+                    if distance2 > distance1:
+                        if distance1 < 0.01:
+                            # sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
+
+
+                            if instruction_points.getLatitude(0) == punkty.getLat(
+                                    group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(
+                                    group_screen.actual_point):
+                                group_screen.actual_instruction += 1
+                            print 'dystans instrukcji'
+                            print str(distanceIns)
+                            if float(distanceIns) < 0.8:
+
+                                group_screen.actual_instruction2 = group_screen.actual_instruction
+                            else:
+                                group_screen.actual_instruction2 = 0
+                            group_screen.actual_point += 1
+
+                            print "instrukcje"
+                            print instruction_points.getLatitude(0)
+                            print instruction_points.getLongitude(0)
+
+                            if group_screen.actual_point == (punkty.getSize() - 1):
+                                group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
+                                group_screen.saveToGpx()
+                                group_screen.Nawiguj = False
+                                self.licz2 = 0
+
+                        # pomocnicze markery zawierajace 2 najblizsze punkty
+                        '''MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lat = float(group_screen.punkty.getLat(group_screen.actual_point))
+                        MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_1"].lon = float(group_screen.punkty.getLon(group_screen.actual_point))
+                        MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lat = float(group_screen.punkty.getLat(group_screen.actual_point + 1))
+                        MainApp.get_running_app().root.carousel.slides[0].ids["marker_trasa_2"].lon = float(group_screen.punkty.getLon(group_screen.actual_point + 1))'''
+
+
+                    else:
+                        # sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
+                        if instruction_points.getLatitude(0) == punkty.getLat(
+                                group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(
+                                group_screen.actual_point):
+                            group_screen.actual_instruction += 1
+                        if float(distanceIns) < 0.8:
+
+                            group_screen.actual_instruction2 = group_screen.actual_instruction
+                        else:
+                            group_screen.actual_instruction2 = 0
+                        group_screen.actual_point += 1
+                        print "instrukcje"
+                        print instruction_points.getLatitude(0)
+                        print instruction_points.getLongitude(0)
+
+                        if group_screen.actual_point == (punkty.getSize() - 1):
+                            group_screen.ids.label_instruction.text = "Dotarłeś na miejsce."
+                            group_screen.saveToGpx()
+                            group_screen.Nawiguj = False
+                            self.licz2 = 0
+
+                    if self.lastInstruction != group_screen.ids.label_instruction.text:
+                        activity.speaker.speak(group_screen.ids.label_instruction.text)
+                        self.lastInstruction = group_screen.ids.label_instruction.text
+
+                    if group_screen.actual_point >= group_screen.route_size[group_screen.travelled_points]:
+                        group_screen.travelled_points += 1
+
+                # if flaga_gps == 1:
+                #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lat = lat_2
+                #     MainApp.get_running_app().root.carousel.slides[0].ids["marker2"].lon = lat_2
+
+                if MainApp.get_running_app().root.carousel.slides[0].auto_center:
+                    mapview.center_on(float(MainApp.lat), float(MainApp.lon))
+                    MainApp.get_running_app().root.carousel.slides[0].redraw_route()
+
+                if self.flagCenter == True:
+                    mapview.center_on(float(MainApp.lat), float(MainApp.lon))
+                    MainApp.get_running_app().root.carousel.slides[0].redraw_route()
+                    self.flagCenter = False
+                MainApp.cos = 0
+                MainApp.prev_time = datetime.datetime.now().time()
+
+                group_screen = MainApp.get_running_app().root.carousel.slides[0]
+                if group_screen.recordPosition == True:
+                    actualDate2 = strftime("%Y-%m-%dT%H:%M:%SZ", localtime())
+                    GraphHopperAndroid.addActualPosition(float(MainApp.lat), float(MainApp.lon), str(actualDate2))
+                    group_screen.punktyTrasyLat.append(float(MainApp.lat))
+                    group_screen.punktyTrasyLon.append(float(MainApp.lon))
 
     @mainthread
     def on_status(self, stype, status):

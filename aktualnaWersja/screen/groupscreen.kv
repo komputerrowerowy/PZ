@@ -9,23 +9,26 @@
             id: scatter2
             RelativeLayout:
                 id: relativeMap
+#                height: root.height
+#                width: root.width
                 height: ((root.height * root.height) + (root.width * root.width))**0.5
                 width: ((root.height * root.height) + (root.width * root.width))**0.5
                 pos: (-((((root.height * root.height) + (root.width * root.width))**0.5) - root.width))/2, (-((((root.height * root.height) + (root.width * root.width))**0.5) - root.height))/2
                 MapView:
+#                    on_touch_move: root.MapNormal()
                     height: root.height
                     width: root.width
                     pos_hint: {'center_x':.5,'center_y':.5}
                     id: mapView
                     marker_list: []
-                    lat: 53.0102
-                    lon: 18.5946
+                    lat: 52.9828
+                    lon: 18.5729
                     zoom: 14
                     node: []
                     MapMarker:
                         id: marker
-                        lat: 53.0102
-                        lon: 18.5946
+                        lat: 52.9828
+                        lon: 18.5729
                     MapMarker:
                         id: marker2
                     MapMarker:
@@ -171,18 +174,31 @@
                     source: 'resources/download.png'
                     height: self.parent.height
 
+#            Button:
+#                id: BtnO
+#                size_hint_x: 0.15
+#                background_normal: ''
+#                background_color: 0.235, 0.529, 0.572, .7
+#                text: ''
+#                on_release: root.fileSelect()
+#                Image:
+#                    id: img_folder
+#                    center_x: self.parent.center_x
+#                    center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
+#                    source: 'resources/folder.png'
+#                    height: self.parent.height * 0.8
             Button:
-                id: BtnO
+                id: BtnSim
                 size_hint_x: 0.15
                 background_normal: ''
                 background_color: 0.235, 0.529, 0.572, .7
                 text: ''
-                on_release: root.fileSelect()
+                on_release: root.simulationRoute()
                 Image:
-                    id: img_folder
+                    id: img_sim
                     center_x: self.parent.center_x
                     center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
-                    source: 'resources/folder.png'
+                    source: 'resources/recwhite.png'
                     height: self.parent.height * 0.8
         BoxLayout:
             id: asdasd
@@ -469,6 +485,7 @@
         pos: root.pos
         orientation: "vertical"
         FileChooserIconView:
+            path: '/sdcard/Bicom'
             size_hint_y: .85
             id: filechooser
         #color: 0.521, 0.521, 0.513, 1
@@ -519,6 +536,7 @@
         pos: root.pos
         orientation: "vertical"
         FileChooserIconView:
+            path: '/sdcard/Bicom/Zapisane_trasy'
             size_hint_y: .85
             id: filechooser
         #color: 0.521, 0.521, 0.513, 1
@@ -674,11 +692,11 @@
         orientation: "vertical"
         spacing: 10
 
-        Image:
-            id: anulujbtn
+        QRCodeWidget:
+            id: qr
+            data: ''
             center_x: self.parent.center_x
             center_y: (self.parent.center_y)
-            source: 'resources/qr.png'
             height: self.parent.height
         Button:
             color: 0.235, 0.529, 0.572, 1
