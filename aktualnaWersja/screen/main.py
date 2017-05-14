@@ -443,7 +443,7 @@ class ShowTime(Screen):
                 self.rejectIncomingCall()
                 self.popup.dismiss()
         self.popup.dismiss()
-        self.popup_shown = False
+        #self.popup_shown = False
         self.ShowSmsAnswer()
 
     def _on_answer2(self, instance, answer):
@@ -621,6 +621,7 @@ class ShowTime(Screen):
                     print nrGrupy
                 except:
                     nrGrupy = 999
+                    print "wyjatek kontaktow: "
                     GrupyId.append(nrGrupy)
                     print "wyjatek: ", sys.exc_info()
 
@@ -684,6 +685,7 @@ class ShowTime(Screen):
 
     def dismiss_popupSmsAnswer(self):
         self._popupSmsAnswer.dismiss()
+        self.popup_shown = False
 
     def ShowSmsAnswer(self):
         content = PopupSmsAnswer(SmsOdp1=self.SmsOdp1,
@@ -698,14 +700,17 @@ class ShowTime(Screen):
     def SmsOdp1(self):
         self.send_sms(self.nrTel, "Jadę rowerem. Odezwę się później.")
         self.dismiss_popupSmsAnswer()
+        self.popup_shown = False
 
     def SmsOdp2(self):
         self.send_sms(self.nrTel, "Jadę rowerem. Nie mogę teraz rozmawiać.")
         self.dismiss_popupSmsAnswer()
+        self.popup_shown = False
 
     def SmsOdp3(self):
         self.send_sms(self.nrTel, "Jadę rowerem. Zadzwoń później.")
         self.dismiss_popupSmsAnswer()
+        self.popup_shown = False
 
 
 class ChooseFile(FloatLayout):
@@ -3110,121 +3115,122 @@ class ZoneButton(Button):
         ZoneButton._instance_count += 1
 
     def pop(self, tytul):
+        pass
 
-        if platform() == 'android':
-            activity = autoclass("org.renpy.android.PythonActivity").mActivity
-            GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
-            Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
-            Data = autoclass("android.provider.ContactsContract$Data")
-            RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
-            content_resolver = activity.getApplicationContext()
-            resolver = content_resolver.getContentResolver()
-
-            for i in range(0, len(ZoneList.ListaNazw)):
-                if tytul == ZoneList.ListaNazw[i]:
-                    groupID = ZoneList.ListaId[i]
-                    break
-
-            projection = [RawContactsColumns.CONTACT_ID, GroupMembership.CONTACT_ID]
-
-            grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None,
-                                   None)
-            group = grupa
-
-            while (grupa.moveToNext()):
-                id = group.getString(group.getColumnIndex("CONTACT_ID"))
-
-                grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
-                group2 = grupa2
-
-                while (grupa2.moveToNext()):
-                    nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
-                    if nazwa not in ZoneButton.Kontakty:
-                        ZoneButton.Kontakty.append(nazwa)
-
-                grupa2.close()
-            grupa.close()
-
-        popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
-                      separator_color=(.235, .529, .572, 1),
-                      # background= 'atlas://data/images/defaulttheme/filechooser_selected',
-                      auto_dismiss=False,
-                      size_hint=(None, None),
-                      size=(400, 400))
-
-        layout1 = StackLayout(orientation='lr-bt')
-
-        zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
-        zamknij.bind(on_release=popup.dismiss)
-
-        scrlv = ScrollView(size_hint=(1, 0.86))
-
-        layout2 = GridLayout(cols=1, size_hint_y=None)
-        layout2.bind(minimum_height=layout2.setter('height'))
-
-        # groupID = '1'
-
-        if len(ZoneButton.Kontakty) < 1:
-            ZoneButton.Kontakty = []
-            ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
-
-            for i in range(0, len(ZoneButton.Kontakty)):
-                btn = Button(text=ZoneButton.Kontakty[i],
-                             color=(.235, .529, .572, 1),
-                             size_hint_y=None,
-                             height=200,
-                             width=200,
-                             valign='middle',
-                             halign='center',
-                             font_size=20)
-
-                btn.text_size = (btn.size)
-                btn.background_color = (.941, .941, .937, 0)
-                layout2.add_widget(btn)
-
-        elif int(groupID) == int(999):
-            ZoneButton.Kontakty = []
-            ZoneButton.Kontakty.append(
-                "Ta grupa przeznaczona jest dla nieznanych numerów i nie zawiera żadnego kontaktu.")
-
-            for i in range(0, len(ZoneButton.Kontakty)):
-                btn = Button(text=ZoneButton.Kontakty[i],
-                             color=(.235, .529, .572, 1),
-                             size_hint_y=None,
-                             height=200,
-                             width=200,
-                             valign='middle',
-                             halign='center',
-                             font_size=20)
-
-                btn.text_size = (btn.size)
-                btn.background_color = (.941, .941, .937, 0)
-                layout2.add_widget(btn)
-        else:
-            for i in range(0, len(ZoneButton.Kontakty)):
-                btn = Button(text=ZoneButton.Kontakty[i],
-                             color=(.235, .529, .572, 1),
-                             size_hint_y=None,
-                             height=40,
-                             width=200,
-                             valign='middle',
-                             halign='center',
-                             font_size=20)
-
-                btn.text_size = (btn.size)
-                btn.background_color = (.941, .941, .937, 0)
-                layout2.add_widget(btn)
-
-        scrlv.add_widget(layout2)
-        layout1.add_widget(zamknij)
-        layout1.add_widget(scrlv)
-        popup.content = layout1
-        popup.open()
-
-        ZoneButton.Kontakty = []
-
-    def scroll_change(self, scrlv, instance, value):
-        scrlv.scroll_y = value
+    #     if platform() == 'android':
+    #         activity = autoclass("org.renpy.android.PythonActivity").mActivity
+    #         GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
+    #         Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
+    #         Data = autoclass("android.provider.ContactsContract$Data")
+    #         RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
+    #         content_resolver = activity.getApplicationContext()
+    #         resolver = content_resolver.getContentResolver()
+    #
+    #         for i in range(0, len(ZoneList.ListaNazw)):
+    #             if tytul == ZoneList.ListaNazw[i]:
+    #                 groupID = ZoneList.ListaId[i]
+    #                 break
+    #
+    #         projection = [RawContactsColumns.CONTACT_ID, GroupMembership.CONTACT_ID]
+    #
+    #         grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None,
+    #                                None)
+    #         group = grupa
+    #
+    #         while (grupa.moveToNext()):
+    #             id = group.getString(group.getColumnIndex("CONTACT_ID"))
+    #
+    #             grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
+    #             group2 = grupa2
+    #
+    #             while (grupa2.moveToNext()):
+    #                 nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
+    #                 if nazwa not in ZoneButton.Kontakty:
+    #                     ZoneButton.Kontakty.append(nazwa)
+    #
+    #             grupa2.close()
+    #         grupa.close()
+    #
+    #     popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
+    #                   separator_color=(.235, .529, .572, 1),
+    #                   # background= 'atlas://data/images/defaulttheme/filechooser_selected',
+    #                   auto_dismiss=False,
+    #                   size_hint=(None, None),
+    #                   size=(400, 400))
+    #
+    #     layout1 = StackLayout(orientation='lr-bt')
+    #
+    #     zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
+    #     zamknij.bind(on_release=popup.dismiss)
+    #
+    #     scrlv = ScrollView(size_hint=(1, 0.86))
+    #
+    #     layout2 = GridLayout(cols=1, size_hint_y=None)
+    #     layout2.bind(minimum_height=layout2.setter('height'))
+    #
+    #     # groupID = '1'
+    #
+    #     if len(ZoneButton.Kontakty) < 1:
+    #         ZoneButton.Kontakty = []
+    #         ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
+    #
+    #         for i in range(0, len(ZoneButton.Kontakty)):
+    #             btn = Button(text=ZoneButton.Kontakty[i],
+    #                          color=(.235, .529, .572, 1),
+    #                          size_hint_y=None,
+    #                          height=200,
+    #                          width=200,
+    #                          valign='middle',
+    #                          halign='center',
+    #                          font_size=20)
+    #
+    #             btn.text_size = (btn.size)
+    #             btn.background_color = (.941, .941, .937, 0)
+    #             layout2.add_widget(btn)
+    #
+    #     elif int(groupID) == int(999):
+    #         ZoneButton.Kontakty = []
+    #         ZoneButton.Kontakty.append(
+    #             "Ta grupa przeznaczona jest dla nieznanych numerów i nie zawiera żadnego kontaktu.")
+    #
+    #         for i in range(0, len(ZoneButton.Kontakty)):
+    #             btn = Button(text=ZoneButton.Kontakty[i],
+    #                          color=(.235, .529, .572, 1),
+    #                          size_hint_y=None,
+    #                          height=200,
+    #                          width=200,
+    #                          valign='middle',
+    #                          halign='center',
+    #                          font_size=20)
+    #
+    #             btn.text_size = (btn.size)
+    #             btn.background_color = (.941, .941, .937, 0)
+    #             layout2.add_widget(btn)
+    #     else:
+    #         for i in range(0, len(ZoneButton.Kontakty)):
+    #             btn = Button(text=ZoneButton.Kontakty[i],
+    #                          color=(.235, .529, .572, 1),
+    #                          size_hint_y=None,
+    #                          height=40,
+    #                          width=200,
+    #                          valign='middle',
+    #                          halign='center',
+    #                          font_size=20)
+    #
+    #             btn.text_size = (btn.size)
+    #             btn.background_color = (.941, .941, .937, 0)
+    #             layout2.add_widget(btn)
+    #
+    #     scrlv.add_widget(layout2)
+    #     layout1.add_widget(zamknij)
+    #     layout1.add_widget(scrlv)
+    #     popup.content = layout1
+    #     popup.open()
+    #
+    #     ZoneButton.Kontakty = []
+    #
+    # def scroll_change(self, scrlv, instance, value):
+    #     scrlv.scroll_y = value
 
 
 
