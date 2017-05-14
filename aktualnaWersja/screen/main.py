@@ -130,6 +130,7 @@ Image = autoclass('net.sourceforge.zbar.Image')
 ImageFormat = autoclass('android.graphics.ImageFormat')
 LinearLayout = autoclass('android.widget.LinearLayout')
 Symbol = autoclass('net.sourceforge.zbar.Symbol')
+JSONObject = autoclass("org.json.JSONObject")
 
 navi_path = '/sdcard'
 
@@ -290,6 +291,10 @@ class ShowTime(Screen):
 
     def build(self):
         pass
+
+
+
+
     def MapNormal(self):
         MainApp.get_running_app().root.carousel.slides[0].ids.relativeMap.height = ((self.height * self.height) + (
         self.width * self.width)) ** 0.5
@@ -1097,6 +1102,22 @@ class GroupScreen(Screen):
     GpxPath = "/sdcard/Bicom/Moje_trasy/"
     simulationFlag = False
 
+
+    def send_string(self):
+        json = JSONObject()
+        info = JSONObject()
+
+        json.put("to", "/topics/" + activity.actualTopic)
+        info.put("title", "Tytuł wiadomości")
+        info.put("klucz1", "wartosc1")
+        info.put("klucz2", "wartosc2")
+        json.put("data", info);
+
+        activity.sendJSON(json)
+
+    def change_topic(self):
+        activity.subscribeTopic("ugabuga")
+
     def simulationRoute(self):
         if self.simulationFlag == False:
             self.simulationFlag = True
@@ -1250,10 +1271,12 @@ class GroupScreen(Screen):
         self._popupGroupConect.open()
 
     def joinGroupConectAlert(self):
-        self.ReadQrCode()
+        #self.ReadQrCode()
+        self.send_string()
 
     def createGroupConectAlert(self):
-        self.ShowQrCode()
+        #self.ShowQrCode()
+        self.change_topic()
 
     def dismiss_popupTras(self):
         self._popupTras.dismiss()
@@ -1638,6 +1661,7 @@ class GroupScreen(Screen):
         if self.NawigationMode == False and len(self.PunktyKontrolneLon)>=2:
             self.NawigationMode = True
             group_screen = MainApp.get_running_app().root.carousel.slides[0]
+            group_screen.ids.mapView.zoom = 18
             self.center()
             self.ids.img_navi.source = "resources/map.png"
             group_screen.recordPosition = True
@@ -4127,10 +4151,10 @@ class MainApp(App):
                     MainApp.znacznik = 1
 
                 group = GroupScreen()
-                try:
-                    group.get_readings(1)
-                except:
-                    pass
+                # try:
+                #     group.get_readings(1)
+                # except:
+                #     pass
 
 
                 # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów

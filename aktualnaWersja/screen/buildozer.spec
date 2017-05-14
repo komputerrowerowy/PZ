@@ -122,7 +122,7 @@ android.sdk = 23
 #android.add_jars = foo.jar,bar.jar,path/to/more/*.jar
 #android.add_jars = libs/support-v4-19.1.0.jar
 #android.add_jars = libs/support-v4-24.1.1.aar
-android.add_jars = libs/cmu.jar,libs/graphhopper-tools-0.9-SNAPSHOT-jar-with-dependencies.jar,libs/classes.jar,libs/android/zbar.jar
+android.add_jars = libs/cmu.jar,libs/graphhopper-tools-0.9-SNAPSHOT-jar-with-dependencies.jar,libs/classes.jar,libs/android/zbar.jar,libs/support-content.jar
 
 # (list) List of Java files to add to the android project (can be java or a
 # directory containing the files)

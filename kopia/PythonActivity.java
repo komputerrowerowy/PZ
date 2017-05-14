@@ -104,6 +104,10 @@ import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 import static android.widget.Toast.makeText;
 import android.support.v4.content.ContextCompat;
 import 	android.support.v4.app.ActivityCompat;
+import org.test.Client;
+import org.test.PostData;
+import org.json.JSONObject;
+import android.support.v4.content.LocalBroadcastManager;
 
 
 
@@ -173,7 +177,8 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
     public boolean AlwaysReadInstruction = true;
     public String keyPressed="";
     public String actual_gram = "";
-    
+    private Client client;
+    public String actualTopic = "";
             
             
             
@@ -222,7 +227,47 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
 }
 
 
+public void sendTestMessage() {
+        Thread postDataThread = new Thread(new PostData(actualTopic));
+        postDataThread.start();
+    }
 
+    public void sendJSON(JSONObject json) {
+        Thread postDataThread = new Thread(new PostData(actualTopic, json));
+        postDataThread.start();
+    }
+    
+    public void changeTopic(String topic) {
+        Intent intent = new Intent("CHANGE_TOPIC");
+        intent.setPackage(this.getPackageName());
+        intent.putExtra("topic", topic);
+        System.out.println("jajebie");
+        System.out.println(intent.getAction());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+    
+    public void subscribeTopic(String topic) {
+        Intent i = new Intent();
+        //i.setPackage(this.getPackageName());
+        i.putExtra("topic", topic);
+        i.setAction("org.test.bicomgrupa.SUBSCRIBE_TOPIC");
+        getApplicationContext().sendBroadcast(i);
+        System.out.println("Wyslalem Intent: " + i.getAction());
+        actualTopic = topic;
+        //Toast.makeText(this, "Dołączyłeś do grupy: " + topic + ".", Toast.LENGTH_LONG).show();
+    }
+    
+    public void translateQR() {
+        Intent intent = new Intent("rg.test.bicomgroup.QRCODE");
+        intent.setPackage(this.getPackageName());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+    
+    public void acceptCall() {
+        Intent intent5 = new Intent("org.test.bicomgrupa.ACCEPT_CALL");
+        intent5.setPackage(this.getPackageName());
+        getApplicationContext().sendBroadcast(intent5);
+    }
 
 private final int CHECK_CODE = 0x1;
     private final int LONG_DURATION = 5000;
@@ -259,6 +304,7 @@ private final int CHECK_CODE = 0x1;
                         byte[] pdu = (byte[])pdus[i];
                         SmsMessage message = SmsMessage.createFromPdu(pdu);
                         String text = message.getDisplayMessageBody();
+                        
                         String sender = getContactName(message.getOriginatingAddress());
                         System.out.println("sluchawkiStan");
                         System.out.println(readSmsState);
@@ -356,7 +402,7 @@ private final int CHECK_CODE = 0x1;
     }
 
 
-    public void acceptCall() {
+    public void acceptCall2() {
         Context context = this;
         if (Build.VERSION.SDK_INT >= 21) {
             Intent answerCalintent = new Intent(context, AcceptCallActivity.class);
@@ -705,6 +751,8 @@ private final int CHECK_CODE = 0x1;
             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        
+        client = new Client();
 
 
 
