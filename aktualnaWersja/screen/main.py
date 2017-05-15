@@ -4082,7 +4082,11 @@ class MainApp(App):
 
                     # if group_screen.of_the_track(x1, y1, x2, y2, x, y):
                     #     group_screen.recalculate_route()
-
+                    print "co tu jest?1"
+                    print float(MainApp.lat)
+                    print float(punkty.getLat(group_screen.actual_point))
+                    print float(MainApp.lon)
+                    print float(punkty.getLon(group_screen.actual_point))
                     distance1 = group_screen.calculate_distance(float(MainApp.lat),
                                                                 float(punkty.getLat(group_screen.actual_point)),
                                                                 float(MainApp.lon),
@@ -4090,6 +4094,11 @@ class MainApp(App):
                     if x1 == x2 and y1 == y2:
                         distance2 = distance1
                     else:
+                        print "co tu jest?2"
+                        print float(MainApp.lat)
+                        print float(punkty.getLat(group_screen.actual_point+1))
+                        print float(MainApp.lon)
+                        print float(punkty.getLon(group_screen.actual_point+1))
                         distance2 = group_screen.calculate_distance(float(MainApp.lat),
                                                                     float(punkty.getLat(group_screen.actual_point + 1)),
                                                                     float(MainApp.lon),
@@ -4111,15 +4120,33 @@ class MainApp(App):
 
                     group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(
                         group_screen.actual_instruction2)
-                    if group_screen.actual_instruction2 == 0:
-                        group_screen.ids.label_instruction_distance.text = 'przez: ' + str(self.distLabel) + 'metrów'
-                    else:
-                        group_screen.ids.label_instruction_distance.text = 'za: ' + str(self.distLabel) + 'metrów'
+                    print "hhhhhhhhhhhhhhhhhhhhhh"
+                    print self.distLabel
 
+                    if group_screen.actual_instruction2 == 0 and self.distLabel>200:
+                        self.distLabel2=round(float(self.distLabel)/1000.0,1)
+                        group_screen.ids.label_instruction_distance.text = 'przez: ' + str(self.distLabel2) + ' km'
+                    elif group_screen.actual_instruction2 == 0 and self.distLabel <= 200:
+                        self.distLabel2=int(self.distLabel/10)*10
+                        group_screen.ids.label_instruction_distance.text = 'przez: ' + str(self.distLabel2) + ' m'
+                    elif group_screen.actual_instruction2 != 0 and self.distLabel>200:
+                        self.distLabel2 = round(float(self.distLabel) / 1000.0, 1)
+                        group_screen.ids.label_instruction_distance.text = 'za: ' + str(self.distLabel2) + ' km'
+                    elif group_screen.actual_instruction2 != 0 and self.distLabel <= 200:
+                        self.distLabel2 = int(self.distLabel / 10) * 10
+                        group_screen.ids.label_instruction_distance.text = 'za: ' + str(self.distLabel2) + ' m'
+
+                    print "co tu jest?3"
+                    print float(MainApp.lat)
+                    print float(instruction_points2.getLatitude(0))
+                    print float(MainApp.lon)
+                    print float(instruction_points2.getLongitude(0))
                     distanceIns = group_screen.calculate_distance(float(instruction_points2.getLatitude(0)),
                                                                   float(MainApp.lat),
                                                                   float(instruction_points2.getLongitude(0)),
                                                                   float(MainApp.lon))
+                    print "dystansssssss"
+                    print distanceIns
                     distanceMeters = distanceIns * 1000
                     self.distLabel = int(distanceMeters)
                     if distance2 > distance1:
@@ -4423,10 +4450,18 @@ class MainApp(App):
 
                     group_screen.ids.label_instruction.text = GraphHopperAndroid.getTurnDescription(
                         group_screen.actual_instruction2)
-                    if group_screen.actual_instruction2 == 0:
-                        group_screen.ids.label_instruction_distance.text = 'przez: ' + str(self.distLabel) + 'metrów'
-                    else:
-                        group_screen.ids.label_instruction_distance.text = 'za: ' + str(self.distLabel) + 'metrów'
+                    if group_screen.actual_instruction2 == 0 and self.distLabel>200:
+                        self.distLabel2=round(float(self.distLabel)/1000.0,1)
+                        group_screen.ids.label_instruction_distance.text = 'przez: ' + str(self.distLabel2) + ' km'
+                    elif group_screen.actual_instruction2 == 0 and self.distLabel <= 200:
+                        self.distLabel2=int(self.distLabel/10)*10
+                        group_screen.ids.label_instruction_distance.text = 'przez: ' + str(self.distLabel2) + ' m'
+                    elif group_screen.actual_instruction2 != 0 and self.distLabel>200:
+                        self.distLabel2 = round(float(self.distLabel) / 1000.0, 1)
+                        group_screen.ids.label_instruction_distance.text = 'za: ' + str(self.distLabel2) + ' km'
+                    elif group_screen.actual_instruction2 != 0 and self.distLabel <= 200:
+                        self.distLabel2 = int(self.distLabel / 10) * 10
+                        group_screen.ids.label_instruction_distance.text = 'za: ' + str(self.distLabel2) + ' m'
 
                     distanceIns = group_screen.calculate_distance(float(instruction_points2.getLatitude(0)),
                                                                   float(MainApp.lat),
@@ -4519,6 +4554,7 @@ class MainApp(App):
                     GraphHopperAndroid.addActualPosition(float(MainApp.lat), float(MainApp.lon), str(actualDate2))
                     group_screen.punktyTrasyLat.append(float(MainApp.lat))
                     group_screen.punktyTrasyLon.append(float(MainApp.lon))
+
 
     @mainthread
     def on_status(self, stype, status):
