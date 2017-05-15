@@ -1314,14 +1314,14 @@ class GroupScreen(Screen):
         self._popupShowPin.open()
 
     def dismiss_popupPutPin(self):
-        topic = MainApp.get_running_app().root.carousel.slides[0].ids.text
-        self.change_topic_add(topic)
+        topic = self.topicLabel
+        self.change_topic_add(str(topic))
         self._popupPutPin.dismiss()
 
 
     def PutPin(self):
         content = PopupPutPin(cancelPutPin=self.dismiss_popupPutPin, selectPin=self.selectPutPin)
-        content.ids.detector.start()
+
 
         self._popupPutPin = Popup(title="Dołącz do grupy", content=content,
                                         size_hint=(0.8, 0.6))
@@ -1375,7 +1375,7 @@ class GroupScreen(Screen):
         self._popupGroupConect.open()
 
     def joinGroupConectAlert(self):
-        #self.PutPin()
+        self.PutPin()
         #self.send_string()
         self.change_topic()
         self.dismiss_popupGroupConect()

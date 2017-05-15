@@ -796,20 +796,23 @@
             size: self.size
     BoxLayout:
         orientation: 'vertical'
+        size: root.size
+        pos: root.pos
         Label:
-            size_hint_y: 0.2
+            size_hint_y: 0.25
 
         TextInput:
             id: PinInput
             background_color: 1,1,1,1
             text: ''
             multiline: False
-            size_hint_x: 0.7
-            size_hint_y: 0.2
+            size_hint_x: 1
+            size_hint_y: 0.25
         Label:
-            size_hint_y: 0.2
+            size_hint_y: 0.25
         Button:
             color: 0.235, 0.529, 0.572, 1
+            size_hint_y: 0.25
             #text: "Zamknij"
             background_normal: ''
             background_color: 1,1,1,1
