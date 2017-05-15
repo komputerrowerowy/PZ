@@ -803,9 +803,18 @@ class PopupAlertStart(FloatLayout):
 class PopupShowPin(FloatLayout):
     cancelShowPin = ObjectProperty(None)
 
+
+
 class PopupPutPin(FloatLayout):
     cancelPutPin = ObjectProperty(None)
     selectPutPin = ObjectProperty(None)
+    def goToGroup(self):
+        topic3 = self.ids.PinInput.text
+        print(str(topic3))
+        gr = GroupScreen()
+
+        gr.change_topic_add(str(topic3))
+        gr.dismiss_popupPutPin()
 
 
 class ChooseBicomTras(FloatLayout):
@@ -1163,7 +1172,7 @@ class GroupScreen(Screen):
     GpxPath = "/sdcard/Bicom/Moje_trasy/"
     simulationFlag = False
     connectGroup = False
-    topicLabel = 1234
+
 
     def send_string(self, klucz1, wartosc1, klucz2, wartosc2, klucz3, wartosc3, tytul):
         json = JSONObject()
@@ -1183,7 +1192,7 @@ class GroupScreen(Screen):
     def change_topic(self):
         # MainApp.get_running_app().root.carousel.slides[0].ids['PinLabel'].text = str(topic)
         # PopupShowPin.ids.PinLabel.text = str(topic)
-        activity.subscribeTopic(str(self.topicLabel))
+        activity.subscribeTopic(str(MainApp.topicLabel))
         # activity.subscribeTopic("ugabuga")
 
     def change_topic_add(self, topic):
@@ -1302,8 +1311,8 @@ class GroupScreen(Screen):
         #actualDate = strftime("%Y-%m-%d %H:%M:%S", localtime())
         # self._popupShowPin.ids.qr.data = actualDate
 
-        self.topicLabel = random.randrange(1000, 10000, 2)
-        content.ids.PinLabel.text = str(self.topicLabel)
+        # MainApp.topicLabel = random.randrange(1000, 10000, 2)
+        content.ids.PinLabel.text = str(MainApp.topicLabel)
 
 
 
@@ -1314,9 +1323,9 @@ class GroupScreen(Screen):
         self._popupShowPin.open()
 
     def dismiss_popupPutPin(self):
-        topic = self.topicLabel
-        self.change_topic_add(str(topic))
-        self._popupPutPin.dismiss()
+        print 'wypisz ten topic'
+
+        #self._popupPutPin.dismiss()
 
 
     def PutPin(self):
@@ -1377,7 +1386,7 @@ class GroupScreen(Screen):
     def joinGroupConectAlert(self):
         self.PutPin()
         #self.send_string()
-        self.change_topic()
+        #elf.change_topic_add(self.topicLabel)
         self.dismiss_popupGroupConect()
         MainApp.get_running_app().root.carousel.slides[0].ids.img_groupConect.source = 'resources/alert.png'
         self.connectGroup = True
@@ -3665,6 +3674,7 @@ class MainApp(App):
     readStormState = 2
     distLabel = 0
     FlagaWysylania = 0
+    topicLabel = random.randrange(1000, 10000, 2)
 
 
     def build(self):
