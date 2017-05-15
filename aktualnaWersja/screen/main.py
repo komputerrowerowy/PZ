@@ -93,6 +93,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.graphics import Color, Line
 from jnius import autoclass, PythonJavaClass, java_method, cast
 from android.runnable import run_on_ui_thread
+import random
 
 # preload java classes
 
@@ -146,6 +147,9 @@ groups = []
 sensorEnabled = False
 wsp2 = 0
 GrupyId = []
+
+accountName = activity.getUsername()
+
 '''Popup odbieranie telefonu'''
 Builder.load_string('''
 <ConfirmPopup>:
@@ -519,6 +523,53 @@ class ShowTime(Screen):
     def check(self, fla):
         # pass
         mapview = MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]
+        group_screen = MainApp.get_running_app().root.carousel.slides[0]
+
+        messageList = activity.client.messageList
+        print "odczytane wiadomosci"
+        if not messageList.isEmpty():
+            for i in xrange(messageList.size()):
+                message = messageList.get(i)
+                message = message.replace("{", "")
+                message = message.replace("}", "")
+                message_split = message.split(",")
+                print message_split
+
+                tytul = message_split.pop().split("=").pop()
+
+                komorka2 = message_split.pop().split("=")
+                wartosc2 = komorka2.pop()
+                klucz2 = komorka2.pop()
+
+                komorka1 = message_split.pop().split("=")
+                wartosc1 = komorka1.pop()
+                klucz1 = komorka1.pop()
+
+                nazwa_konta = message_split.pop().split("=").pop()
+
+                print tytul
+                print komorka2
+                print wartosc2
+                print klucz2
+                print ""
+
+                print komorka1
+                print wartosc1
+                print klucz1
+                print ""
+
+                print nazwa_konta
+                if str(tytul) == 'CarDown2':
+                    group_screen.sendAlertCarDown()
+                elif str(tytul) == 'TitleCarUp':
+                    group_screen.sendAlertCarUp()
+                elif str(tytul) == 'TitleStart':
+                    group_screen.sendAlertStart()
+                elif str(tytul) == 'TitleStop':
+                    group_screen.sendAlertStop()
+
+
+            messageList.clear()
 
         if self.minutnik%60==0:
             print datetime.datetime.today()
@@ -731,6 +782,10 @@ class PopupGroupConect(FloatLayout):
 
 class PopupAlert(FloatLayout):
     cancelAlert = ObjectProperty(None)
+    sendCarDown = ObjectProperty(None)
+    sendCarUp = ObjectProperty(None)
+    sendStart = ObjectProperty(None)
+    sendStop = ObjectProperty(None)
 
 
 class PopupAlertCarDown(FloatLayout):
@@ -745,11 +800,12 @@ class PopupAlertStop(FloatLayout):
 class PopupAlertStart(FloatLayout):
     cancelAlertStart = ObjectProperty(None)
 
-class PopupShowQrCode(FloatLayout):
-    cancelShowQrCode = ObjectProperty(None)
+class PopupShowPin(FloatLayout):
+    cancelShowPin = ObjectProperty(None)
 
-class PopupReadQrCode(FloatLayout):
-    cancelReadQrCode = ObjectProperty(None)
+class PopupPutPin(FloatLayout):
+    cancelPutPin = ObjectProperty(None)
+    selectPutPin = ObjectProperty(None)
 
 
 class ChooseBicomTras(FloatLayout):
@@ -1106,22 +1162,32 @@ class GroupScreen(Screen):
     punktySymulacjiLon = []
     GpxPath = "/sdcard/Bicom/Moje_trasy/"
     simulationFlag = False
+    connectGroup = False
+    topicLabel = 1234
 
-
-    def send_string(self):
+    def send_string(self, klucz1, wartosc1, klucz2, wartosc2, klucz3, wartosc3, tytul):
         json = JSONObject()
         info = JSONObject()
 
         json.put("to", "/topics/" + activity.actualTopic)
-        info.put("title", "Tytuł wiadomości")
-        info.put("klucz1", "wartosc1")
-        info.put("klucz2", "wartosc2")
+        info.put("title", tytul)
+        info.put(klucz1, wartosc1)
+        info.put(klucz2, wartosc2)
+        info.put(klucz3, wartosc3)
         json.put("data", info);
+        print 'tu wpisuje jsona xD'
+        print json.toString()
 
         activity.sendJSON(json)
 
     def change_topic(self):
-        activity.subscribeTopic("ugabuga")
+        # MainApp.get_running_app().root.carousel.slides[0].ids['PinLabel'].text = str(topic)
+        # PopupShowPin.ids.PinLabel.text = str(topic)
+        activity.subscribeTopic(str(self.topicLabel))
+        # activity.subscribeTopic("ugabuga")
+
+    def change_topic_add(self, topic):
+        activity.subscribeTopic(str(topic))
 
     def simulationRoute(self):
         if self.simulationFlag == False:
@@ -1161,11 +1227,30 @@ class GroupScreen(Screen):
         self._popupAlert.dismiss()
 
     def sendAlert(self):
-        content = PopupAlert(cancelAlert=self.dismiss_popupAlert)
+        content = PopupAlert(cancelAlert=self.dismiss_popupAlert, sendCarDown=self.sendCarDownMessage, sendCarUp=self.sendCarUpMessage , sendStop =self.sendStop , sendStart =self.sendStart)
 
         self._popupAlert = Popup(title="Wyślij komunikat", content=content,
                             size_hint=(0.8, 0.7))
         self._popupAlert.open()
+
+    def sendCarDownMessage(self):
+        self.send_string('id', accountName, 'KeyCarDown', 'CarDown', 'KeyCarDown2', 'CarDown2', 'TitleCarDown')
+        self.dismiss_popupAlert()
+
+    def sendCarUpMessage(self):
+        self.send_string('id', accountName, 'KeyCarUp', 'CarUp', 'KeyCarUp2', 'CarUp2', 'TitleCarUp')
+        self.dismiss_popupAlert()
+
+    def sendStop(self):
+        self.send_string('id', accountName, 'KeyStop', 'Stop', 'KeyStop2', 'Stop2', 'TitleStop')
+        self.dismiss_popupAlert()
+
+    def sendStart(self):
+        self.send_string('id', accountName, 'KeyStart', 'Start', 'KeyStart2', 'Start2', 'TitleStart')
+        self.dismiss_popupAlert()
+
+    def sendMainLocation(self):
+        self.send_string('id', accountName, 'lat', str(MainApp.lat), 'lon', str(MainApp.lon), 'AktualPosition')
 
     def dismiss_popupAlertCarDown(self):
         self._popupAlertCarDown.dismiss()
@@ -1208,37 +1293,44 @@ class GroupScreen(Screen):
                                         size_hint=(0.8, 0.5))
         self._popupAlertStart.open()
 
-    def dismiss_popupShowQrCode(self):
-        self._popupShowQrCode.dismiss()
+    def dismiss_popupShowPin(self):
+        self._popupShowPin.dismiss()
 
-    def ShowQrCode(self):
-        content = PopupShowQrCode(cancelShowQrCode=self.dismiss_popupShowQrCode)
+    def ShowPin(self):
+        content = PopupShowPin(cancelShowPin=self.dismiss_popupShowPin)
 
-        actualDate = strftime("%Y-%m-%d %H:%M:%S", localtime())
-        # self._popupShowQrCode.ids.qr.data = actualDate
-        content.ids.qr.data = actualDate
+        #actualDate = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        # self._popupShowPin.ids.qr.data = actualDate
 
-
-
-        self._popupShowQrCode = Popup(title="Komunikat", content=content,
-                                        size_hint=(0.8, 0.8))
+        self.topicLabel = random.randrange(1000, 10000, 2)
+        content.ids.PinLabel.text = str(self.topicLabel)
 
 
-        self._popupShowQrCode.open()
 
-    def dismiss_popupReadQrCode(self):
-        self._popupReadQrCode.dismiss()
+        self._popupShowPin = Popup(title="Komunikat", content=content,
+                                        size_hint=(0.8, 0.4))
 
 
-    def ReadQrCode(self):
-        content = PopupReadQrCode(cancelReadQrCode=self.dismiss_popupReadQrCode)
+        self._popupShowPin.open()
+
+    def dismiss_popupPutPin(self):
+        topic = MainApp.get_running_app().root.carousel.slides[0].ids.text
+        self.change_topic_add(topic)
+        self._popupPutPin.dismiss()
+
+
+    def PutPin(self):
+        content = PopupPutPin(cancelPutPin=self.dismiss_popupPutPin, selectPin=self.selectPutPin)
         content.ids.detector.start()
 
-        self._popupReadQrCode = Popup(title="zczytaj qrcode", content=content,
-                                        size_hint=(0.8, 0.8))
+        self._popupPutPin = Popup(title="Dołącz do grupy", content=content,
+                                        size_hint=(0.8, 0.6))
 
 
-        self._popupReadQrCode.open()
+        self._popupPutPin.open()
+
+    def selectPutPin(self):
+        pass
 
 
 
@@ -1261,6 +1353,13 @@ class GroupScreen(Screen):
 
         self.dismiss_popup()
 
+    def ComunicationGroups(self):
+        if self.connectGroup == False:
+            self.ShowGroupConect()
+        else:
+            self.sendAlert()
+
+
 
 
     def dismiss_popupGroupConect(self):
@@ -1276,12 +1375,19 @@ class GroupScreen(Screen):
         self._popupGroupConect.open()
 
     def joinGroupConectAlert(self):
-        #self.ReadQrCode()
-        self.send_string()
+        #self.PutPin()
+        #self.send_string()
+        self.change_topic()
+        self.dismiss_popupGroupConect()
+        MainApp.get_running_app().root.carousel.slides[0].ids.img_groupConect.source = 'resources/alert.png'
+        self.connectGroup = True
 
     def createGroupConectAlert(self):
-        #self.ShowQrCode()
+        self.dismiss_popupGroupConect()
+        self.ShowPin()
         self.change_topic()
+        MainApp.get_running_app().root.carousel.slides[0].ids.img_groupConect.source = 'resources/alert.png'
+        self.connectGroup = True
 
     def dismiss_popupTras(self):
         self._popupTras.dismiss()
@@ -2269,7 +2375,7 @@ class GroupScreen(Screen):
         print acos((cosap * cosbp + sinap * sinbp * cos(1.616667 * pi / 180)) * pi / 180)
         distance = acos((cosap * cosbp + sinap * sinbp * cos(1.616667 * pi / 180)) * pi / 180) * 111.1'''
 
-        distance = sqrt(pow((lat2 - lat1), 2) + cos(lat1 * pi / 180) * pow((lon2 - lon1), 2)) * 40075.704 / 360
+        distance = sqrt(pow((lat2 - lat1), 2) + pow(cos(lat1 * pi / 180) * (lon2 - lon1), 2)) * 40075.704 / 360
 
         return distance
 
@@ -3718,6 +3824,11 @@ class MainApp(App):
     def on_location_symuluj(self, clock):
 
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
+        try:
+            if group_screen.connectGroup == True:
+                group_screen.sendMainLocation()
+        except:
+            print"brak polaczenia z grupa"
         if group_screen.simulationFlag == True:
             duration = (
                 datetime.datetime.combine(datetime.date.today(),
@@ -3766,22 +3877,32 @@ class MainApp(App):
 
                 print "licznik_predkosci"
                 if self.licz2 > 0:
+                    print MainApp.lat
+                    print MainApp.LastLat
+                    print MainApp.lon
+                    print MainApp.LastLon
+                    print self.LastLat
+                    print self.LastLon
                     self.distanceSpeed = group_screen.calculate_distance(float(MainApp.lat),
                                                                          float(MainApp.LastLat),
                                                                          float(MainApp.lon),
                                                                          float(MainApp.LastLon))
-                    self.distanceSpeed = self.distanceSpeed / 10000
+                    # self.distanceSpeed = self.distanceSpeed / 10000
                     self.timeNow = time.time()
                     self.TimeSpeed = self.timeNow - self.timeLast
-                    self.TimeSpeed = self.TimeSpeed / 60
+                    # self.TimeSpeed = self.TimeSpeed / 60
 
                     print"++++++++++"
                     print (str(self.distanceSpeed))
                     print (str(self.TimeSpeed))
                     self.timeLast = self.timeNow
+                    MainApp.LastLat = MainApp.lat
+                    MainApp.LastLon = MainApp.lon
                     self.LastLat = MainApp.lat
                     self.LastLon = MainApp.lon
                 else:
+                    MainApp.LastLat = MainApp.lat
+                    MainApp.LastLon = MainApp.lon
                     self.LastLat = MainApp.lat
                     self.LastLon = MainApp.lon
                     self.distanceSpeed = 0
@@ -3801,7 +3922,7 @@ class MainApp(App):
                     self.gps_speed = 0
                 else:
                     try:
-                        self.gps_speed = float(self.distanceSpeed) / float(self.TimeSpeed)
+                        self.gps_speed = float(self.distanceSpeed * 3600) / float(self.TimeSpeed)
                         print "000000000000000000000000000000000"
                         print (self.gps_speed)
                         print "00000000000000000000000000000"
@@ -3823,7 +3944,8 @@ class MainApp(App):
                 # self.gps_speed = round(self.gps_speed, 2)
                 # self.highest_speed = self.highest_speed * 18 / 5
                 # self.highest_speed = round(self.highest_speed, 2)
-                self.distance = self.distance + (self.gps_speed / 1000.00)
+                # self.distance = self.distance + (self.gps_speed / 1000.00) aaaaaaaaaaaaaaa
+                self.distance = self.distance + self.distanceSpeed
                 if self.gps_speed <= 9 and self.gps_speed > 6:
                     self.calories = self.calories + 70 * 0.06 / 60.00
                 elif self.gps_speed > 9 and self.gps_speed <= 13:
@@ -3983,7 +4105,7 @@ class MainApp(App):
                                                                   float(MainApp.lat),
                                                                   float(instruction_points2.getLongitude(0)),
                                                                   float(MainApp.lon))
-                    distanceMeters = distanceIns * 850
+                    distanceMeters = distanceIns * 1000
                     self.distLabel = int(distanceMeters)
                     if distance2 > distance1:
                         if distance1 < 0.01:
@@ -4077,6 +4199,11 @@ class MainApp(App):
     def on_location(self, speed, **kwargs):
 
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
+        try:
+            if group_screen.connectGroup == True:
+                group_screen.sendMainLocation()
+        except:
+            print"brak polaczenia z grupa"
         if group_screen.simulationFlag == False:
             duration = (
                 datetime.datetime.combine(datetime.date.today(),
@@ -4286,7 +4413,7 @@ class MainApp(App):
                                                                   float(MainApp.lat),
                                                                   float(instruction_points2.getLongitude(0)),
                                                                   float(MainApp.lon))
-                    distanceMeters = distanceIns * 850
+                    distanceMeters = distanceIns * 1000
                     self.distLabel = int(distanceMeters)
                     if distance2 > distance1:
                         if distance1 < 0.01:

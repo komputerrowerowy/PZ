@@ -421,7 +421,7 @@
                 background_color: 0.235, 0.529, 0.572, .7
                 halign: 'right'
                 text: ''
-                on_release: root.ShowGroupConect()
+                on_release: root.ComunicationGroups()
 #                on_release: root.sendAlertStart()
                 #root.test111()
                 #on_release: root.parent.parent.parent.check("881689020", "Testowy SMS")
@@ -744,7 +744,7 @@
                     source: 'resources/anuluj.png'
                     height: self.parent.height
 
-<PopupShowQrCode>:
+<PopupShowPin>:
     canvas.before:
         Color:
             rgba: 0.235, 0.529, 0.572, 1
@@ -757,41 +757,37 @@
         orientation: "vertical"
         spacing: 10
 
-        QRCodeWidget:
-            id: qr
-            data: ''
-            center_x: self.parent.center_x
-            center_y: (self.parent.center_y)
-            height: self.parent.height
-        Button:
-            color: 0.235, 0.529, 0.572, 1
-            #text: "Zamknij"
-            background_normal: ''
-            background_color: 1,1,1,1
+        Label:
+            id: PinLabel
+            canvas.before:
+                Color:
+                    rgb: 0.235, 0.529, 0.572
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            size_hint_y: .1
+            font_size: self.height / 3
+            text: "1234"
+            size_hint_y: .7
+            color: 1, 1, 1, 1
+        BoxLayout:
             size_hint_y: .3
-            on_release: root.cancelShowQrCode()
-            Image:
-                id: anulujbtn
-                center_x: self.parent.center_x
-                center_y: (self.parent.center_y)
-                source: 'resources/anuluj.png'
-                height: self.parent.height
-
-#<PopupShowQrCode>:
-#    canvas.before:
-#        Color:
-#            rgba: 0.235, 0.529, 0.572, 1
-#        Rectangle:
-#            pos: self.pos
-#            size: self.size
-#    BoxLayout:
-#        orientation: 'vertical'
-#
-#        ZbarQrcodeDetector:
-#            id: detector
+            orientation: 'vertical'
+            Button:
+                color: 0.235, 0.529, 0.572, 1
+                #text: "Zamknij"
+                background_normal: ''
+                background_color: 1,1,1,1
+                on_release: root.cancelShowPin()
+                Image:
+                    id: anulujbtn
+                    center_x: self.parent.center_x
+                    center_y: (self.parent.center_y)
+                    source: 'resources/anuluj.png'
+                    height: self.parent.height
 
 
-<PopupReadQrCode>:
+<PopupPutPin>:
     canvas.before:
         Color:
             rgba: 0.235, 0.529, 0.572, 1
@@ -800,24 +796,33 @@
             size: self.size
     BoxLayout:
         orientation: 'vertical'
+        Label:
+            size_hint_y: 0.2
+
+        TextInput:
+            id: PinInput
+            background_color: 1,1,1,1
+            text: ''
+            multiline: False
+            size_hint_x: 0.7
+            size_hint_y: 0.2
+        Label:
+            size_hint_y: 0.2
+        Button:
+            color: 0.235, 0.529, 0.572, 1
+            #text: "Zamknij"
+            background_normal: ''
+            background_color: 1,1,1,1
+            on_release: root.cancelPutPin()
+            Image:
+                id: anulujbtn
+                center_x: self.parent.center_x
+                center_y: (self.parent.center_y)
+                source: 'resources/ok.png'
+                height: self.parent.height
 
 
-        ZbarQrcodeDetector:
-            id: detector
 
-#        Label:
-#            text: '\\n'.join(map(repr, detector.symbols))
-#            size_hint_y: .3
-#
-#        BoxLayout:
-#            size_hint_y: .3
-#
-#            Button:
-#                text: 'Scan a qrcode'
-#                on_release: detector.start()
-#            Button:
-#                text: 'Stop detection'
-#                on_release: detector.stop()
 
 <PopupAlert>:
     canvas.before:
@@ -840,7 +845,7 @@
                     #text: "Zamknij"
                     background_normal: ''
                     background_color: 0.235, 0.529, 0.572, 1
-                    #on_release: root.cancelGpx()
+                    on_release: root.sendCarUp()
                     Image:
                         id: anulujbtn
                         center_x: self.parent.center_x
@@ -852,7 +857,7 @@
                     #text: "Zamknij"
                     background_normal: ''
                     background_color: 0.235, 0.529, 0.572, 1
-                    #on_release: root.cancelGpx()
+                    on_release: root.sendCarDown()
                     Image:
                         id: anulujbtn
                         center_x: self.parent.center_x
@@ -866,7 +871,7 @@
                     #text: "Zamknij"
                     background_normal: ''
                     background_color: 0.235, 0.529, 0.572, 1
-                    #on_release: root.cancelGpx()
+                    on_release: root.sendStart()
                     Image:
                         id: anulujbtn
                         center_x: self.parent.center_x
@@ -878,7 +883,7 @@
                     #text: "Zamknij"
                     background_normal: ''
                     background_color: 0.235, 0.529, 0.572, 1
-                    #on_release: root.cancelGpx()
+                    on_release: root.sendStop()
                     Image:
                         id: anulujbtn
                         center_x: self.parent.center_x
