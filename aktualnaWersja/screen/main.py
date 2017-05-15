@@ -3664,6 +3664,7 @@ class MainApp(App):
     readSmsState = 2
     readStormState = 2
     distLabel = 0
+    FlagaWysylania = 0
 
 
     def build(self):
@@ -3824,11 +3825,15 @@ class MainApp(App):
     def on_location_symuluj(self, clock):
 
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
-        try:
-            if group_screen.connectGroup == True:
-                group_screen.sendMainLocation()
-        except:
-            print"brak polaczenia z grupa"
+        if self.FlagaWysylania >= 4:
+            self.FlagaWysylania = 0
+            try:
+                if group_screen.connectGroup == True:
+                    group_screen.sendMainLocation()
+            except:
+                print"brak polaczenia z grupa"
+        else:
+            self.FlagaWysylania = self.FlagaWysylania + 1
         if group_screen.simulationFlag == True:
             duration = (
                 datetime.datetime.combine(datetime.date.today(),
@@ -4199,11 +4204,15 @@ class MainApp(App):
     def on_location(self, speed, **kwargs):
 
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
-        try:
-            if group_screen.connectGroup == True:
-                group_screen.sendMainLocation()
-        except:
-            print"brak polaczenia z grupa"
+        if self.FlagaWysylania >= 4:
+            self.FlagaWysylania = 0
+            try:
+                if group_screen.connectGroup == True:
+                    group_screen.sendMainLocation()
+            except:
+                print"brak polaczenia z grupa"
+        else:
+            self.FlagaWysylania = self.FlagaWysylania + 1
         if group_screen.simulationFlag == False:
             duration = (
                 datetime.datetime.combine(datetime.date.today(),
