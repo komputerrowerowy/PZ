@@ -36,21 +36,68 @@
                         id: marker_trasa_1
                     MapMarker:
                         id: marker_trasa_2
+                    MapMarker
+                        id: marker_group_1
+                        lat: 0.0
+                        lon: 0.0
+                        source: "libs/garden/garden.mapview/mapview/icons/markerGroupReady.png"
+                    MapMarker
+                        id: marker_group_2
+                        lat: 0.0
+                        lon: 0.0
+                        source: "libs/garden/garden.mapview/mapview/icons/markerGroupReady.png"
+                    MapMarker
+                        id: marker_group_3
+                        lat: 0.0
+                        lon: 0.0
+                        source: "libs/garden/garden.mapview/mapview/icons/markerGroupReady.png"
+                    MapMarker
+                        id: marker_group_4
+                        lat: 0.0
+                        lon: 0.0
+                    MapMarker
+                        id: marker_group_5
+                        lat: 0.0
+                        lon: 0.0
+                    MapMarker
+                        id: marker_group_6
+                        lat: 0.0
+                        lon: 0.0
+                    MapMarker
+                        id: marker_group_7
+                        lat: 0.0
+                        lon: 0.0
+                    MapMarker
+                        id: marker_group_8
+                        lat: 0.0
+                        lon: 0.0
+                    MapMarker
+                        id: marker_group_9
+                        lat: 0.0
+                        lon: 0.0
+                    MapMarker
+                        id: marker_group_10
+                        lat: 0.0
+                        lon: 0.0
     BoxLayout:
         orientation: 'vertical'
         size_hint: 1, 1
-        Label:
+        Button:
             id: label_instruction_distance
             size_hint: 1, 0.05
+            background_normal: ''
+            background_color: 0.235, 0.529, 0.572, 0.8
+            background_down: ''
             canvas.before:
-                Color:
-                    rgba: 0.235, 0.529, 0.572, 0.8
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
+#                Color:
+#                    rgba: 0.235, 0.529, 0.572, 0.8
+#                Rectangle:
+#                    pos: self.pos
+#                    size: self.size
             color: 1, 1, 1, 1
             font_size: self.height / 2
             text: ''
+            on_release: root.sfinxof()
         Label:
             id: label_instruction
             size_hint: 1, 0.075
@@ -212,7 +259,7 @@
                     id: img_sim
                     center_x: self.parent.center_x
                     center_y: (self.parent.center_y - (self.parent.height/2)* 0.8)
-                    source: 'resources/recwhite.png'
+                    source: 'resources/recred.png'
                     height: self.parent.height * 0.8
         BoxLayout:
             id: asdasd

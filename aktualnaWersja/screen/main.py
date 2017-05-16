@@ -289,6 +289,9 @@ class ShowTime(Screen):
     aktualna_minuta = 30
     minutnik=0
     if_night=False
+    group_members_names = []
+    group_members_lat = []
+    group_members_lon = []
 
     def __init__(self, **kwargs):
         super(ShowTime, self).__init__()
@@ -519,6 +522,18 @@ class ShowTime(Screen):
             return False
         return True
 
+    def group_update_marker(self):
+        show_time = MainApp.get_running_app().root
+
+        for index in xrange(0, len(show_time.group_members_lat)):
+            marker = "marker_group_" + str(index + 1)
+
+            marker_group = show_time.carousel.slides[0].ids[marker]
+            marker_group.lat = float(show_time.group_members_lat[index])
+            marker_group.lon = float(show_time.group_members_lon[index])
+        #self.group_update_marker(marker_group, lat, lon)
+
+
 
 
     def check(self, fla):
@@ -530,44 +545,82 @@ class ShowTime(Screen):
         print "odczytane wiadomosci"
         if not messageList.isEmpty():
             for i in xrange(messageList.size()):
+
+                nazwa_konta = ""
+                komorka = []
+                tytul = ""
+                lat = 0.0
+                lon = 0.0
+
                 message = messageList.get(i)
                 message = message.replace("{", "")
                 message = message.replace("}", "")
                 message_split = message.split(",")
                 print message_split
 
-                tytul = message_split.pop().split("=").pop()
+                komorka.append(message_split.pop().split("="))
+                komorka.append(message_split.pop().split("="))
+                komorka.append(message_split.pop().split("="))
+                komorka.append(message_split.pop().split("="))
 
-                komorka2 = message_split.pop().split("=")
-                wartosc2 = komorka2.pop()
-                klucz2 = komorka2.pop()
+                print komorka
 
-                komorka1 = message_split.pop().split("=")
-                wartosc1 = komorka1.pop()
-                klucz1 = komorka1.pop()
+                for i in komorka:
+                    wartosc = i.pop()
+                    klucz = i.pop()
 
-                nazwa_konta = message_split.pop().split("=").pop()
+                    print klucz
+                    print wartosc
+                    wartosc = wartosc.replace(" ", "")
+                    klucz = klucz.replace(" ", "")
 
-                print tytul
-                print komorka2
-                print wartosc2
-                print klucz2
-                print ""
+                    if klucz == "id":
+                        nazwa_konta = wartosc
+                    elif klucz == "title":
+                        tytul = wartosc
+                    elif klucz == "lat":
+                        lat = float(wartosc)
+                    elif klucz == "lon":
+                        lon = float(wartosc)
 
-                print komorka1
-                print wartosc1
-                print klucz1
-                print ""
+                if nazwa_konta != activity.getUsername():
+                    print "kupa"
+                    print nazwa_konta
+                    print tytul
+                    if str(tytul) == 'TitleCarDown':
+                        group_screen.sendAlertCarDown()
+                    elif str(tytul) == 'TitleCarUp':
+                        group_screen.sendAlertCarUp()
+                    elif str(tytul) == 'TitleStart':
+                        group_screen.sendAlertStart()
+                    elif str(tytul) == 'TitleStop':
+                        group_screen.sendAlertStop()
+                    elif str(tytul) == "AktualPosition":
+                        if nazwa_konta not in self.group_members_names:
+                            self.group_members_names.append(str(nazwa_konta))
+                            self.group_members_lat.append(float(lat))
+                            self.group_members_lon.append(float(lon))
 
-                print nazwa_konta
-                if str(tytul) == 'CarDown2':
-                    group_screen.sendAlertCarDown()
-                elif str(tytul) == 'TitleCarUp':
-                    group_screen.sendAlertCarUp()
-                elif str(tytul) == 'TitleStart':
-                    group_screen.sendAlertStart()
-                elif str(tytul) == 'TitleStop':
-                    group_screen.sendAlertStop()
+                            '''print self.group_members_names
+
+                            index = len(self.group_members_lat) - 1
+                            marker = "marker_group_" + str(index + 1)
+                            print marker
+
+                            marker_group = MainApp.get_running_app().root.carousel.slides[0].ids[marker]
+                            self.group_update_marker(marker_group, lat, lon)'''
+                        else:
+                            index = self.group_members_names.index(str(nazwa_konta))
+                            self.group_members_lat[index] = lat
+                            self.group_members_lon[index] = lon
+
+                            '''marker = "marker_group_" + str(index + 1)
+                            print marker
+                            #lat: 52.9828
+                            #lon: 18.5729
+
+                            marker_group = MainApp.get_running_app().root.carousel.slides[0].ids[marker]
+                            self.group_update_marker(marker_group, lat, lon)'''
 
 
             messageList.clear()
@@ -731,7 +784,7 @@ class ShowTime(Screen):
                 self.flagaCall = 1
 
         print "Tutaj sprawdzam Weather.czy_burza=" + str(Weather.czy_burza)
-        if Weather.czy_burza==0.5 and self.powtorka==0:
+        if Weather.czy_burza==1 and self.powtorka==0:
             self.powtorka=1
             self.stormListener()
 
@@ -1171,8 +1224,16 @@ class GroupScreen(Screen):
     punktySymulacjiLat = []
     punktySymulacjiLon = []
     GpxPath = "/sdcard/Bicom/Moje_trasy/"
-    simulationFlag = False
+    simulationFlag = True
     connectGroup = False
+
+    def sfinxof(self):
+        if activity.ignore_sphinx == True:
+            activity.ignore_sphinx = False
+            MainApp.get_running_app().root.carousel.slides[0].ids.label_instruction_distance.background_color = (0.235, 0.529, 0.572, 0.9)
+        else:
+            activity.ignore_sphinx = True
+            MainApp.get_running_app().root.carousel.slides[0].ids.label_instruction_distance.background_color = (0.235, 0.529, 0.572, 0.8)
 
 
     def send_string(self, klucz1, wartosc1, klucz2, wartosc2, klucz3, wartosc3, tytul):
@@ -2880,7 +2941,8 @@ class Weather(Screen):
         MainApp.get_running_app().root.carousel.slides[4].ids["label_temperatura"].text = str(temp)+str('°C')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_opady"].text = str(rain) + str(' mm')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_wilgotnosc"].text = str(humidity) + str('%')
-        MainApp.get_running_app().root.carousel.slides[4].ids["label_wiatr"].text = str(kierunek)+" "+str(wind)+str(' m/s ')
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_wiatr"].text = str(kierunek) + " " + str(
+            wind) + str(' m/s ')
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_miejscowosc"].text = str(place)
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_czas"].text = str(time)
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_nazwa_pogody"].text = str(name)
@@ -2890,8 +2952,8 @@ class Weather(Screen):
             ' mm')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wilgotnosc"].text = str(humidity_forecast) + str(
             '%')
-        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text = str(kierunek_forecast)+" "+str(wind_forecast)+str(
-            ' m/s ')
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text = str(wind_forecast) + str(
+            'm/s ') + str(kierunek_forecast)
         return data_forecast['city']['name']
 
     def burze_api(self,key, wsdl_file, city, range_detect):
@@ -2908,9 +2970,7 @@ class Weather(Screen):
             print "Weather().czy_burza="+str(self.czy_burza)
             print "whahahaha mamy radarN"
             StormPopup.ktory_radar = "resources/radarN.png"
-            StormPopup.background_color = (1,1,0,1)
-
-            #StormPopup.text="Uwaga!\nTak naprawde to nie ma burzy ;)"
+            StormPopup.background_color = (1, 1, 0, 1)
             #self.czy_burza = 0
             #MainApp.get_running_app().root.carousel.slides[0].ids["label_burza"].color = (0, 1, 0, 0.3)
             print "Brak burzy"
@@ -2922,7 +2982,7 @@ class Weather(Screen):
             if str(burza['kierunek'])=='N':
                 print "whahahaha mamy radarN"
                 if burza['odleglosc']>=50:
-                    StormPopup.background_color=(1,1,0,1)
+                    StormPopup.background_color = (1, 1, 0, 1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2944,18 +3004,18 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='E':
                 print "whahahaha mamy radarE"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,1)
+                    StormPopup.color=(1,1,0,.1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
-                    StormPopup.color=(1,0,0,1)
+                    StormPopup.color=(1,0,0,.3)
                 StormPopup.ktory_radar = "resources/radarE.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: E"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: wschodni")
             elif str(burza['kierunek'])=='SE':
                 print "whahahaha mamy radarSE"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,1)
+                    StormPopup.color=(1,1,0,.1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2966,7 +3026,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='S':
                 print "whahahaha mamy radarS"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,1)
+                    StormPopup.color=(1,1,0,.1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2977,7 +3037,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='SW':
                 print "whahahaha mamy radarSW"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,1)
+                    StormPopup.color=(1,1,0,.1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2988,7 +3048,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='W':
                 print "whahahaha mamy radarW"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,1)
+                    StormPopup.color=(1,1,0,.1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2999,7 +3059,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='NW':
                 print "whahahaha mamy radarNW"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,1)
+                    StormPopup.color=(1,1,0,.1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -3235,120 +3295,120 @@ class ZoneButton(Button):
     def pop(self, tytul):
         pass
 
-    #     if platform() == 'android':
-    #         activity = autoclass("org.renpy.android.PythonActivity").mActivity
-    #         GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
-    #         Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
-    #         Data = autoclass("android.provider.ContactsContract$Data")
-    #         RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
-    #         content_resolver = activity.getApplicationContext()
-    #         resolver = content_resolver.getContentResolver()
-    #
-    #         for i in range(0, len(ZoneList.ListaNazw)):
-    #             if tytul == ZoneList.ListaNazw[i]:
-    #                 groupID = ZoneList.ListaId[i]
-    #                 break
-    #
-    #         projection = [RawContactsColumns.CONTACT_ID, GroupMembership.CONTACT_ID]
-    #
-    #         grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None,
-    #                                None)
-    #         group = grupa
-    #
-    #         while (grupa.moveToNext()):
-    #             id = group.getString(group.getColumnIndex("CONTACT_ID"))
-    #
-    #             grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
-    #             group2 = grupa2
-    #
-    #             while (grupa2.moveToNext()):
-    #                 nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
-    #                 if nazwa not in ZoneButton.Kontakty:
-    #                     ZoneButton.Kontakty.append(nazwa)
-    #
-    #             grupa2.close()
-    #         grupa.close()
-    #
-    #     popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
-    #                   separator_color=(.235, .529, .572, 1),
-    #                   # background= 'atlas://data/images/defaulttheme/filechooser_selected',
-    #                   auto_dismiss=False,
-    #                   size_hint=(None, None),
-    #                   size=(400, 400))
-    #
-    #     layout1 = StackLayout(orientation='lr-bt')
-    #
-    #     zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
-    #     zamknij.bind(on_release=popup.dismiss)
-    #
-    #     scrlv = ScrollView(size_hint=(1, 0.86))
-    #
-    #     layout2 = GridLayout(cols=1, size_hint_y=None)
-    #     layout2.bind(minimum_height=layout2.setter('height'))
-    #
-    #     # groupID = '1'
-    #
-    #     if len(ZoneButton.Kontakty) < 1:
-    #         ZoneButton.Kontakty = []
-    #         ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
-    #
-    #         for i in range(0, len(ZoneButton.Kontakty)):
-    #             btn = Button(text=ZoneButton.Kontakty[i],
-    #                          color=(.235, .529, .572, 1),
-    #                          size_hint_y=None,
-    #                          height=200,
-    #                          width=200,
-    #                          valign='middle',
-    #                          halign='center',
-    #                          font_size=20)
-    #
-    #             btn.text_size = (btn.size)
-    #             btn.background_color = (.941, .941, .937, 0)
-    #             layout2.add_widget(btn)
-    #
-    #     elif int(groupID) == int(999):
-    #         ZoneButton.Kontakty = []
-    #         ZoneButton.Kontakty.append(
-    #             "Ta grupa przeznaczona jest dla nieznanych numerów i nie zawiera żadnego kontaktu.")
-    #
-    #         for i in range(0, len(ZoneButton.Kontakty)):
-    #             btn = Button(text=ZoneButton.Kontakty[i],
-    #                          color=(.235, .529, .572, 1),
-    #                          size_hint_y=None,
-    #                          height=200,
-    #                          width=200,
-    #                          valign='middle',
-    #                          halign='center',
-    #                          font_size=20)
-    #
-    #             btn.text_size = (btn.size)
-    #             btn.background_color = (.941, .941, .937, 0)
-    #             layout2.add_widget(btn)
-    #     else:
-    #         for i in range(0, len(ZoneButton.Kontakty)):
-    #             btn = Button(text=ZoneButton.Kontakty[i],
-    #                          color=(.235, .529, .572, 1),
-    #                          size_hint_y=None,
-    #                          height=40,
-    #                          width=200,
-    #                          valign='middle',
-    #                          halign='center',
-    #                          font_size=20)
-    #
-    #             btn.text_size = (btn.size)
-    #             btn.background_color = (.941, .941, .937, 0)
-    #             layout2.add_widget(btn)
-    #
-    #     scrlv.add_widget(layout2)
-    #     layout1.add_widget(zamknij)
-    #     layout1.add_widget(scrlv)
-    #     popup.content = layout1
-    #     popup.open()
-    #
-    #     ZoneButton.Kontakty = []
-    #
-    # def scroll_change(self, scrlv, instance, value):
-    #     scrlv.scroll_y = value
+        '''if platform() == 'android':
+            activity = autoclass("org.renpy.android.PythonActivity").mActivity
+            GroupMembership = autoclass("android.provider.ContactsContract$CommonDataKinds$GroupMembership")
+            Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
+            Data = autoclass("android.provider.ContactsContract$Data")
+            RawContactsColumns = autoclass("android.provider.ContactsContract$RawContactsColumns")
+            content_resolver = activity.getApplicationContext()
+            resolver = content_resolver.getContentResolver()
+
+            for i in range(0, len(ZoneList.ListaNazw)):
+                if tytul == ZoneList.ListaNazw[i]:
+                    groupID = ZoneList.ListaId[i]
+                    break
+
+            projection = [RawContactsColumns.CONTACT_ID, GroupMembership.GROUP_ROW_ID]
+
+            grupa = resolver.query(Data.CONTENT_URI, projection, GroupMembership.GROUP_ROW_ID + "=" + groupID, None,
+                                   None)
+            group = grupa
+
+            while (grupa.moveToNext()):
+                id = group.getString(group.getColumnIndex("CONTACT_ID"))
+
+                grupa2 = resolver.query(Phone.CONTENT_URI, None, Phone.CONTACT_ID + "=" + id, None, None)
+                group2 = grupa2
+
+                while (grupa2.moveToNext()):
+                    nazwa = group2.getString(group2.getColumnIndex("DISPLAY_NAME"))
+                    if nazwa not in ZoneButton.Kontakty:
+                        ZoneButton.Kontakty.append(nazwa)
+
+                grupa2.close()
+            grupa.close()
+
+        popup = Popup(title=tytul, title_color=(.235, .529, .572, 1), title_align='center',
+                      separator_color=(.235, .529, .572, 1),
+                      # background= 'atlas://data/images/defaulttheme/filechooser_selected',
+                      auto_dismiss=False,
+                      size_hint=(None, None),
+                      size=(400, 400))
+
+        layout1 = StackLayout(orientation='lr-bt')
+
+        zamknij = Button(text='Zamknij', background_color=(.235, .529, .572, 1), size_hint_y=None, height=40)
+        zamknij.bind(on_release=popup.dismiss)
+
+        scrlv = ScrollView(size_hint=(1, 0.86))
+
+        layout2 = GridLayout(cols=1, size_hint_y=None)
+        layout2.bind(minimum_height=layout2.setter('height'))
+
+        # groupID = '1'
+
+        if len(ZoneButton.Kontakty) < 1:
+            ZoneButton.Kontakty = []
+            ZoneButton.Kontakty.append("Brak kontaktów w tej grupie.")
+
+            for i in range(0, len(ZoneButton.Kontakty)):
+                btn = Button(text=ZoneButton.Kontakty[i],
+                             color=(.235, .529, .572, 1),
+                             size_hint_y=None,
+                             height=200,
+                             width=200,
+                             valign='middle',
+                             halign='center',
+                             font_size=20)
+
+                btn.text_size = (btn.size)
+                btn.background_color = (.941, .941, .937, 0)
+                layout2.add_widget(btn)
+
+        elif int(groupID) == int(999):
+            ZoneButton.Kontakty = []
+            ZoneButton.Kontakty.append(
+                "Ta grupa przeznaczona jest dla nieznanych numerów i nie zawiera żadnego kontaktu.")
+
+            for i in range(0, len(ZoneButton.Kontakty)):
+                btn = Button(text=ZoneButton.Kontakty[i],
+                             color=(.235, .529, .572, 1),
+                             size_hint_y=None,
+                             height=200,
+                             width=200,
+                             valign='middle',
+                             halign='center',
+                             font_size=20)
+
+                btn.text_size = (btn.size)
+                btn.background_color = (.941, .941, .937, 0)
+                layout2.add_widget(btn)
+        else:
+            for i in range(0, len(ZoneButton.Kontakty)):
+                btn = Button(text=ZoneButton.Kontakty[i],
+                             color=(.235, .529, .572, 1),
+                             size_hint_y=None,
+                             height=40,
+                             width=200,
+                             valign='middle',
+                             halign='center',
+                             font_size=20)
+
+                btn.text_size = (btn.size)
+                btn.background_color = (.941, .941, .937, 0)
+                layout2.add_widget(btn)
+
+        scrlv.add_widget(layout2)
+        layout1.add_widget(zamknij)
+        layout1.add_widget(scrlv)
+        popup.content = layout1
+        popup.open()
+
+        ZoneButton.Kontakty = []
+
+    def scroll_change(self, scrlv, instance, value):
+        scrlv.scroll_y = value'''
 
 
 
@@ -3678,11 +3738,14 @@ class MainApp(App):
     distLabel = 0
     FlagaWysylania = 0
     topicLabel = random.randrange(1000, 10000, 2)
-    ostatnie_predkosci=[0,0,0,0,0,0]
-    j=0
-    k=0
-    skrzyzowanieLat=[53.008887,53.008887, 53.011018, 53.011018, 53.011018, 53.011018, 53.010646, 53.010646, 53.009383]
-    skrzyzowanieLon=[18.585147,18.585147, 18.585597, 18.585597, 18.585597, 18.585597, 18.593536, 18.593536, 18.593510]
+    ostatnie_predkosci = [0, 0, 0, 0, 0, 0]
+    j = 0
+    k = 0
+    skrzyzowanieLat = [53.008887, 53.008887, 53.011018, 53.011018, 53.011018, 53.011018, 53.010646, 53.010646,
+                       53.009383]
+    skrzyzowanieLon = [18.585147, 18.585147, 18.585597, 18.585597, 18.585597, 18.585597, 18.593536, 18.593536,
+                       18.593510]
+
 
 
     def build(self):
@@ -3843,7 +3906,23 @@ class MainApp(App):
     def on_location_symuluj(self, clock):
 
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
+
+        show_time = MainApp.get_running_app().root
+
+        for index in xrange(0, len(show_time.group_members_lat)):
+            marker = "marker_group_" + str(index + 1)
+
+            print "testMarker"
+
+            marker_group = show_time.carousel.slides[0].ids[marker]
+            MainApp.get_running_app().root.carousel.slides[0].ids[marker].lat = float(
+                show_time.group_members_lat[index])
+            MainApp.get_running_app().root.carousel.slides[0].ids[marker].lon = float(
+                show_time.group_members_lon[index])
+
+
         if self.FlagaWysylania >= 4:
+
             self.FlagaWysylania = 0
             try:
                 if group_screen.connectGroup == True:
@@ -3982,16 +4061,14 @@ class MainApp(App):
                 self.calories2 = round(self.calories, 1)
                 self.distance2 = round(self.distance, 2)
                 self.gps_speed2 = round(self.gps_speed, 1)
-                if self.j==6:
-                    self.j=0
-                if self.j<6:
-                    self.ostatnie_predkosci[self.j]=self.gps_speed2
-                    self.j=self.j+1
-                    sumka=self.ostatnie_predkosci[0]+self.ostatnie_predkosci[1]+self.ostatnie_predkosci[2]+self.ostatnie_predkosci[3] +self.ostatnie_predkosci[4]+self.ostatnie_predkosci[5]
-                    self.gps_speed2=round(sumka/6,1)
-
-
-
+                if self.j == 6:
+                    self.j = 0
+                if self.j < 6:
+                    self.ostatnie_predkosci[self.j] = self.gps_speed2
+                    self.j = self.j + 1
+                    sumka = self.ostatnie_predkosci[0] + self.ostatnie_predkosci[1] + self.ostatnie_predkosci[2] + \
+                            self.ostatnie_predkosci[3] + self.ostatnie_predkosci[4] + self.ostatnie_predkosci[5]
+                    self.gps_speed2 = round(sumka / 6, 1)
                 # MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
                 # MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
 
@@ -4080,6 +4157,8 @@ class MainApp(App):
                 MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lat = float(MainApp.lat)
                 MainApp.get_running_app().root.carousel.slides[0].ids["marker"].lon = float(MainApp.lon)
 
+
+
                 punkty = MainApp.get_running_app().root.carousel.slides[0].punkty
                 # punkty.setNode(0, float(MainApp.lat), float(MainApp.lon))
 
@@ -4159,6 +4238,7 @@ class MainApp(App):
                     print float(instruction_points2.getLatitude(0))
                     print float(MainApp.lon)
                     print float(instruction_points2.getLongitude(0))
+
                     distanceIns = group_screen.calculate_distance(float(self.skrzyzowanieLat[self.k]),
                                                                   float(MainApp.lat),
                                                                   float(self.skrzyzowanieLon[self.k]),
@@ -4168,7 +4248,7 @@ class MainApp(App):
                     distanceMeters = distanceIns * 1000
                     self.distLabel = int(distanceMeters)
                     if distance2 > distance1:
-                        if distance1 < 0.01:
+                        if distance1 < 0.1:
                             # sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
 
 
@@ -4179,6 +4259,7 @@ class MainApp(App):
                             print 'dystans instrukcji'
                             print str(distanceIns)
                             if float(distanceIns) < 0.4:
+
                                 self.k = self.k + 1
                                 group_screen.actual_instruction2 = group_screen.actual_instruction
                             else:
@@ -4254,13 +4335,26 @@ class MainApp(App):
                     group_screen.punktyTrasyLon.append(float(MainApp.lon))
 
 
-
     @mainthread
     def on_location(self, speed, **kwargs):
+
+        show_time = MainApp.get_running_app().root
+
+        for index in xrange(0, len(show_time.group_members_lat)):
+            marker = "marker_group_" + str(index + 1)
+
+            print "testMarker"
+
+            marker_group = show_time.carousel.slides[0].ids[marker]
+            MainApp.get_running_app().root.carousel.slides[0].ids[marker].lat = float(
+                show_time.group_members_lat[index])
+            MainApp.get_running_app().root.carousel.slides[0].ids[marker].lon = float(
+                show_time.group_members_lon[index])
 
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
         if self.FlagaWysylania >= 4:
             self.FlagaWysylania = 0
+
             try:
                 if group_screen.connectGroup == True:
                     group_screen.sendMainLocation()
@@ -4380,7 +4474,7 @@ class MainApp(App):
                         print str(miej)
 
                         #city = str(miej)
-                        #city="Tirana"
+                        city="Innsbruck"
                         range_detect = 70
                         print "Wykonuje burze_api"
                         ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
