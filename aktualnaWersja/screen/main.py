@@ -187,7 +187,7 @@ Builder.load_string('''
         orientation: 'vertical'
         size_hint_y: 1
         Image:
-            size_hint_y: .4
+            size_hint_y: .2
             canvas.before:
                 Color:
                     rgba: root.color
@@ -196,10 +196,10 @@ Builder.load_string('''
                     size: self.size
             center_x: self.parent.center_x
             source: root.grzmot
-            height: self.parent.height*4
-            width: self.parent.width*4
+            height: self.parent.height*2
+            width: self.parent.width*2
         Image:
-            size_hint_y: .4
+            size_hint_y: .6
             canvas.before:
                 Color:
                     rgba: root.color
@@ -207,9 +207,10 @@ Builder.load_string('''
                     pos: self.pos
                     size: self.size
             center_x: self.parent.center_x
-            source: root.ktory_radar
-            height: self.parent.height*4
-            width: self.parent.width*4
+            background_color: 1,1,0,0
+            source: 'resources/radarN.png'
+            height: self.parent.height*6
+            width: self.parent.width*6
 <StartScreen>:
     canvas.before:
         Rectangle:
@@ -262,7 +263,7 @@ class StormPopup(GridLayout):
     text = StringProperty()
     ktory_radar=''
     grzmot='resources/cloud-and-thunder.png'
-    color=(1,0,0,.3)
+    color=(1,0,0,1)
 
     def __init__(self, **kwargs):
         self.register_event_type('on_answer2')
@@ -730,7 +731,7 @@ class ShowTime(Screen):
                 self.flagaCall = 1
 
         print "Tutaj sprawdzam Weather.czy_burza=" + str(Weather.czy_burza)
-        if Weather.czy_burza==1 and self.powtorka==0:
+        if Weather.czy_burza==0.5 and self.powtorka==0:
             self.powtorka=1
             self.stormListener()
 
@@ -2879,7 +2880,7 @@ class Weather(Screen):
         MainApp.get_running_app().root.carousel.slides[4].ids["label_temperatura"].text = str(temp)+str('°C')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_opady"].text = str(rain) + str(' mm')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_wilgotnosc"].text = str(humidity) + str('%')
-        MainApp.get_running_app().root.carousel.slides[4].ids["label_wiatr"].text = str(wind) + str('m/s ') + str(kierunek)
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_wiatr"].text = str(kierunek)+" "+str(wind)+str(' m/s ')
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_miejscowosc"].text = str(place)
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_czas"].text = str(time)
         #MainApp.get_running_app().root.carousel.slides[5].ids["label_nazwa_pogody"].text = str(name)
@@ -2889,8 +2890,8 @@ class Weather(Screen):
             ' mm')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wilgotnosc"].text = str(humidity_forecast) + str(
             '%')
-        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text = str(wind_forecast) + str(
-            'm/s ') + str(kierunek_forecast)
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text = str(kierunek_forecast)+" "+str(wind_forecast)+str(
+            ' m/s ')
         return data_forecast['city']['name']
 
     def burze_api(self,key, wsdl_file, city, range_detect):
@@ -2903,23 +2904,25 @@ class Weather(Screen):
     def print_burza(self,burza):
         print "=== Wykrywanie burzy ==="
         if burza['liczba'] == 0:
-            Weather.czy_burza=0
+            Weather.czy_burza=1
             print "Weather().czy_burza="+str(self.czy_burza)
             print "whahahaha mamy radarN"
             StormPopup.ktory_radar = "resources/radarN.png"
-            StormPopup.text="Uwaga!\nTak naprawde to nie ma burzy ;)"
+            StormPopup.background_color = (1,1,0,1)
+
+            #StormPopup.text="Uwaga!\nTak naprawde to nie ma burzy ;)"
             #self.czy_burza = 0
             #MainApp.get_running_app().root.carousel.slides[0].ids["label_burza"].color = (0, 1, 0, 0.3)
             print "Brak burzy"
         else:
-            Weather.czy_burza=1
+            Weather.czy_burza=0
             print "Weather().czy_burza=" + str(Weather().czy_burza)
             print "Uwaga! Wyladowania atmosferyczne w odleglosci ", str(burza['odleglosc']), "km"
             print "Kierunek: ", str(burza['kierunek'])
             if str(burza['kierunek'])=='N':
                 print "whahahaha mamy radarN"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,.3)
+                    StormPopup.background_color=(1,1,0,1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2930,7 +2933,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='NE':
                 print "whahahaha mamy radarNE"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,.3)
+                    StormPopup.color=(1,1,0,.1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2941,18 +2944,18 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='E':
                 print "whahahaha mamy radarE"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,.3)
+                    StormPopup.color=(1,1,0,1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
-                    StormPopup.color=(1,0,0,.3)
+                    StormPopup.color=(1,0,0,1)
                 StormPopup.ktory_radar = "resources/radarE.png"
                 StormPopup.text = "Uwaga!\nBurze w odleglosci "+str(burza['odleglosc'])+"km\nKierunek: E"
                 activity.readStormAlerts("Uwaga! Burze w odleglosci "+str(burza['odleglosc'])+"km. Kierunek: wschodni")
             elif str(burza['kierunek'])=='SE':
                 print "whahahaha mamy radarSE"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,.3)
+                    StormPopup.color=(1,1,0,1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2963,7 +2966,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='S':
                 print "whahahaha mamy radarS"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,.3)
+                    StormPopup.color=(1,1,0,1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2974,7 +2977,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='SW':
                 print "whahahaha mamy radarSW"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,.3)
+                    StormPopup.color=(1,1,0,1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2985,7 +2988,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='W':
                 print "whahahaha mamy radarW"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,.3)
+                    StormPopup.color=(1,1,0,1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -2996,7 +2999,7 @@ class Weather(Screen):
             elif str(burza['kierunek'])=='NW':
                 print "whahahaha mamy radarNW"
                 if burza['odleglosc']>=50:
-                    StormPopup.color=(1,1,0,.3)
+                    StormPopup.color=(1,1,0,1)
                 elif burza['odleglosc']>=20 and burza['odleglosc']<50:
                     StormPopup.color=(1,.5,0,.3)
                 else:
@@ -3675,6 +3678,11 @@ class MainApp(App):
     distLabel = 0
     FlagaWysylania = 0
     topicLabel = random.randrange(1000, 10000, 2)
+    ostatnie_predkosci=[0,0,0,0,0,0]
+    j=0
+    k=0
+    skrzyzowanieLat=[53.008887,53.008887, 53.011018, 53.011018, 53.011018, 53.011018, 53.010646, 53.010646, 53.009383]
+    skrzyzowanieLon=[18.585147,18.585147, 18.585597, 18.585597, 18.585597, 18.585597, 18.593536, 18.593536, 18.593510]
 
 
     def build(self):
@@ -3974,6 +3982,16 @@ class MainApp(App):
                 self.calories2 = round(self.calories, 1)
                 self.distance2 = round(self.distance, 2)
                 self.gps_speed2 = round(self.gps_speed, 1)
+                if self.j==6:
+                    self.j=0
+                if self.j<6:
+                    self.ostatnie_predkosci[self.j]=self.gps_speed2
+                    self.j=self.j+1
+                    sumka=self.ostatnie_predkosci[0]+self.ostatnie_predkosci[1]+self.ostatnie_predkosci[2]+self.ostatnie_predkosci[3] +self.ostatnie_predkosci[4]+self.ostatnie_predkosci[5]
+                    self.gps_speed2=round(sumka/6,1)
+
+
+
                 # MainApp.get_running_app().root.carousel.slides[4].ids["label_speed"].text = str(self.gps_speed)
                 # MainApp.get_running_app().root.carousel.slides[4].ids["label_max_speed"].text = str(self.highest_speed)
 
@@ -4141,9 +4159,9 @@ class MainApp(App):
                     print float(instruction_points2.getLatitude(0))
                     print float(MainApp.lon)
                     print float(instruction_points2.getLongitude(0))
-                    distanceIns = group_screen.calculate_distance(float(instruction_points2.getLatitude(0)),
+                    distanceIns = group_screen.calculate_distance(float(self.skrzyzowanieLat[self.k]),
                                                                   float(MainApp.lat),
-                                                                  float(instruction_points2.getLongitude(0)),
+                                                                  float(self.skrzyzowanieLon[self.k]),
                                                                   float(MainApp.lon))
                     print "dystansssssss"
                     print distanceIns
@@ -4161,7 +4179,7 @@ class MainApp(App):
                             print 'dystans instrukcji'
                             print str(distanceIns)
                             if float(distanceIns) < 0.4:
-
+                                self.k = self.k + 1
                                 group_screen.actual_instruction2 = group_screen.actual_instruction
                             else:
                                 group_screen.actual_instruction2 = 0
@@ -4190,7 +4208,7 @@ class MainApp(App):
                                 group_screen.actual_point) and instruction_points.getLongitude(0) == punkty.getLon(
                                 group_screen.actual_point):
                             group_screen.actual_instruction += 1
-                        if float(distanceIns) < 0.8:
+                        if float(distanceIns) < 0.2:
 
                             group_screen.actual_instruction2 = group_screen.actual_instruction
                         else:
@@ -4362,7 +4380,7 @@ class MainApp(App):
                         print str(miej)
 
                         #city = str(miej)
-                        city="Innsbruck"
+                        #city="Tirana"
                         range_detect = 70
                         print "Wykonuje burze_api"
                         ostrzezenia, burza = Weather().burze_api(key, wsdl_file, city, range_detect)
