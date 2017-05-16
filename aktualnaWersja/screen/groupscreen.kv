@@ -8,8 +8,13 @@
             height: root.height
             width: root.width
             id: scatter2
+            auto_bring_to_front: False
+#            bbox: ((0, 0), (root.width, root.height))
+
             RelativeLayout:
                 id: relativeMap
+                auto_bring_to_front: False
+
 #                height: root.height
 #                width: root.width
                 height: ((root.height * root.height) + (root.width * root.width))**0.5

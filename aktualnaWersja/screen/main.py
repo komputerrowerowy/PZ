@@ -522,16 +522,7 @@ class ShowTime(Screen):
             return False
         return True
 
-    def group_update_marker(self):
-        show_time = MainApp.get_running_app().root
 
-        for index in xrange(0, len(show_time.group_members_lat)):
-            marker = "marker_group_" + str(index + 1)
-
-            marker_group = show_time.carousel.slides[0].ids[marker]
-            marker_group.lat = float(show_time.group_members_lat[index])
-            marker_group.lon = float(show_time.group_members_lon[index])
-        #self.group_update_marker(marker_group, lat, lon)
 
 
 
@@ -1226,6 +1217,11 @@ class GroupScreen(Screen):
     GpxPath = "/sdcard/Bicom/Moje_trasy/"
     simulationFlag = True
     connectGroup = False
+
+    # def __init__(self, **kwargs):
+    #     super(GroupScreen, self).__init__()
+    #     self.ids.scatter2.bbox = ((0, 0), (self.width, self.height))
+
 
     def sfinxof(self):
         if activity.ignore_sphinx == True:
@@ -3741,10 +3737,9 @@ class MainApp(App):
     ostatnie_predkosci = [0, 0, 0, 0, 0, 0]
     j = 0
     k = 0
-    skrzyzowanieLat = [53.008887, 53.008887, 53.011018, 53.011018, 53.011018, 53.011018, 53.010646, 53.010646,
+    skrzyzowanieLat = [53.008887, 53.008887, 53.011923,53.011923, 53.011923, 53.011923,53.011923, 53.011880, 53.011880,53.011880,53.011880,53.011880,53.009383,
                        53.009383]
-    skrzyzowanieLon = [18.585147, 18.585147, 18.585597, 18.585597, 18.585597, 18.585597, 18.593536, 18.593536,
-                       18.593510]
+    skrzyzowanieLon = [18.585147, 18.585147, 18.585732, 18.585732, 18.585732, 18.585732, 18.585732, 18.596178,18.596178,18.596178,18.596178,18.596178,18.593510,18.593510]
 
 
 
@@ -3766,6 +3761,7 @@ class MainApp(App):
         Clock.schedule_interval(show_time.check, 1)
         Clock.schedule_interval(UstawFlage, 3600)
         Clock.schedule_interval(self.on_location_symuluj, 1)
+        Clock.schedule_interval(self.group_update_marker, 1)
         try:
             gps.configure(on_location=self.on_location, on_status=self.on_status)
             self.start(1000, 0)
@@ -3903,10 +3899,7 @@ class MainApp(App):
         MainApp.get_running_app().root.carousel.load_previous()
 
     @mainthread
-    def on_location_symuluj(self, clock):
-
-        group_screen = MainApp.get_running_app().root.carousel.slides[0]
-
+    def group_update_marker(self, a):
         show_time = MainApp.get_running_app().root
 
         for index in xrange(0, len(show_time.group_members_lat)):
@@ -3919,6 +3912,25 @@ class MainApp(App):
                 show_time.group_members_lat[index])
             MainApp.get_running_app().root.carousel.slides[0].ids[marker].lon = float(
                 show_time.group_members_lon[index])
+
+            #gr = GroupScreen()
+            #gr.centerMy()
+
+            print "wszystkiewarstwy"
+            for layer in MainApp.get_running_app().root.carousel.slides[0].ids["mapView"]._layers:
+                # if layer.id == 'line_map_layer':
+                #     layer.czysc_trase()
+                #     break
+                layer.reposition()
+                break
+                #print layer
+
+    @mainthread
+    def on_location_symuluj(self, clock):
+
+        group_screen = MainApp.get_running_app().root.carousel.slides[0]
+
+
 
 
         if self.FlagaWysylania >= 4:
@@ -4085,11 +4097,11 @@ class MainApp(App):
                     mapview.add_layer(LineMapLayer(), mode="scatter")
                     MainApp.znacznik = 1
 
-                # group = GroupScreen()
-                # try:
-                #     group.get_readings(1)
-                # except:
-                #     pass
+                group = GroupScreen()
+                try:
+                    group.get_readings(1)
+                except:
+                    pass
 
 
                 # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów
@@ -4248,7 +4260,7 @@ class MainApp(App):
                     distanceMeters = distanceIns * 1000
                     self.distLabel = int(distanceMeters)
                     if distance2 > distance1:
-                        if distance1 < 0.1:
+                        if distance1 < 0.01:
                             # sprawdzenie czy najblizszy punkt ma wskazowki jazdy i zmiana na kolejna instrukcje
 
 
@@ -4338,18 +4350,7 @@ class MainApp(App):
     @mainthread
     def on_location(self, speed, **kwargs):
 
-        show_time = MainApp.get_running_app().root
 
-        for index in xrange(0, len(show_time.group_members_lat)):
-            marker = "marker_group_" + str(index + 1)
-
-            print "testMarker"
-
-            marker_group = show_time.carousel.slides[0].ids[marker]
-            MainApp.get_running_app().root.carousel.slides[0].ids[marker].lat = float(
-                show_time.group_members_lat[index])
-            MainApp.get_running_app().root.carousel.slides[0].ids[marker].lon = float(
-                show_time.group_members_lon[index])
 
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
         if self.FlagaWysylania >= 4:
@@ -4442,10 +4443,10 @@ class MainApp(App):
                     MainApp.znacznik = 1
 
                 group = GroupScreen()
-                # try:
-                #     group.get_readings(1)
-                # except:
-                #     pass
+                try:
+                    group.get_readings(1)
+                except:
+                    pass
 
 
                 # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów
