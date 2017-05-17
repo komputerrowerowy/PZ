@@ -3947,7 +3947,7 @@ class MainApp(App):
 
 
 
-        if self.FlagaWysylania >= 4:
+        if self.FlagaWysylania >= 5:
 
             self.FlagaWysylania = 0
             try:
@@ -4367,7 +4367,7 @@ class MainApp(App):
 
 
         group_screen = MainApp.get_running_app().root.carousel.slides[0]
-        if self.FlagaWysylania >= 4:
+        if self.FlagaWysylania >= 5:
             self.FlagaWysylania = 0
 
             try:
