@@ -775,7 +775,7 @@ class ShowTime(Screen):
                 self.flagaCall = 1
 
         print "Tutaj sprawdzam Weather.czy_burza=" + str(Weather.czy_burza)
-        if Weather.czy_burza==1 and self.powtorka==0:
+        if Weather.czy_burza==2 and self.powtorka==0:
             self.powtorka=1
             self.stormListener()
 
@@ -1012,7 +1012,7 @@ class MusicPlayer(Screen):
 
         # get mp3 files from directory
         print "utwory"
-        for root, dirs, files in os.walk('/storage'):
+        for root, dirs, files in os.walk('/sdcard'):
             for f in files:
                 filename = os.path.join(root, f)
                 if filename.endswith('.mp3'):
@@ -2948,8 +2948,8 @@ class Weather(Screen):
             ' mm')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wilgotnosc"].text = str(humidity_forecast) + str(
             '%')
-        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text = str(wind_forecast) + str(
-            'm/s ') + str(kierunek_forecast)
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text =str(kierunek_forecast)+" "+ str(wind_forecast) + str(
+            ' m/s ')
         return data_forecast['city']['name']
 
     def burze_api(self,key, wsdl_file, city, range_detect):
