@@ -102,7 +102,7 @@ import random
 #owm = pyowm.OWM('b26433c9a2c69c16c1d138cc5710fd57', language='pl')  #moj kod!!!
 
 # 3c8792 niebieski kolor xD
-print "wersja_kkkkkkkkkkkkkkkkkkkkkkkk"
+print "wersja_kkkkkkkkkkkkkkkkkkkkkkkk_prezentacja"
 
 Hardware = autoclass('org.renpy.android.Hardware')
 
@@ -865,6 +865,7 @@ class PopupPutPin(FloatLayout):
     selectPutPin = ObjectProperty(None)
     def goToGroup(self):
         topic3 = self.ids.PinInput.text
+        MainApp.topicLabel = self.ids.PinInput.text
         print(str(topic3))
         gr = GroupScreen()
 
@@ -1252,6 +1253,7 @@ class GroupScreen(Screen):
         info.put(klucz2, wartosc2)
         info.put(klucz3, wartosc3)
         json.put("data", info);
+        json.put("time_to_live", 4)
         print 'tu wpisuje jsona xD'
         print json.toString()
 

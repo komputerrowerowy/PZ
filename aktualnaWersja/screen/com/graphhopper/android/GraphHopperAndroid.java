@@ -69,7 +69,7 @@ public class GraphHopperAndroid{
     private Button remoteButton;
     private volatile boolean prepareInProgress = false;
     private volatile boolean shortestPathRunning = false;
-    private String currentArea = "kujawsko-pomorskie-latest";
+    private String currentArea = "poland-latest";
     private String fileListURL = "http://download2.graphhopper.com/public/maps/" + Constants.getMajorVersion() + "/";
     private String prefixURL = fileListURL;
     private String downloadURL;
