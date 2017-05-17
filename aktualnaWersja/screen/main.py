@@ -86,8 +86,7 @@ from kivy.garden.qrcode import QRCodeWidget
 from collections import namedtuple
 from kivy.lang import Builder
 from kivy.app import App
-from kivy.properties import ObjectProperty, ListProperty, BooleanProperty, \
-    NumericProperty
+from kivy.properties import ObjectProperty, ListProperty, BooleanProperty, NumericProperty
 from kivy.uix.widget import Widget
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.graphics import Color, Line
@@ -103,7 +102,7 @@ import random
 #owm = pyowm.OWM('b26433c9a2c69c16c1d138cc5710fd57', language='pl')  #moj kod!!!
 
 # 3c8792 niebieski kolor xD
-print "wersja_aaafghjkl"
+print "wersja_kkkkkkkkkkkkkkkkkkkkkkkk"
 
 Hardware = autoclass('org.renpy.android.Hardware')
 
@@ -396,7 +395,7 @@ class ShowTime(Screen):
             self.popup.open()
 
             activity.lastWord = ""
-            activity.actual_search = "ODBIERZ";
+            activity.actual_search = "ODBIERZ"
             activity.switchSearch("ODBIERZ")
             self.incoming_call_clock = Clock.schedule_interval(self.accept_call_voice, 1)
             # time.sleep(1)
@@ -416,7 +415,8 @@ class ShowTime(Screen):
         #print "dupa" + " " + activity.lastWord
         if activity.callState == 1:
             #print "dupa" + " " + activity.lastWord
-            if activity.lastWord == "ODBIERZ" or activity.lastWord == "ODBIERZ2":
+            commands = activity.lastWord.split(" ")
+            if commands[0] == "ODBIERZ" or commands[0] == "ODBIERZ2" or commands[0] == "ODBIERZ3":
                 print "odbierz"
                 activity.lastWord = ""
                 self.flagaCall = 1
@@ -426,7 +426,7 @@ class ShowTime(Screen):
 
                 self.incoming_call_clock.cancel()
             else:
-                if activity.lastWord == "ODRZUC" or activity.lastWord == "ODRZUC2" or activity.lastWord == "ROZLACZ" or activity.lastWord == "ROZLACZ(2)":
+                if commands[0] == "ODRZUC" or commands[0] == "ODRZUC2" or commands[0] == "ODRZUC3" or commands[0] == "ODRZUC4" or commands[0] == "ROZLACZ" or commands[0] == "ROZLACZ(2)":
                     print "odrzuc"
                     activity.lastWord = ""
                     self.flagaCall = 1
@@ -437,22 +437,32 @@ class ShowTime(Screen):
                     self.incoming_call_clock.cancel()
 
     def _on_answer(self, instance, answer):
-        print "USER ANSWER: ", repr(answer)
+        print "testodbierz"
+        print "USER ANSWER3: ", repr(answer)
+        print answer
+        print answer == "Odbierz"
         if answer == "Odbierz":
-
+            print"odebralem0"
             self.flagaCall = 1
+            print"odebralem1"
             self.popup.dismiss()
-            AcceptIncomingCall2.acceptCall()
+            print"odebralem2"
+            activity.acceptCall()
+            print "odebralem3"
         else:
             if answer == "Odrzuc":
-
+                print "odrzucilem0"
                 self.flagaCall = 1
-
+                print "odrzucilem1"
                 self.rejectIncomingCall()
+                print "odrzucilem2"
                 self.popup.dismiss()
+                print "odrzucilem3"
+                self.ShowSmsAnswer()
+                print "odrzucilem4"
         self.popup.dismiss()
         #self.popup_shown = False
-        self.ShowSmsAnswer()
+
 
     def _on_answer2(self, instance, answer):
         print "USER ANSWER2: ", repr(answer)
@@ -674,10 +684,10 @@ class ShowTime(Screen):
         if activity.lastWord != '':
             music_screen = MainApp.get_running_app().root.carousel.slides[3]
             commands = activity.lastWord.split(" ")
-            if commands[0] == "DALEJ":
+            if commands[0] == "DALEJ" or commands[0] == "DALEJ2":
                 MainApp.get_running_app().root.carousel.load_next(mode = 'next')
                 activity.lastWord = ""
-            if commands[0] == "WSTECZ":
+            if commands[0] == "WSTECZ" or commands[0] == "WSTECZ2":
                 MainApp.get_running_app().root.carousel.load_previous()
                 activity.lastWord = ""
             if commands[0] == "POPRZEDNI" or activity.lastWord == "POPRZEDNIA":
@@ -2948,8 +2958,7 @@ class Weather(Screen):
             ' mm')
         MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wilgotnosc"].text = str(humidity_forecast) + str(
             '%')
-        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text =str(kierunek_forecast)+" "+ str(wind_forecast) + str(
-            ' m/s ')
+        MainApp.get_running_app().root.carousel.slides[4].ids["label_forecast_wiatr"].text =str(kierunek_forecast)+" "+ str(wind_forecast) + str(' m/s ')
         return data_forecast['city']['name']
 
     def burze_api(self,key, wsdl_file, city, range_detect):
@@ -3738,8 +3747,8 @@ class MainApp(App):
     j = 0
     k = 0
     skrzyzowanieLat = [53.008887, 53.008887, 53.011923,53.011923, 53.011923, 53.011923,53.011923, 53.011880, 53.011880,53.011880,53.011880,53.011880,53.009383,
-                       53.009383]
-    skrzyzowanieLon = [18.585147, 18.585147, 18.585732, 18.585732, 18.585732, 18.585732, 18.585732, 18.596178,18.596178,18.596178,18.596178,18.596178,18.593510,18.593510]
+                       53.009383,53.009383,53.009383,53.009383,53.009383,53.009383,53.009383,53.009383,53.009383,53.009383,53.009383]
+    skrzyzowanieLon = [18.585147, 18.585147, 18.585732, 18.585732, 18.585732, 18.585732, 18.585732, 18.596178,18.596178,18.596178,18.596178,18.596178,18.593510,18.593510,18.593510,18.593510,18.593510,18.593510,18.593510,18.593510,18.593510,18.593510,18.593510,18.593510]
 
 
 
@@ -4098,10 +4107,10 @@ class MainApp(App):
                     MainApp.znacznik = 1
 
                 group = GroupScreen()
-                try:
-                    group.get_readings(1)
-                except:
-                    pass
+                # try:
+                #     group.get_readings(1)
+                # except:
+                #     pass
 
 
                 # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów
@@ -4443,10 +4452,10 @@ class MainApp(App):
                     MainApp.znacznik = 1
 
                 group = GroupScreen()
-                try:
-                    group.get_readings(1)
-                except:
-                    pass
+                # try:
+                #     group.get_readings(1)
+                # except:
+                #     pass
 
 
                 # Automatyczne wyświetlenei listy z kontakatami na screanie kontaktów

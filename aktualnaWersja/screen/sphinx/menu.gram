@@ -3,13 +3,8 @@
 grammar menus;
 
 <menu> = DALEJ   |
+         DALEJ2  |
           WSTECZ  |
-          POPRZEDNI |
-          POPRZEDNIA |
-          NASTEPNY  |
-          NASTEPNA  |
-          STOP      |
-          START     |
-          MUZYKA  ;
+          WSTECZ2 ;
 
 public <menus> = <menu>+;

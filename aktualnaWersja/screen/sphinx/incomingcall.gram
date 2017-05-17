@@ -3,7 +3,10 @@
 grammar incomingcall;
 
 <incomingcal> = ODRZUC    |
+                ODRZUC2    |
+                ODRZUC3    |
+                ODRZUC4    |
 				 ODBIERZ     |
 				 ODBIERZ2  |
-				 ROZLACZ   ;
+                 ODBIERZ3  ;
 public <incomingcall> = <incomingcal>+;

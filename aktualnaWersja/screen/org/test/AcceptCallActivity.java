@@ -79,37 +79,49 @@ public class AcceptCallActivity extends Activity {
     private void acceptCall() {
 
         // for HTC devices we need to broadcast a connected headset
+        System.out.println("accept0");
         boolean broadcastConnected = MANUFACTURER_HTC.equalsIgnoreCase(Build.MANUFACTURER)
                 && !audioManager.isWiredHeadsetOn();
 
+        System.out.println("accept00");
         if (broadcastConnected) {
             broadcastHeadsetConnected(false);
         }
+        System.out.println("accept1");
 
         try {
 
             try {
                 // logger.debug("execute input keycode headset hook");
+                System.out.println("accept2");
                 Runtime.getRuntime().exec("input keyevent " +
                         Integer.toString(KeyEvent.KEYCODE_HEADSETHOOK));
+                System.out.println("accept3");
 
             } catch (IOException e) {
                 // Runtime.exec(String) had an I/O problem, try to fall back
                 //    logger.debug("send keycode headset hook intents");
+                System.out.println("accept4");
                 String enforcedPerm = "android.permission.CALL_PRIVILEGED";
                 Intent btnDown = new Intent(Intent.ACTION_MEDIA_BUTTON).putExtra(
                         Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN,
                                 KeyEvent.KEYCODE_HEADSETHOOK));
+                System.out.println("accept5");
                 Intent btnUp = new Intent(Intent.ACTION_MEDIA_BUTTON).putExtra(
                         Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_UP,
                                 KeyEvent.KEYCODE_HEADSETHOOK));
+                System.out.println("accept6");
 
                 sendOrderedBroadcast(btnDown, enforcedPerm);
+                System.out.println("accept7");
                 sendOrderedBroadcast(btnUp, enforcedPerm);
+                System.out.println("accept8");
             }
         } finally {
             if (broadcastConnected) {
+                System.out.println("accept9");
                 broadcastHeadsetConnected(false);
+                System.out.println("accept10");
             }
         }
         
@@ -127,6 +139,8 @@ public class AcceptCallActivity extends Activity {
         try {
             sendOrderedBroadcast(i, null);
         } catch (Exception e) {
+            System.out.println("wyjebalo telefon");
+            System.out.println(e.toString());
         }
     }
 

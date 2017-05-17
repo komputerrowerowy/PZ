@@ -1,10 +1,12 @@
 [app]
 
 # (str) Title of your application
+#title = BICOMwwwdwad
 title = BICOMww
 #title = BICOMwwSymulator
 
 # (str) Package name
+#package.name = BICOMProjectwwwdwad
 package.name = BICOMProjectww
 #package.name = BICOMProjectwwSymulator
 

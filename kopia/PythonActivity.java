@@ -183,6 +183,8 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
     public Client client;
     public String actualTopic = "";
     public String googleId = "testowyID";
+    
+    public boolean ignore_sphinx = true;
             
             
             
@@ -290,7 +292,7 @@ public void sendTestMessage() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
     
-    public void acceptCall() {
+    public void acceptCall2() {
         Intent intent5 = new Intent("org.test.bicomgrupa.ACCEPT_CALL");
         intent5.setPackage(this.getPackageName());
         getApplicationContext().sendBroadcast(intent5);
@@ -429,7 +431,7 @@ private final int CHECK_CODE = 0x1;
     }
 
 
-    public void acceptCall2() {
+    public void acceptCall() {
         Context context = this;
         if (Build.VERSION.SDK_INT >= 21) {
             Intent answerCalintent = new Intent(context, AcceptCallActivity.class);
@@ -442,6 +444,7 @@ private final int CHECK_CODE = 0x1;
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
+        System.out.println("acceptNormalny");
     }
 
 
@@ -628,7 +631,7 @@ private final int CHECK_CODE = 0x1;
         //    ;
 		System.out.println("test partial = " + text);
             //((TextView) findViewById(R.id.result_text)).setText(text);
-        //makeText(getApplicationContext(), "partial = " + text, Toast.LENGTH_SHORT).show();
+        //makeText(getApplicationContext(), "parlastWord = text;tial = " + text, Toast.LENGTH_SHORT).show();
     }
             
     @Override
@@ -639,7 +642,11 @@ private final int CHECK_CODE = 0x1;
             //makeText(getApplicationContext(), "result = " + text, Toast.LENGTH_SHORT).show();
             //makeText(getApplicationContext(), "partial = " + text, Toast.LENGTH_SHORT).show();
             //((TextView) findViewById(R.id.result_text)).setText(text);
-			lastWord = text;
+            if (ignore_sphinx) {
+                lastWord = "";
+            } else {
+                lastWord = text;
+            }
             System.out.println("test result = " + text);
         }
     }
@@ -1073,7 +1080,7 @@ private final int CHECK_CODE = 0x1;
 	System.out.println(keyCode);
         if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK)
             {
-                return true;
+                return false;
             }
 	else if (keyCode == KeyEvent.KEYCODE_NUMPAD_ADD) {
 		keyPressed = "+";
@@ -1103,13 +1110,13 @@ private final int CHECK_CODE = 0x1;
 
     @Override
     public boolean onKeyUp(int keyCode, final KeyEvent event) {
-        //Log.i("python", "key up " + mView + " " + mView.mStarted);
-        //if (mView != null && mView.mStarted && SDLSurfaceView.nativeKey(keyCode, 0, event.getUnicodeChar())) {
-         //   return true;
-       // } else {
-         //   return super.onKeyUp(keyCode, event);
-        //}
-	System.out.println("plusowanie2");
+        Log.i("python", "key up " + mView + " " + mView.mStarted);
+        if (mView != null && mView.mStarted && SDLSurfaceView.nativeKey(keyCode, 0, event.getUnicodeChar())) {
+            return true;
+        } else {
+            return super.onKeyUp(keyCode, event);
+        }
+	/*System.out.println("plusowanie2");
 	System.out.println(keyCode);
 	if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK)
             {
@@ -1139,7 +1146,7 @@ private final int CHECK_CODE = 0x1;
             return true;
         } else {
             return super.onKeyDown(keyCode, event);
-        }
+        }*/
     }
 
     protected void onDestroy() {
