@@ -62,6 +62,8 @@ public class PostData extends Thread {
             info.put("title", "Notificatoin Title");   // Notification title
             info.put("body", "Hello Test notification"); // Notification body
             json.put("data", info);
+            json.put("time_to_live", 4);
+            System.out.println("tekst wiadomosci7654321 ");
             System.out.println(json.toString());
         } catch (Exception e) {
             e.printStackTrace();

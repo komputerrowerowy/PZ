@@ -175,7 +175,7 @@ public class PythonActivity extends Activity implements Runnable, RecognitionLis
 	public String lastWord = "";
 	public String lastState = "";
     public boolean HeadsetIsPlugged = false;
-    public int readSmsState = 2;
+    public int readSmsState = 1;
     public int readStormState = 2;
     public boolean AlwaysReadInstruction = true;
     public String keyPressed="";
@@ -338,10 +338,8 @@ private final int CHECK_CODE = 0x1;
                         System.out.println("sluchawkiStan");
                         System.out.println(readSmsState);
                         if((HeadsetIsPlugged == true && readSmsState == 2) || readSmsState == 1){
-                            speaker.pause(LONG_DURATION);
                             AlwaysReadInstruction = false;
                             speaker.speak("Masz nową wiadomość od: " + sender + "!");
-                            speaker.pause(SHORT_DURATION);
                             speaker.speak(text);
                             AlwaysReadInstruction = true;
                         }

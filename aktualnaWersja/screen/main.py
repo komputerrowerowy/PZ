@@ -1306,6 +1306,8 @@ class GroupScreen(Screen):
     def sendAlert(self):
         content = PopupAlert(cancelAlert=self.dismiss_popupAlert, sendCarDown=self.sendCarDownMessage, sendCarUp=self.sendCarUpMessage , sendStop =self.sendStop , sendStart =self.sendStart)
 
+        content.ids.PinGroup.text = 'PIN grupy: ' + str(MainApp.topicLabel)
+
         self._popupAlert = Popup(title="Wyślij komunikat", content=content,
                             size_hint=(0.8, 0.7))
         self._popupAlert.open()
@@ -1381,6 +1383,7 @@ class GroupScreen(Screen):
 
         # MainApp.topicLabel = random.randrange(1000, 10000, 2)
         content.ids.PinLabel.text = str(MainApp.topicLabel)
+
 
 
 

@@ -35,6 +35,7 @@
                         id: marker
                         lat: 52.9828
                         lon: 18.5729
+                        source: "libs/garden/garden.mapview/mapview/icons/myMarker.png"
                     MapMarker:
                         id: marker2
                     MapMarker:
@@ -895,7 +896,23 @@
             size_hint_y: .8
             orientation: 'vertical'
             BoxLayout:
+                size_hint_y: .1
+                Label:
+                    id: PinGroup
+                    canvas.before:
+                        Color:
+                            rgb: 1, 1, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                    font_size: self.height / 2
+                    text: "1234"
+                    color: 0.235, 0.529, 0.572, 1
+
+            BoxLayout:
                 orientation: 'horizontal'
+                size_hint_y: .45
                 Button:
                     color: 0.235, 0.529, 0.572, 1
                     #text: "Zamknij"
@@ -922,6 +939,7 @@
                         height: self.parent.height
             BoxLayout:
                 orientation: 'horizontal'
+                size_hint_y: .45
                 Button:
                     color: 0.235, 0.529, 0.572, 1
                     #text: "Zamknij"
